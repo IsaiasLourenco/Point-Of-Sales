@@ -13,9 +13,11 @@ $res = $query->fetchAll(PDO::FETCH_ASSOC);
 
 if (count($res) > 0) {
     $nivel = $res[0]['nivel'];
+    $_SESSION['id_usuario'] = $res[0]['id']; 
     $_SESSION['nome_usuario'] = $res[0]['nome']; 
-    $_SESSION['nivel_usuario'] = $res[0]['nivel']; 
     $_SESSION['cpf_usuario'] = $res[0]['cpf']; 
+    $_SESSION['cpf_usuario'] = $res[0]['cpf']; 
+    $_SESSION['nivel_usuario'] = $res[0]['nivel']; 
     
     if ($nivel == 'Administrador') {
         header("Location: painel-adm");

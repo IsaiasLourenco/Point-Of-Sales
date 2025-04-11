@@ -6,9 +6,12 @@ require_once('verificar-permissao.php');
 //VARIÁVEIS DO MENU ADMINISTRATIVO
 $menu1 = 'home';
 $menu2 = 'usuarios';
+$menu3 = 'fornecedores';
+$menu4 = 'categorias';
+$menu5 = 'produtos';
 
 //RECUPERAR DADOS DO USUÁRIO
-$query = $pdo->query("SELECT * FROM usuarios WHERE cpf = '$_SESSION[cpf_usuario]'");
+$query = $pdo->query("SELECT * FROM usuarios WHERE id = '$_SESSION[id_usuario]'");
 $res = $query->fetchAll(PDO::FETCH_ASSOC);
 $id_usu = $res[0]['id'];
 $nome_usu = $res[0]['nome'];
@@ -48,6 +51,9 @@ $nivel_usu = $res[0]['nivel'];
 
     <!-- Bootstrap Icons -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.3.0/font/bootstrap-icons.css">
+
+    <!-- Busca CEP -->
+    <script src="../assets/js/buscaCep.js" type="module" defer></script>
 </head>
 
 <body>
@@ -66,13 +72,16 @@ $nivel_usu = $res[0]['nivel'];
                     <li class="nav-item">
                         <a class="nav-link" href="index.php?pagina=<?php echo $menu2 ?>">Usuários</a>
                     </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="index.php?pagina=<?php echo $menu3 ?>">Fornecedores</a>
+                    </li>
                     <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" data-bs-target="" data-bs-toggle="" id="dropdownMenu" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                            Dropdown
+                        <a class="nav-link dropdown-toggle" href="#" id="dropdownMenu" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            Produtos
                         </a>
                         <ul class="dropdown-menu" aria-labelledby="dropdownMenu">
-                            <li><a class="dropdown-item" href="#">Action</a></li>
-                            <li><a class="dropdown-item" href="#">Another action</a></li>
+                            <li><a class="dropdown-item" href="<?php echo $menu5 ?>">Cadastro de Produtos</a></li>
+                            <li><a class="dropdown-item" href="<?php echo $menu4?>">Cadastro de Categorias</a></li>
                             <li>
                                 <hr class="dropdown-divider">
                             </li>
@@ -108,7 +117,13 @@ $nivel_usu = $res[0]['nivel'];
             require_once($menu1 . '.php');
         } else if (@$_GET['pagina'] == $menu2) {
             require_once($menu2 . '.php');
-        } else {
+        } else if (@$_GET['pagina'] == $menu3) {
+            require_once($menu3 . '.php');
+        } else if (@$_GET['pagina'] == $menu4) {
+            require_once($menu4 . '.php');
+        } else if (@$_GET['pagina'] == $menu5) {
+            require_once($menu5 . '.php');
+        }  else {
             require_once($menu1 . '.php');
         }
         ?>
@@ -170,7 +185,7 @@ $nivel_usu = $res[0]['nivel'];
                     </div>
 
                     <div class="modal-footer justify-content-center">
-                        <button type="button" class="btn btn-danger" data-bs-dismiss="modal" id="btn-fechar">Fechar</button>
+                        <button type="button" class="btn btn-danger" data-bs-dismiss="modal" id="btn-fechar-perfil">Fechar</button>
                         <button type="submit" class="btn btn-secondary" name="btn-salvar-perfil" id="btn-salvar-perfil">Salvar</button>
                     </div>
 
@@ -202,11 +217,10 @@ $nivel_usu = $res[0]['nivel'];
 <!--AJAX PARA INSERÇÃO E EDIÇÃO DOS DADOS -->
 <script type="text/javascript">
     $("#frm-perfil").submit(function() {
-        var pagina = "<?= $pagina ?>";
         event.preventDefault();
         var formData = new FormData(this);
         $.ajax({
-            url: "/pdv/painel-adm/editar-perfil.php",
+            url: "editar-perfil.php",
             type: 'POST',
             data: formData,
             success: function(mensagem) {
@@ -214,7 +228,7 @@ $nivel_usu = $res[0]['nivel'];
                 if (mensagem.trim() == "Salvo com Sucesso!") {
                     //$('#nome').val('');
                     //$('#cpf').val('');
-                    $('#btn-fechar').click();
+                    $('#btn-fechar-perfil').click();
                     //window.location = "index.php?pagina=" + pagina;
                     location.reload();
                 } else {
@@ -225,15 +239,7 @@ $nivel_usu = $res[0]['nivel'];
             cache: false,
             contentType: false,
             processData: false,
-            xhr: function() { // Custom XMLHttpRequest
-                var myXhr = $.ajaxSettings.xhr();
-                if (myXhr.upload) { // Avalia se tem suporte a propriedade upload
-                    myXhr.upload.addEventListener('progress', function() {
-                        /* faz alguma coisa durante o progresso do upload */
-                    }, false);
-                }
-                return myXhr;
-            }
+        
         });
     });
 </script>

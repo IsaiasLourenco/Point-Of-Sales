@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Usuários</title>
+    <title>Fornecedores</title>
 
 </head>
 
@@ -12,15 +12,15 @@
     <div class="mt-4" style="margin-right:25px">
         <?php
         @session_start();
-        $pagina = 'usuarios';
+        $pagina = 'fornecedores';
         require_once('../conexao.php');
         require_once('verificar-permissao.php');
         ?>
-        <h5 style="text-align: center; color: darkgray;">USUÁRIOS</h5>
-        <a href="index.php?pagina=<?php echo $pagina ?>&funcao=novo" type="button" class="btn btn-sm btn-secondary mt-2 mb-2">Novo Usuário</a>
+        <h5 style="text-align: center; color: darkgray;">FORNECEDORES</h5>
+        <a href="index.php?pagina=<?php echo $pagina ?>&funcao=novo" type="button" class="btn btn-sm btn-secondary mt-2 mb-2">Novo Fornecedor</a>
 
         <?php
-        $query = $pdo->query("SELECT * FROM usuarios ORDER BY id ASC");
+        $query = $pdo->query("SELECT * FROM fornecedores ORDER BY id ASC");
         $res = $query->fetchAll(PDO::FETCH_ASSOC);
         $total_reg = @count($res);
         if ($total_reg) {
@@ -31,10 +31,9 @@
                         <thead>
                             <tr>
                                 <th>Nome</th>
+                                <th>CNPJ</th>
                                 <th>Email</th>
-                                <th>CPF</th>
-                                <th>Senha</th>
-                                <th>Nivel</th>
+                                <th>Telefone</th>
                                 <th>Ações</th>
                             </tr>
                         </thead>
@@ -46,10 +45,9 @@
                             <tbody>
                                 <tr>
                                     <td><?php echo $res[$i]['nome'] ?></td>
+                                    <td><?php echo $res[$i]['cnpj'] ?></td>
                                     <td><?php echo $res[$i]['email'] ?></td>
-                                    <td><?php echo $res[$i]['cpf'] ?></td>
-                                    <td><?php echo $res[$i]['senha'] ?></td>
-                                    <td><?php echo $res[$i]['nivel'] ?></td>
+                                    <td><?php echo $res[$i]['telefone'] ?></td>
                                     <td>
                                         <a href="index.php?pagina=<?php echo $pagina ?>&funcao=editar&id=<?php echo $res[$i]['id'] ?>" title="Editar">
                                             <i class="bi bi-pencil-square text-primary"></i>
@@ -73,16 +71,21 @@
     <?php
     if (@$_GET['funcao'] == "editar") {
         $titulo_modal = "Editar";
-        $query = $pdo->query("SELECT * FROM usuarios WHERE id = '$_GET[id]'");
+        $query = $pdo->query("SELECT * FROM fornecedores WHERE id = '$_GET[id]'");
         $res = $query->fetchAll(PDO::FETCH_ASSOC);
         $total_reg = @count($res);
         if ($total_reg) {
             $id = $res[0]['id'];
             $nome = $res[0]['nome'];
+            $cnpj = $res[0]['cnpj'];
             $email = $res[0]['email'];
-            $cpf = $res[0]['cpf'];
-            $senha = $res[0]['senha'];
-            $nivel = $res[0]['nivel'];
+            $telefone = $res[0]['telefone'];
+            $cep = $res[0]['cep'];
+            $rua = $res[0]['rua'];
+            $numero = $res[0]['numero'];
+            $bairro = $res[0]['bairro'];
+            $cidade = $res[0]['cidade'];
+            $estado = $res[0]['estado'];
         }
     } else {
         $titulo_modal = "Inserir";
@@ -91,7 +94,7 @@
 
     <!-- Modal de Inserção Edição -->
     <div class="modal fade" tabindex="-1" role="dialog" id="modalCadastro">
-        <div class="modal-dialog" role="document">
+        <div class="modal-dialog modal-lg" role="document">
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title"><?php echo $titulo_modal ?></h5>
@@ -104,17 +107,22 @@
 
                         <div class="row">
 
-                            <div class="col-md-12">
+                            <div class="col-md-4">
                                 <div class="mb-3">
                                     <label for="nome" class="form-label">Nome</label>
                                     <input type="text" class="form-control" id="nome" name="nome" placeholder="Nome" value="<?php echo @$nome ?>" required="">
                                 </div>
                             </div>
-                        </div>
 
 
-                        <div class="row">
-                            <div class="col-md-12">
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label for="cnpj" class="form-label">CNPJ</label>
+                                    <input type="text" class="form-control" id="cnpj" name="cnpj" placeholder="CNPJ" value="<?php echo @$cnpj ?>" required="">
+                                </div>
+                            </div>
+
+                            <div class="col-md-4">
                                 <div class="mb-3">
                                     <label for="email" class="form-label">Email</label>
                                     <input type="email" class="form-control" id="email" name="email" placeholder="email" value="<?php echo @$email ?>" required="">
@@ -125,45 +133,68 @@
 
                         <div class="row">
 
-                            <div class="col-md-6">
+                            <div class="col-md-4">
                                 <div class="mb-3">
-                                    <label for="cpf" class="form-label">CPF</label>
-                                    <input type="text" class="form-control" id="cpf" name="cpf" placeholder="CPF" value="<?php echo @$cpf ?>" required="">
+                                    <label for="telefone" class="form-label">Telefone</label>
+                                    <input type="text" class="form-control" id="telefone" name="telefone" placeholder="telefone" value="<?php echo @$telefone ?>" required="">
                                 </div>
                             </div>
 
-                            <div class="col-md-6">
+                            <div class="col-md-3">
                                 <div class="mb-3">
-                                    <label for="senha" class="form-label">Senha</label>
-                                    <input type="text" class="form-control" id="senha" name="senha" placeholder="Senha" value="<?php echo @$senha ?>" required="">
+                                    <label for="cep" class="form-label">CEP</label>
+                                    <input type="text" class="form-control" id="cep" name="cep" placeholder="CEP" value="<?php echo @$cep ?>" required="">
                                 </div>
                             </div>
+
+                            <div class="col-md-5">
+                                <div class="mb-3">
+                                    <label for="rua" class="form-label">Rua</label>
+                                    <input type="text" class="form-control" id="rua" name="rua" placeholder="Rua" value="<?php echo @$rua ?>" readonly>
+                                </div>
+                            </div>
+
                         </div>
 
                         <div class="row">
 
-                            <div class="col-md-6">
+                            <div class="col-md-2">
                                 <div class="mb-3">
-                                    <label for="nivel" class="form-label">Nível</label>
-                                    <select class="form-select mt-1" aria-label="Default select example" name="nivel">
-                                        <option <?php if (@$nivel == 'Operador') { ?> selected <?php } ?> value="Operador">Operador</option>
-                                        <option <?php if (@$nivel == 'Administrador') { ?> selected <?php } ?> value="Administrador">Administrador</option>
-                                        <option <?php if (@$nivel == 'Tesoureiro') { ?> selected <?php } ?> value="Tesoureiro">Tesoureiro</option>
-                                    </select>
+                                    <label for="numero" class="form-label">Número</label>
+                                    <input type="text" class="form-control" id="numero" name="numero" placeholder="Número" value="<?php echo @$numero ?>" required="">
                                 </div>
                             </div>
 
-                            <div class="col-md-6">
-                                <div class="modal-footer">
-                                    <button type="button" class="btn btn-sm btn-danger" data-bs-dismiss="modal" id="btn-fechar">Fechar</button>
-                                    <button type="submit" class="btn btn-sm btn-secondary" name="btn-salvar" id="btn-salvar">Salvar</button>
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label for="bairro" class="form-label">Bairro</label>
+                                    <input type="text" class="form-control" id="bairro" name="bairro" placeholder="Bairro" value="<?php echo @$bairro ?>" readonly>
                                 </div>
                             </div>
 
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label for="cidade" class="form-label">Cidade</label>
+                                    <input type="text" class="form-control" id="cidade" name="cidade" placeholder="Cidade" value="<?php echo @$cidade ?>" readonly>
+                                </div>
+                            </div>
+
+                            <div class="col-md-2">
+                                <div class="mb-3">
+                                    <label for="estado" class="form-label">Estado</label>
+                                    <input type="text" class="form-control" id="estado" name="estado" placeholder="Estado" value="<?php echo @$estado ?>" readonly>
+                                </div>
+                            </div>
+
+                        </div>
+
+                        <div class="modal-footer justify-content-center">
+                            <button type="button" class="btn btn-danger" data-bs-dismiss="modal" id="btn-fechar">Fechar</button>
+                            <button type="submit" class="btn btn-secondary" name="btn-salvar" id="btn-salvar">Salvar</button>
                         </div>
 
                         <input name="id" type="hidden" value="<?php echo @$id ?>">
-                        <input name="cpf_double" type="hidden" value="<?php echo @$cpf ?>">
+                        <input name="cnpj_double" type="hidden" value="<?php echo @$cnpj ?>">
                         <input name="email_double" type="hidden" value="<?php echo @$email ?>">
 
                         <small>
@@ -276,7 +307,7 @@ if (@$_GET['funcao'] == 'deletar') { ?>
             cache: false,
             contentType: false,
             processData: false,
-           
+
         });
     });
 </script>
