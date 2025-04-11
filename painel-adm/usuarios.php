@@ -11,8 +11,10 @@
 <body>
     <div class="mt-4" style="margin-right:25px">
         <?php
+        @session_start();
         $pagina = 'usuarios';
         require_once('../conexao.php');
+        require_once('verificar-permissao.php');
         ?>
         <a href="index.php?pagina=<?php echo $pagina ?>&funcao=novo" type="button" class="btn btn-sm btn-secondary mt-2 mb-2">Novo Usuário</a>
 

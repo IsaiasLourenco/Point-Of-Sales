@@ -1,5 +1,8 @@
 <?php
+@session_start();
 require_once('../config.php');
+require_once('verificar-permissao.php');
+
 //VARIÁVEIS DO MENU ADMINISTRATIVO
 $menu1 = 'home';
 $menu2 = 'usuarios';
@@ -69,12 +72,12 @@ $menu2 = 'usuarios';
                 </ul>
 
                 <form class="d-flex">
-                    <img class="img-profile rounded-circle mt-1" src="../assets/img/eu-II.jpg" width="40px" height="40px">
+                    <img class="img-profile rounded-circle mt-1" src="../assets/img/user.png" width="40px" height="40px">
 
                     <ul class="navbar-nav">
                         <li class="nav-item dropdown">
                             <a class="nav-link dropdown-toggle text-dark" href="#" id="dropdownPerfil" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                Isaias Lourenço
+                                <?php echo $_SESSION['nome_usuario']?>
                             </a>
 
                             <div class="dropdown-menu" aria-labelledby="dropdownPerfil">
