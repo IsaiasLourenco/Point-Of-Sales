@@ -45,7 +45,7 @@
                                 <tr>
                                     <td><?php echo $res[$i]['nome'] ?></td>
                                     <td></td>
-                                    <td></td>
+                                    <td><img src="../assets/img/categorias/<?php echo $res[$i]['imagem'] ?>" width="30px"></td>
                                     <td>
                                         <a href="index.php?pagina=<?php echo $pagina ?>&funcao=editar&id=<?php echo $res[$i]['id'] ?>" title="Editar">
                                             <i class="bi bi-pencil-square text-primary"></i>

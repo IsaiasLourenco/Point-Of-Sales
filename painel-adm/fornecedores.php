@@ -50,12 +50,17 @@
                                     <td><?php echo $res[$i]['telefone'] ?></td>
                                     <td>
                                         <a href="index.php?pagina=<?php echo $pagina ?>&funcao=editar&id=<?php echo $res[$i]['id'] ?>" title="Editar">
-                                            <i class="bi bi-pencil-square text-primary"></i>
+                                            <i class="bi bi-pencil-square text-success"></i>
                                         </a>
 
                                         <a href="index.php?pagina=<?php echo $pagina ?>&funcao=deletar&id=<?php echo $res[$i]['id'] ?>" title="Excluir">
                                             <i class="bi bi-trash text-danger mx-1"></i>
                                         </a>
+
+                                        <a href="#" title="Dados Adiconais" onclick="mostrarDados('<?php echo $res[$i]['nome'] ?>', '<?php echo $res[$i]['cep'] ?>', '<?php echo $res[$i]['rua'] ?>', '<?php echo $res[$i]['numero'] ?>', '<?php echo $res[$i]['bairro'] ?>', '<?php echo $res[$i]['cidade'] ?>', '<?php echo $res[$i]['estado'] ?>')">
+                                            <i class="bi bi-house-fill text-primary mx-1"></i>
+                                        </a>
+
                                     </td>
                                 </tr>
                             <?php } ?>
@@ -225,7 +230,7 @@
                         <p>Deseja realmente excluir o registro <?php echo $_GET['id'] ?> ?</p>
 
                         <div class="modal-footer justify-content-center">
-                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" id="btn-fechar">Fechar</button>
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" id="btn-fechar-del">Fechar</button>
                             <button type="submit" class="btn btn-danger" name="btn-excluir" id="btn-excluir">Excluir</button>
                         </div>
 
@@ -240,6 +245,45 @@
         </div>
     </div>
     <!-- Fim Modal de Exclusão -->
+
+    <!-- Modal Dados Adicionais -->
+    <div class="modal fade" tabindex="-1" role="dialog" id="modalDados">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Dados Adicionais</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+                </div>
+
+                <div class="modal-body mb-5">
+
+                    <strong>Nome: </strong>
+                    <span id="nome-registro"></span>
+                    <hr>
+                    <strong>CEP: </strong>
+                    <span id="cep-registro"></span>
+                    <hr>
+                    <strong>Rua: </strong>
+                    <span id="rua-registro"></span>
+                    <hr>
+                    <strong>Numero: </strong>
+                    <span id="numero-registro"></span>
+                    <hr>
+                    <strong>Bairro: </strong>
+                    <span id="bairro-registro"></span>
+                    <hr>
+                    <strong>Cidade: </strong>
+                    <span id="cidade-registro"></span>
+                    <hr>
+                    <strong>Estado: </strong>
+                    <span id="estado-registro"></span>
+
+                </div>
+
+            </div>
+        </div>
+    </div>
+    <!-- Fim Modal Dados Adicionais -->
 
 </body>
 
@@ -328,7 +372,7 @@ if (@$_GET['funcao'] == 'deletar') { ?>
                 if (mensagem.trim() == "Excluído com Sucesso!") {
                     //$('#nome').val('');
                     //$('#cpf').val('');
-                    $('#btn-fechar').click();
+                    $('#btn-fechar-del').click();
                     window.location = "index.php?pagina=" + pagina;
                     //location.reload();
                 } else {
@@ -353,3 +397,24 @@ if (@$_GET['funcao'] == 'deletar') { ?>
     });
 </script>
 <!-- FIM SCRIPT PARA DATATABLE -->
+
+<!-- SCRIPT MOSTRAR DADOS -->
+<script type="text/javascript">
+    function mostrarDados(nome, cep, rua, numero, bairro, cidade, estado) {
+        event.preventDefault();
+
+        $('#nome-registro').text(nome);
+        $('#cep-registro').text(cep);
+        $('#rua-registro').text(rua);
+        $('#numero-registro').text(numero);
+        $('#bairro-registro').text(bairro);
+        $('#cidade-registro').text(cidade);
+        $('#estado-registro').text(estado);
+
+        var myModal = new bootstrap.Modal(document.getElementById('modalDados'), {
+            backdrop: 'static'
+        })
+        myModal.show();
+    }
+</script>
+<!-- FIM SCRIPT MOSTRAR DADOS -->
