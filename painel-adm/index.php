@@ -3,12 +3,11 @@
 require_once('../conexao.php');
 require_once('verificar-permissao.php');
 
-//VARIÁVEIS DO MENU ADMINISTRATIVO
+//VARIAVEIS DO MENU ADMINISTRATIVO
 $menu1 = 'home';
 $menu2 = 'usuarios';
 $menu3 = 'fornecedores';
 $menu4 = 'categorias';
-$menu5 = 'produtos';
 
 //RECUPERAR DADOS DO USUÁRIO
 $query = $pdo->query("SELECT * FROM usuarios WHERE id = '$_SESSION[id_usuario]'");
@@ -76,12 +75,12 @@ $nivel_usu = $res[0]['nivel'];
                         <a class="nav-link" href="index.php?pagina=<?php echo $menu3 ?>">Fornecedores</a>
                     </li>
                     <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" id="dropdownMenu" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                             Produtos
                         </a>
-                        <ul class="dropdown-menu" aria-labelledby="dropdownMenu">
-                            <li><a class="dropdown-item" href="<?php echo $menu5 ?>">Cadastro de Produtos</a></li>
-                            <li><a class="dropdown-item" href="<?php echo $menu4?>">Cadastro de Categorias</a></li>
+                        <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                            <li><a class="dropdown-item" href="#">Cadastro de Produtos</a></li>
+                            <li><a class="dropdown-item" href="index.php?pagina=<?php echo $menu4 ?>">Cadastro de Categorias</a></li>
                             <li>
                                 <hr class="dropdown-divider">
                             </li>
@@ -121,9 +120,7 @@ $nivel_usu = $res[0]['nivel'];
             require_once($menu3 . '.php');
         } else if (@$_GET['pagina'] == $menu4) {
             require_once($menu4 . '.php');
-        } else if (@$_GET['pagina'] == $menu5) {
-            require_once($menu5 . '.php');
-        }  else {
+        } else {
             require_once($menu1 . '.php');
         }
         ?>
@@ -239,7 +236,7 @@ $nivel_usu = $res[0]['nivel'];
             cache: false,
             contentType: false,
             processData: false,
-        
+
         });
     });
 </script>
