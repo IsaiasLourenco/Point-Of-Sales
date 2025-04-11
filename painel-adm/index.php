@@ -1,11 +1,21 @@
 <?php
 @session_start();
-require_once('../config.php');
+require_once('../conexao.php');
 require_once('verificar-permissao.php');
 
 //VARIÁVEIS DO MENU ADMINISTRATIVO
 $menu1 = 'home';
 $menu2 = 'usuarios';
+
+//RECUPERAR DADOS DO USUÁRIO
+$query = $pdo->query("SELECT * FROM usuarios WHERE cpf = '$_SESSION[cpf_usuario]'");
+$res = $query->fetchAll(PDO::FETCH_ASSOC);
+$id_usu = $res[0]['id'];
+$nome_usu = $res[0]['nome'];
+$email_usu = $res[0]['email'];
+$cpf_usu = $res[0]['cpf'];
+$senha_usu = $res[0]['senha'];
+$nivel_usu = $res[0]['nivel'];
 ?>
 
 <!DOCTYPE html>
@@ -57,7 +67,7 @@ $menu2 = 'usuarios';
                         <a class="nav-link" href="index.php?pagina=<?php echo $menu2 ?>">Usuários</a>
                     </li>
                     <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" id="dropdownMenu" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        <a class="nav-link dropdown-toggle" href="#" data-bs-target="" data-bs-toggle="" id="dropdownMenu" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                             Dropdown
                         </a>
                         <ul class="dropdown-menu" aria-labelledby="dropdownMenu">
@@ -77,11 +87,11 @@ $menu2 = 'usuarios';
                     <ul class="navbar-nav">
                         <li class="nav-item dropdown">
                             <a class="nav-link dropdown-toggle text-dark" href="#" id="dropdownPerfil" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                <?php echo $_SESSION['nome_usuario']?>
+                                <?php echo $nome_usu ?>
                             </a>
 
                             <div class="dropdown-menu" aria-labelledby="dropdownPerfil">
-                                <a class="dropdown-item" href="#">Editar Perfil<a>
+                                <a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#modalPerfil">Editar Perfil<a>
                                         <a class="dropdown-item" href="../logout.php">Sair</a>
 
                             </div>
@@ -108,6 +118,79 @@ $menu2 = 'usuarios';
 
 </html>
 
+<!-- Modal de Inserção Edição -->
+<div class="modal fade" tabindex="-1" role="dialog" id="modalPerfil">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Editar</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+            </div>
+
+            <form method="POST" id="frm-perfil">
+
+                <div class="modal-body">
+
+                    <div class="row">
+
+                        <div class="col-md-12">
+                            <div class="mb-3">
+                                <label for="nome" class="form-label">Nome</label>
+                                <input type="text" class="form-control" id="nome-perfil" name="nome-perfil" placeholder="Nome" value="<?php echo @$nome_usu ?>" required="">
+                            </div>
+                        </div>
+                    </div>
+
+
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="mb-3">
+                                <label for="email" class="form-label">Email</label>
+                                <input type="email" class="form-control" id="email-perfil" name="email-perfil" placeholder="email" value="<?php echo @$email_usu ?>" required="">
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <div class="row">
+
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="cpf" class="form-label">CPF</label>
+                                <input type="text" class="form-control" id="cpf-perfil" name="cpf-perfil" placeholder="CPF" value="<?php echo @$cpf_usu ?>" required="">
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="senha" class="form-label">Senha</label>
+                                <input type="text" class="form-control" id="senha-perfil" name="senha-perfil" placeholder="Senha" value="<?php echo @$senha_usu ?>" required="">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="modal-footer justify-content-center">
+                        <button type="button" class="btn btn-danger" data-bs-dismiss="modal" id="btn-fechar">Fechar</button>
+                        <button type="submit" class="btn btn-secondary" name="btn-salvar-perfil" id="btn-salvar-perfil">Salvar</button>
+                    </div>
+
+                    <input name="id-perfil" type="hidden" value="<?php echo @$id_usu ?>">
+                    <input name="cpf_double-perfil" type="hidden" value="<?php echo @$cpf_usu ?>">
+                    <input name="email_double-perfil" type="hidden" value="<?php echo @$email_usu ?>">
+
+                    <small>
+                        <div align="center" id="mensagem-perfil">
+
+                        </div>
+                    </small>
+
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<!-- Fim Modal de Inserção Edição -->
+
 <!-- Script Mascaras -->
 <script type="text/javascript" src="../assets/js/mascara.js"></script>
 <!-- Fim Script Mascaras -->
@@ -115,3 +198,43 @@ $menu2 = 'usuarios';
 <!-- Ajax para funcionar Mascaras JS -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.mask/1.14.11/jquery.mask.min.js"></script>
 <!-- Fim Ajax para funcionar Mascaras JS -->
+
+<!--AJAX PARA INSERÇÃO E EDIÇÃO DOS DADOS -->
+<script type="text/javascript">
+    $("#frm-perfil").submit(function() {
+        var pagina = "<?= $pagina ?>";
+        event.preventDefault();
+        var formData = new FormData(this);
+        $.ajax({
+            url: "/pdv/painel-adm/editar-perfil.php",
+            type: 'POST',
+            data: formData,
+            success: function(mensagem) {
+                $('#mensagem').removeClass()
+                if (mensagem.trim() == "Salvo com Sucesso!") {
+                    //$('#nome').val('');
+                    //$('#cpf').val('');
+                    $('#btn-fechar').click();
+                    //window.location = "index.php?pagina=" + pagina;
+                    location.reload();
+                } else {
+                    $('#mensagem-perfil').addClass('text-danger')
+                }
+                $('#mensagem-perfil').text(mensagem)
+            },
+            cache: false,
+            contentType: false,
+            processData: false,
+            xhr: function() { // Custom XMLHttpRequest
+                var myXhr = $.ajaxSettings.xhr();
+                if (myXhr.upload) { // Avalia se tem suporte a propriedade upload
+                    myXhr.upload.addEventListener('progress', function() {
+                        /* faz alguma coisa durante o progresso do upload */
+                    }, false);
+                }
+                return myXhr;
+            }
+        });
+    });
+</script>
+<!-- FIM AJAX PARA INSERÇÃO E EDIÇÃO DOS DADOS -->
