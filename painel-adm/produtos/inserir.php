@@ -1,58 +1,76 @@
-<?php
+<?php 
 require_once("../../conexao.php");
 
 $id = $_POST['id'];
+$codigo = $_POST['codigo'];
 $nome = $_POST['nome'];
+$valor_venda = $_POST['valor_venda'];
+$valor_venda = str_replace(',', '.', $valor_venda);
+$descricao = $_POST['descricao'];
+$categoria = $_POST['categoria'];
 $nome_double = $_POST['nome_double'];
 
-//DUPLICIDADE NOME DA CATEGORIA
-if ($nome_double != $nome) {
-    $res_double = $pdo->prepare("SELECT * FROM categorias WHERE nome = :nome");
-    $res_double->bindValue(":nome", "$nome");
-    $res_double->execute();
-    $nome_usu = $res_double->fetch(PDO::FETCH_ASSOC);
-    if ($nome_usu) {
-        echo 'Nome da Categoria já cadastrada!';
-        exit();
-    }
+// EVITAR DUPLICIDADE NO NOME
+if($nome_double != $nome){
+	$query_con = $pdo->prepare("SELECT * from produtos WHERE nome = :nome");
+	$query_con->bindValue(":nome", $nome);
+	$query_con->execute();
+	$res_con = $query_con->fetchAll(PDO::FETCH_ASSOC);
+	if(@count($res_con) > 0){
+		echo 'Produto já Cadastrado!';
+		exit();
+	}
 }
 
 //SCRIPT PARA SUBIR FOTO NO BANCO
 $nome_img = preg_replace('/[ -]+/', '-', @$_FILES['imagem']['name']);
-$caminho = '../../assets/img/categorias/' . $nome_img;
-if (@$_FILES['imagem']['name'] == "") {
-    $imagem = "sem-foto.jpg";
-} else {
+$caminho = '../assets/img/produtos/' .$nome_img;
+if (@$_FILES['imagem']['name'] == ""){
+  $imagem = "sem-foto.jpg";
+}else{
     $imagem = $nome_img;
 }
 
-$imagem_temp = @$_FILES['imagem']['tmp_name'];
-$ext = pathinfo($imagem, PATHINFO_EXTENSION);
-if ($ext == 'png' or $ext == 'jpg' or $ext == 'jpeg' or $ext == 'gif') {
-    move_uploaded_file($imagem_temp, $caminho);
-} else {
-    echo 'Extensão de Imagem não permitida!';
-    exit();
+$imagem_temp = @$_FILES['imagem']['tmp_name']; 
+$ext = pathinfo($imagem, PATHINFO_EXTENSION);   
+if($ext == 'png' or $ext == 'jpg' or $ext == 'jpeg' or $ext == 'gif'){ 
+move_uploaded_file($imagem_temp, $caminho);
+}else{
+	echo 'Extensão de Imagem não permitida!';
+	exit();
 }
 
-if ($id == "") {
-    $res = $pdo->prepare("INSERT INTO categorias SET nome = :nome, imagem = :imagem");
-    $res->bindValue(":nome", "$nome");
-    $res->bindValue(":imagem", "$imagem");
-    $res->execute();
-} else {
-    if ($imagem != 'sem-foto.jpg') {
-        $res = $pdo->prepare("UPDATE categorias SET nome = :nome, imagem = :imagem WHERE id = :id");
-        $res->bindValue(":id", "$id");
-        $res->bindValue(":nome", "$nome");
-        $res->bindValue(":imagem", "$imagem");
-        $res->execute();
-    } else {
-        $res = $pdo->prepare("UPDATE categorias SET nome = :nome WHERE id = :id");
-        $res->bindValue(":id", "$id");
-        $res->bindValue(":nome", "$nome");
-        $res->execute();
-    }
-   
+if($id == ""){
+	$res = $pdo->prepare("INSERT INTO produtos SET codigo = :codigo, nome = :nome, valor_venda = :valor_venda, descricao = :descricao, categoria = :categoria, imagem = :imagem");
+	$res->bindValue(":codigo", $codigo);
+	$res->bindValue(":nome", $nome);
+	$res->bindValue(":valor_venda", $valor_venda);
+	$res->bindValue(":descricao", $descricao);
+	$res->bindValue(":categoria", $categoria);
+	$res->bindValue(":imagem", $imagem);
+	$res->execute();
+}else{
+	if($imagem != 'sem-foto.jpg'){
+		$res = $pdo->prepare("UPDATE produtos SET codigo = :codigo, nome = :nome, valor_venda = :valor_venda, descricao = :descricao, categoria = :categoria, imagem = :imagem WHERE id = :id");
+		$res->bindValue(":id", $id);
+		$res->bindValue(":codigo", $codigo);
+		$res->bindValue(":nome", $nome);
+		$res->bindValue(":valor_venda", $valor_venda);
+		$res->bindValue(":descricao", $descricao);
+		$res->bindValue(":categoria", $categoria);
+		$res->bindValue(":foto", $imagem);
+	}else{
+		$res = $pdo->prepare("UPDATE produtos SET codigo = :codigo, nome = :nome, valor_venda = :valor_venda, descricao = :descricao, categoria = :categoria WHERE id = :id");
+		$res->bindValue(":id", $id);
+		$res->bindValue(":codigo", $codigo);
+		$res->bindValue(":nome", $nome);
+		$res->bindValue(":valor_venda", $valor_venda);
+		$res->bindValue(":descricao", $descricao);
+		$res->bindValue(":categoria", $categoria);
+		$res->execute();
+	}
+	
 }
+
 echo 'Salvo com Sucesso!';
+?>
