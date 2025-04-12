@@ -8,6 +8,7 @@ $menu1 = 'home';
 $menu2 = 'usuarios';
 $menu3 = 'fornecedores';
 $menu4 = 'categorias';
+$menu5 = 'produtos';
 
 //RECUPERAR DADOS DO USUÁRIO
 $query = $pdo->query("SELECT * FROM usuarios WHERE id = '$_SESSION[id_usuario]'");
@@ -79,7 +80,7 @@ $nivel_usu = $res[0]['nivel'];
                             Produtos
                         </a>
                         <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-                            <li><a class="dropdown-item" href="#">Cadastro de Produtos</a></li>
+                            <li><a class="dropdown-item" href="index.php?pagina=<?php echo $menu5 ?>">Cadastro de Produtos</a></li>
                             <li><a class="dropdown-item" href="index.php?pagina=<?php echo $menu4 ?>">Cadastro de Categorias</a></li>
                             <li>
                                 <hr class="dropdown-divider">
@@ -120,6 +121,8 @@ $nivel_usu = $res[0]['nivel'];
             require_once($menu3 . '.php');
         } else if (@$_GET['pagina'] == $menu4) {
             require_once($menu4 . '.php');
+        } else if (@$_GET['pagina'] == $menu5) {
+            require_once($menu5 . '.php');
         } else {
             require_once($menu1 . '.php');
         }

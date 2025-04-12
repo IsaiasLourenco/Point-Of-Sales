@@ -154,7 +154,7 @@
                         <p>Deseja realmente excluir o registro <?php echo $_GET['id'] ?> ?</p>
 
                         <div class="modal-footer justify-content-center">
-                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" id="btn-fechar">Fechar</button>
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" id="btn-fechar-excluir">Fechar</button>
                             <button type="submit" class="btn btn-danger" name="btn-excluir" id="btn-excluir">Excluir</button>
                         </div>
 

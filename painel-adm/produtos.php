@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Fornecedores</title>
+    <title>Produtos</title>
 
 </head>
 
@@ -12,15 +12,16 @@
     <div class="mt-4" style="margin-right:25px">
         <?php
         @session_start();
-        $pagina = 'fornecedores';
+        $pagina = 'produtos';
         require_once('../conexao.php');
         require_once('verificar-permissao.php');
+        
         ?>
-        <h5 style="text-align: center; color: darkgray;">FORNECEDORES</h5>
-        <a href="index.php?pagina=<?php echo $pagina ?>&funcao=novo" type="button" class="btn btn-sm btn-secondary mt-2 mb-2">Novo Fornecedor</a>
+        <h5 style="text-align: center; color: darkgray;">PRODUTOS</h5>
+        <a href="index.php?pagina=<?php echo $pagina ?>&funcao=novo" type="button" class="btn btn-sm btn-secondary mt-2 mb-2">Novo Produto</a>
 
         <?php
-        $query = $pdo->query("SELECT * FROM fornecedores ORDER BY id ASC");
+        $query = $pdo->query("SELECT * FROM produtos ORDER BY id ASC");
         $res = $query->fetchAll(PDO::FETCH_ASSOC);
         $total_reg = @count($res);
         if ($total_reg) {
@@ -30,10 +31,13 @@
                     <div class="table-responsive">
                         <thead>
                             <tr>
-                                <th>Nome</th>
-                                <th class="text-center">CNPJ</th>
-                                <th class="text-center">Email</th>
-                                <th class="text-center">Telefone</th>
+                                <th class="text-center">Nome</th>
+                                <th class="text-center">Código</th>
+                                <th class="text-center">Estoque</th>
+                                <th class="text-center">Valor Compra</th>
+                                <th class="text-center">Valor Venda</th>
+                                <th class="text-center">Fornecedor</th>
+                                <th class="text-center">Imagem</th>
                                 <th>Ações</th>
                             </tr>
                         </thead>
@@ -41,16 +45,25 @@
                         for ($i = 0; $i < $total_reg; $i++) {
                             foreach ($res[$i] as $key => $value); {
                             }
+                            $id_cat = $res[$i]['categoria'];
+                            $query_2 = $pdo->query("SELECT * from categorias where id = '$id_cat'");
+                            $res_2 = $query_2->fetchAll(PDO::FETCH_ASSOC);
+                            $nome_cat = $res_2[0]['nome'];
                         ?>
+
                             <tbody>
+
                                 <tr>
-                                    <td><?php echo $res[$i]['nome'] ?></td>
-                                    <td class="text-center"><?php echo $res[$i]['cnpj'] ?></td>
-                                    <td class="text-center"><?php echo $res[$i]['email'] ?></td>
-                                    <td class="text-center"><?php echo $res[$i]['telefone'] ?></td>
+                                    <td class="text-center"><?php echo $res[$i]['nome'] ?></td>
+                                    <td class="text-center"><?php echo $res[$i]['codigo'] ?></td>
+                                    <td class="text-center"><?php echo $res[$i]['estoque'] ?></td>
+                                    <td class="text-center">R$ <?php echo $res[$i]['valor_compra'] ?></td>
+                                    <td class="text-center">R$ <?php echo $res[$i]['valor_venda'] ?></td>
+                                    <td class="text-center"><?php echo $res[$i]['fornecedor'] ?></td>
+                                    <td class="text-center"><img src="../assets/img/produtos/<?php echo $res[$i]['imagem'] ?>" width="30px"></td class="text-center">
                                     <td>
                                         <a href="index.php?pagina=<?php echo $pagina ?>&funcao=editar&id=<?php echo $res[$i]['id'] ?>" title="Editar">
-                                            <i class="bi bi-pencil-square text-success"></i>
+                                            <i class="bi bi-pencil-square text-primary"></i>
                                         </a>
 
                                         <a href="index.php?pagina=<?php echo $pagina ?>&funcao=deletar&id=<?php echo $res[$i]['id'] ?>" title="Excluir">
@@ -58,13 +71,12 @@
                                         </a>
 
                                         <a href="#" title="Dados Adiconais" onclick="mostrarDados(' <?php echo $res[$i]['nome'] ?>', 
-                                                                                                    '<?php echo $res[$i]['cep'] ?>', 
-                                                                                                    '<?php echo $res[$i]['rua'] ?>', 
-                                                                                                    '<?php echo $res[$i]['numero'] ?>', 
-                                                                                                    '<?php echo $res[$i]['bairro'] ?>', 
-                                                                                                    '<?php echo $res[$i]['cidade'] ?>', 
-                                                                                                    '<?php echo $res[$i]['estado'] ?>')">
-                                            <i class="bi bi-house-fill text-primary mx-1"></i>
+                                                                                                    '<?php echo $res[$i]['descricao'] ?>', 
+                                                                                                    '<?php echo $nome_cat ?>', 
+                                                                                                    '<?php echo $res[$i]['lucro'] ?>', 
+                                                                                                    '<?php echo $res[$i]['estoque_min'] ?>',
+                                                                                                    '<?php echo $res[$i]['imagem'] ?>')">
+                                            <i class="bi bi-info-circle-fill text-primary mx-1"></i>
                                         </a>
 
                                     </td>
@@ -76,27 +88,29 @@
             </small>
         <?php } else {
             echo '<p>Não existem dados para serem exibidos!!</p>';
-        } ?>
+        } 
+        ?>
     </div>
 
     <?php
     if (@$_GET['funcao'] == "editar") {
         $titulo_modal = "Editar";
-        $query = $pdo->query("SELECT * FROM fornecedores WHERE id = '$_GET[id]'");
+        $query = $pdo->query("SELECT * FROM produtos WHERE id = '$_GET[id]'");
         $res = $query->fetchAll(PDO::FETCH_ASSOC);
         $total_reg = @count($res);
         if ($total_reg) {
             $id = $res[0]['id'];
+            $codigo = $res[0]['codigo'];
             $nome = $res[0]['nome'];
-            $cnpj = $res[0]['cnpj'];
-            $email = $res[0]['email'];
-            $telefone = $res[0]['telefone'];
-            $cep = $res[0]['cep'];
-            $rua = $res[0]['rua'];
-            $numero = $res[0]['numero'];
-            $bairro = $res[0]['bairro'];
-            $cidade = $res[0]['cidade'];
-            $estado = $res[0]['estado'];
+            $descricao = $res[0]['descricao'];
+            $valor_compra = $res[0]['valor_compra'];
+            $valor_venda = $res[0]['valor_venda'];
+            $categoria = $res[0]['categoria'];
+            $fornecedor = $res[0]['fornecedor'];
+            $estoque = $res[0]['estoque'];
+            $lucro = $res[0]['lucro'];
+            $estoque_min = $res[0]['estoque_min'];
+            $imagem = $res[0]['imagem'];
         }
     } else {
         $titulo_modal = "Inserir";
@@ -112,31 +126,22 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
                 </div>
 
-                <form method="POST" id="frm-cadastro">
-
+                <form method="post" id="form">
                     <div class="modal-body">
 
                         <div class="row">
 
-                            <div class="col-md-4">
+                            <div class="col-6">
                                 <div class="mb-3">
-                                    <label for="nome" class="form-label">Nome</label>
-                                    <input type="text" class="form-control" id="nome" name="nome" placeholder="Nome" value="<?php echo @$nome ?>" required="">
+                                    <label for="codigo" class="form-label">Código </label>
+                                    <input type="text" class="form-control" id="codigo" name="codigo" placeholder="Código" value="<?php echo @$codigo ?>" required>
                                 </div>
                             </div>
 
-
-                            <div class="col-md-4">
+                            <div class="col-6">
                                 <div class="mb-3">
-                                    <label for="cnpj" class="form-label">CNPJ</label>
-                                    <input type="text" class="form-control" id="cnpj" name="cnpj" placeholder="CNPJ" value="<?php echo @$cnpj ?>" required="">
-                                </div>
-                            </div>
-
-                            <div class="col-md-4">
-                                <div class="mb-3">
-                                    <label for="email" class="form-label">Email</label>
-                                    <input type="email" class="form-control" id="email" name="email" placeholder="email" value="<?php echo @$email ?>" required="">
+                                    <label for="nome" class="form-label">Nome </label>
+                                    <input type="text" class="form-control" id="nome" name="nome" placeholder="Nome" value="<?php echo @$nome ?>" required>
                                 </div>
                             </div>
 
@@ -144,77 +149,76 @@
 
                         <div class="row">
 
-                            <div class="col-md-4">
+                            <div class="col-6">
                                 <div class="mb-3">
-                                    <label for="telefone" class="form-label">Telefone</label>
-                                    <input type="text" class="form-control" id="telefone" name="telefone" placeholder="telefone" value="<?php echo @$telefone ?>" required="">
+                                    <label for="exampleFormControlInput1" class="form-label">Valor Venda </label>
+                                    <input type="text" class="form-control" id="valor_venda" name="valor_venda" placeholder="Valor da Venda" required value="<?php echo @$valor_venda ?>">
                                 </div>
                             </div>
 
-                            <div class="col-md-3">
+                            <div class="col-6">
                                 <div class="mb-3">
-                                    <label for="cep" class="form-label">CEP</label>
-                                    <input type="text" class="form-control" id="cep" name="cep" placeholder="CEP" value="<?php echo @$cep ?>" required="">
-                                </div>
-                            </div>
+                                    <label for="exampleFormControlInput1" class="form-label">Categoria </label>
+                                    <select class="form-select" aria-label="Default select example" name="categoria">
+                                        <?php
+                                        $query = $pdo->query("SELECT * FROM categorias ORDER BY nome ASC");
+                                        $res = $query->fetchAll(PDO::FETCH_ASSOC);
+                                        for ($i = 0; $i < @count($res); $i++) {
+                                            foreach ($res[$i] as $key => $value) {
+                                            }
+                                            $id_item = $res[$i]['id'];
+                                            $nome_item = $res[$i]['nome'];
+                                        ?>
+                                            <option <?php if (@$id_item == @$categoria) { ?> selected <?php } ?> value="<?php echo $id_item ?>"><?php echo $nome_item ?></option>
 
-                            <div class="col-md-5">
-                                <div class="mb-3">
-                                    <label for="rua" class="form-label">Rua</label>
-                                    <input type="text" class="form-control" id="rua" name="rua" placeholder="Rua" value="<?php echo @$rua ?>" readonly>
+                                        <?php } ?>
+
+                                    </select>
                                 </div>
                             </div>
 
                         </div>
 
                         <div class="row">
-
-                            <div class="col-md-2">
+                            <div class="col-12">
                                 <div class="mb-3">
-                                    <label for="numero" class="form-label">Número</label>
-                                    <input type="text" class="form-control" id="numero" name="numero" placeholder="Número" value="<?php echo @$numero ?>" required="">
+                                    <label for="exampleFormControlInput1" class="form-label">Descrição </label>
+                                    <input type="text" class="form-control" id="descricao" name="descricao" placeholder="Descrição do Produto" value="<?php echo @$descricao ?>">
                                 </div>
                             </div>
+                        </div>
 
-                            <div class="col-md-4">
-                                <div class="mb-3">
-                                    <label for="bairro" class="form-label">Bairro</label>
-                                    <input type="text" class="form-control" id="bairro" name="bairro" placeholder="Bairro" value="<?php echo @$bairro ?>" readonly>
-                                </div>
-                            </div>
+                        <div class="form-group">
+                            <label>Imagem</label>
+                            <input type="file" value="<?php echo @$imagem ?>" class="form-control-file" id="imagem" name="imagem" onChange="carregarImg();">
+                        </div>
 
-                            <div class="col-md-4">
-                                <div class="mb-3">
-                                    <label for="cidade" class="form-label">Cidade</label>
-                                    <input type="text" class="form-control" id="cidade" name="cidade" placeholder="Cidade" value="<?php echo @$cidade ?>" readonly>
-                                </div>
-                            </div>
+                        <div id="divImgConta" class="mt-4">
+                            <?php if (@$imagem != "") { ?>
+                                <img src="../assets/img/<?php echo $pagina ?>/<?php echo @$imagem ?>" width="170px" id="target">
+                            <?php  } else { ?>
+                                <img src="../assets/img/<?php echo $pagina ?>/sem-foto.jpg" width="170px" id="target">
 
-                            <div class="col-md-2">
-                                <div class="mb-3">
-                                    <label for="estado" class="form-label">Estado</label>
-                                    <input type="text" class="form-control" id="estado" name="estado" placeholder="Estado" value="<?php echo @$estado ?>" readonly>
-                                </div>
-                            </div>
+                            <?php } ?>
+                        </div>
+
+                        <div id="codigoBarra">
 
                         </div>
 
-                        <div class="modal-footer justify-content-center">
-                            <button type="button" class="btn btn-danger" data-bs-dismiss="modal" id="btn-fechar">Fechar</button>
-                            <button type="submit" class="btn btn-secondary" name="btn-salvar" id="btn-salvar">Salvar</button>
-                        </div>
-
-                        <input name="id" type="hidden" value="<?php echo @$id ?>">
-                        <input name="cnpj_double" type="hidden" value="<?php echo @$cnpj ?>">
-                        <input name="email_double" type="hidden" value="<?php echo @$email ?>">
+                        <input type="hidden" name="id" value="<?php echo @$id ?>">
 
                         <small>
                             <div align="center" id="mensagem">
-
                             </div>
                         </small>
 
                     </div>
+                    <div class="modal-footer justify-content-center">
+                        <button type="button" class="btn btn-danger" data-bs-dismiss="modal" id="btn-fechar">Fechar</button>
+                        <button type="submit" class="btn btn-secondary" name="btn-salvar" id="btn-salvar">Salvar</button>
+                    </div>
+                    
                 </form>
             </div>
         </div>
@@ -236,7 +240,7 @@
                         <p>Deseja realmente excluir o registro <?php echo $_GET['id'] ?> ?</p>
 
                         <div class="modal-footer justify-content-center">
-                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" id="btn-fechar-del">Fechar</button>
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" id="btn-fechar-excluir">Fechar</button>
                             <button type="submit" class="btn btn-danger" name="btn-excluir" id="btn-excluir">Excluir</button>
                         </div>
 
@@ -266,23 +270,19 @@
                     <strong>Nome: </strong>
                     <span id="nome-registro"></span>
                     <hr>
-                    <strong>CEP: </strong>
-                    <span id="cep-registro"></span>
+                    <strong>Descrição: </strong>
+                    <span id="descricao-registro"></span>
                     <hr>
-                    <strong>Rua: </strong>
-                    <span id="rua-registro"></span>
+                    <strong>Categoria: </strong>
+                    <span id="categoria-registro"></span>
                     <hr>
-                    <strong>Numero: </strong>
-                    <span id="numero-registro"></span>
+                    <strong>Lucro: </strong>
+                    <span id="lucro-registro"></span>
                     <hr>
-                    <strong>Bairro: </strong>
-                    <span id="bairro-registro"></span>
+                    <strong>Estoque Mínimo: </strong>
+                    <span id="estoque-min-registro"></span>
                     <hr>
-                    <strong>Cidade: </strong>
-                    <span id="cidade-registro"></span>
-                    <hr>
-                    <strong>Estado: </strong>
-                    <span id="estado-registro"></span>
+                    <img id="imagem-registro" src="" class="mx-auto d-block" width="250px">
 
                 </div>
 
@@ -378,7 +378,7 @@ if (@$_GET['funcao'] == 'deletar') { ?>
                 if (mensagem.trim() == "Excluído com Sucesso!") {
                     //$('#nome').val('');
                     //$('#cpf').val('');
-                    $('#btn-fechar-del').click();
+                    $('#btn-fechar').click();
                     window.location = "index.php?pagina=" + pagina;
                     //location.reload();
                 } else {
@@ -404,18 +404,41 @@ if (@$_GET['funcao'] == 'deletar') { ?>
 </script>
 <!-- FIM SCRIPT PARA DATATABLE -->
 
+
+<!--SCRIPT PARA CARREGAR IMAGEM -->
+<script type="text/javascript">
+    function carregarImg() {
+
+        var target = document.getElementById('target');
+        var file = document.querySelector("input[type=file]").files[0];
+        var reader = new FileReader();
+
+        reader.onloadend = function() {
+            target.src = reader.result;
+        };
+
+        if (file) {
+            reader.readAsDataURL(file);
+
+
+        } else {
+            target.src = "";
+        }
+    }
+</script>
+<!--FINAL SCRIPT PARA CARREGAR IMAGEM -->
+
 <!-- SCRIPT MOSTRAR DADOS -->
 <script type="text/javascript">
-    function mostrarDados(nome, cep, rua, numero, bairro, cidade, estado) {
+    function mostrarDados(nome, descricao, categoria, lucro, estoque_min, imagem) {
         event.preventDefault();
 
         $('#nome-registro').text(nome);
-        $('#cep-registro').text(cep);
-        $('#rua-registro').text(rua);
-        $('#numero-registro').text(numero);
-        $('#bairro-registro').text(bairro);
-        $('#cidade-registro').text(cidade);
-        $('#estado-registro').text(estado);
+        $('#descricao-registro').text(descricao);
+        $('#categoria-registro').text(categoria);
+        $('#lucro-registro').text(lucro);
+        $('#estoque-min-registro').text(estoque_min);
+        $('#imagem-registro').attr('src', '../assets/img/produtos/' + imagem);
 
         var myModal = new bootstrap.Modal(document.getElementById('modalDados'), {
             backdrop: 'static'
@@ -424,3 +447,25 @@ if (@$_GET['funcao'] == 'deletar') { ?>
     }
 </script>
 <!-- FIM SCRIPT MOSTRAR DADOS -->
+
+<!-- SCRIPT GERA CÓDIGO DE BARRAS -->
+<script type="text/javascript">
+	$("#codigo").keyup(function () {
+        gerarCodigo();
+	});
+</script>
+<script type="text/javascript">
+    var pagina = "<?= $pagina ?>";
+	function gerarCodigo(){
+        $.ajax({
+            url: pagina + "/barras.php",
+            method: 'POST',
+            data: $('#form').serialize(),
+            dataType: 'html',
+            success: function(result){
+                $("#codigoBarra").html(result);
+            }
+        });
+    }
+</script>
+<!-- FIM SCRIPT GERA CÓDIGO DE BARRAS -->

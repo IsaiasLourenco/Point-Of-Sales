@@ -33,7 +33,7 @@
                                 <th>Nome</th>
                                 <th>Email</th>
                                 <th>CPF</th>
-                                <th>Senha</th>
+                                <th class="text-center">Senha</th>
                                 <th>Nivel</th>
                                 <th>Ações</th>
                             </tr>
@@ -48,7 +48,7 @@
                                     <td><?php echo $res[$i]['nome'] ?></td>
                                     <td><?php echo $res[$i]['email'] ?></td>
                                     <td><?php echo $res[$i]['cpf'] ?></td>
-                                    <td><?php echo $res[$i]['senha'] ?></td>
+                                    <td class="text-center"><?php echo $res[$i]['senha'] ?></td>
                                     <td><?php echo $res[$i]['nivel'] ?></td>
                                     <td>
                                         <a href="index.php?pagina=<?php echo $pagina ?>&funcao=editar&id=<?php echo $res[$i]['id'] ?>" title="Editar">
