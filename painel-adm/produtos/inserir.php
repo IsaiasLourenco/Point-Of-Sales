@@ -24,7 +24,7 @@ if($nome_double != $nome){
 
 //SCRIPT PARA SUBIR FOTO NO BANCO
 $nome_img = preg_replace('/[ -]+/', '-', @$_FILES['imagem']['name']);
-$caminho = '../assets/img/produtos/' .$nome_img;
+$caminho = '../../assets/img/produtos/' .$nome_img;
 if (@$_FILES['imagem']['name'] == ""){
   $imagem = "sem-foto.jpg";
 }else{

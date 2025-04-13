@@ -1,4 +1,4 @@
 <?php 
-    require_once('../geraCodigoBarra.php');
+    require_once('../gerarBarras.php');
     geraCodigoBarra($_POST['codigo']); 
 ?>

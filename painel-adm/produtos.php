@@ -23,7 +23,7 @@ require_once('verificar-permissao.php');
 
 <div class="mt-4" style="margin-right:25px">
     <?php
-    $query = $pdo->query("SELECT * from produtos order by id desc");
+    $query = $pdo->query("SELECT * FROM produtos ORDER BY id ASC");
     $res = $query->fetchAll(PDO::FETCH_ASSOC);
     $total_reg = @count($res);
     if ($total_reg > 0) {
@@ -268,7 +268,7 @@ if (@$_GET['funcao'] == "editar") {
             <form method="POST" id="form-excluir">
                 <div class="modal-body">
 
-                    <p>Deseja Realmente Excluir o Registro?</p>
+                    <p>Deseja Realmente Excluir o Registro <?php echo $_GET['id'] ?>?</p>
 
                     <small>
                         <div align="center" class="mt-1" id="mensagem-excluir">
@@ -393,7 +393,7 @@ if (@$_GET['funcao'] == "editar") {
                 </div>
                 <div class="modal-footer">
                     <button type="button" id="btn-fechar-comprar" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
-                    <button name="btn-salvar-comprar" id="btn-salvar-comprar" type="submit" class="btn btn-success">Salvar</button>
+                    <button name="btn-salvar-comprar" id="btn-salvar-comprar" type="submit" class="btn btn-danger">Salvar</button>
 
                     <input name="id-comprar" id="id-comprar" type="hidden">
 
@@ -446,12 +446,12 @@ if (@$_GET['funcao'] == "deletar") { ?>
 <!--AJAX PARA INSERÇÃO E EDIÇÃO DOS DADOS -->
 <script type="text/javascript">
     $("#form").submit(function() {
-        var pag = "<?= $pag ?>";
+        var pagina = "<?= $pagina ?>";
         event.preventDefault();
         var formData = new FormData(this);
 
         $.ajax({
-            url: pag + "/inserir.php",
+            url: pagina + "/inserir.php",
             type: 'POST',
             data: formData,
 
@@ -464,7 +464,7 @@ if (@$_GET['funcao'] == "deletar") { ?>
                     //$('#nome').val('');
                     //$('#cpf').val('');
                     $('#btn-fechar').click();
-                    window.location = "index.php?pagina=" + pag;
+                    window.location = "index.php?pagina=" + pagina;
 
                 } else {
 
@@ -487,12 +487,12 @@ if (@$_GET['funcao'] == "deletar") { ?>
 <!--AJAX PARA EXCLUIR DADOS -->
 <script type="text/javascript">
     $("#form-excluir").submit(function() {
-        var pag = "<?= $pag ?>";
+        var pagina = "<?= $pagina ?>";
         event.preventDefault();
         var formData = new FormData(this);
 
         $.ajax({
-            url: pag + "/excluir.php",
+            url: pagina + "/excluir.php",
             type: 'POST',
             data: formData,
 
@@ -504,8 +504,8 @@ if (@$_GET['funcao'] == "deletar") { ?>
 
                     $('#mensagem-excluir').addClass('text-success')
 
-                    $('#btn-fechar').click();
-                    window.location = "index.php?pagina=" + pag;
+                    $('#btn-fechar-excluir').click();
+                    window.location = "index.php?pagina=" + pagina;
 
                 } else {
 
@@ -569,7 +569,7 @@ if (@$_GET['funcao'] == "deletar") { ?>
         $('#telefone-registro').text(tel_forn);
         $('#lucro-registro').text(lucro);
         $('#estoque-min-registro').text(estoque_min);
-        $('#imagem-registro').attr('src', '../asssets/img/produtos/' + imagem);
+        $('#imagem-registro').attr('src', '../assets/img/produtos/' + imagem);
 
         var myModal = new bootstrap.Modal(document.getElementById('modalDados'), {
 
@@ -583,14 +583,14 @@ if (@$_GET['funcao'] == "deletar") { ?>
 <!--AJAX PARA GERAR CÓDIGO DE BARRAS -->
 <script type="text/javascript">
     $("#codigo").keyup(function() {
-        geraCodigoBarra();
+        gerarCodigo();
     });
 </script>
 <script type="text/javascript">
-    var pag = "<?= $pag ?>";
-    function geraCodigoBarra() {
+    var pagina = "<?= $pagina ?>";    
+    function gerarCodigo() {
         $.ajax({
-            url: pag + "/barras.php",
+            url: pagina + "/barras.php",
             method: 'POST',
             data: $('#form').serialize(),
             dataType: "html",
@@ -621,12 +621,12 @@ if (@$_GET['funcao'] == "deletar") { ?>
 <!--AJAX PARA COMPRAR PRODUTO -->
 <script type="text/javascript">
     $("#form-comprar").submit(function() {
-        var pag = "<?= $pag ?>";
+        var pagina = "<?= $pagina ?>";
         event.preventDefault();
         var formData = new FormData(this);
 
         $.ajax({
-            url: pag + "/comprar-produto.php",
+            url: pagina + "/comprar-produto.php",
             type: 'POST',
             data: formData,
 
