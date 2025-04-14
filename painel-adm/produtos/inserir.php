@@ -58,7 +58,8 @@ if($id == ""){
 		$res->bindValue(":valor_venda", $valor_venda);
 		$res->bindValue(":descricao", $descricao);
 		$res->bindValue(":categoria", $categoria);
-		$res->bindValue(":foto", $imagem);
+		$res->bindValue(":imagem", $imagem);
+		$res->execute();
 	}else{
 		$res = $pdo->prepare("UPDATE produtos SET codigo = :codigo, nome = :nome, valor_venda = :valor_venda, descricao = :descricao, categoria = :categoria WHERE id = :id");
 		$res->bindValue(":id", $id);

@@ -31,23 +31,27 @@
                         <thead>
                             <tr>
                                 <th>Nome</th>
-                                <th>Produtos</th>
-                                <th>Imagem</th>
-                                <th>Ações</th>
+                                <th class="text-center">Produtos da Categoria</th>
+                                <th class="text-center">Imagem</th>
+                                <th class="text-center">Ações</th>
                             </tr>
                         </thead>
                         <?php
                         for ($i = 0; $i < $total_reg; $i++) {
                             foreach ($res[$i] as $key => $value); {
                             }
+                            $id_cat = $res[$i]['id'];
+                            $query_p = $pdo->query("SELECT * FROM produtos WHERE categoria = '$id_cat'");
+                            $res_p = $query_p->fetchAll(PDO::FETCH_ASSOC);
+                            $qtde_produtos = @count($res_p);
                         ?>
                             <tbody>
                                 <tr>
                                     <td><?php echo $res[$i]['nome'] ?></td>
-                                    <td></td>
-                                    <td><img src="../assets/img/categorias/<?php echo $res[$i]['imagem'] ?>" width="30px"></td>
-                                    <td>
-                                        <a href="index.php?pagina=<?php echo $pagina ?>&funcao=editar&id=<?php echo $res[$i]['id'] ?>" title="Editar">
+                                    <td class="text-center"><?php echo $qtde_produtos ?></td>
+                                    <td class="text-center"><img src="../assets/img/categorias/<?php echo $res[$i]['imagem'] ?>" width="30px"></td>
+                                    <td class="text-center">
+                                        <a href="index.php?pagina=<?php echo $pagina ?>&funcao=editar&id=<?php echo $res[$i]['id'] ?>" title="Editar" style="text-decoration: none;">
                                             <i class="bi bi-pencil-square text-primary"></i>
                                         </a>
 
@@ -124,7 +128,7 @@
 
                         <input name="id" type="hidden" value="<?php echo @$id ?>">
                         <input name="nome_double" type="hidden" value="<?php echo @$nome ?>">
-                        
+
 
                         <small>
                             <div align="center" id="mensagem">
@@ -286,14 +290,13 @@ if (@$_GET['funcao'] == 'deletar') { ?>
 
 <!--SCRIPT PARA CARREGAR IMAGEM -->
 <script type="text/javascript">
-
     function carregarImg() {
 
         var target = document.getElementById('target');
         var file = document.querySelector("input[type=file]").files[0];
         var reader = new FileReader();
 
-        reader.onloadend = function () {
+        reader.onloadend = function() {
             target.src = reader.result;
         };
 
@@ -305,6 +308,5 @@ if (@$_GET['funcao'] == 'deletar') { ?>
             target.src = "";
         }
     }
-
 </script>
 <!--FINAL SCRIPT PARA CARREGAR IMAGEM -->

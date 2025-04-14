@@ -102,7 +102,7 @@ require_once('verificar-permissao.php');
 
 
                                 <a href="#" onclick="comprarProdutos('<?php echo $res[$i]['id'] ?>')" title="Comprar Produtos" style="text-decoration: none">
-                                    <i class="bi bi-bag-fill text-primary mx-1"></i>
+                                    <i class="bi bi-bag-fill text-secondary mx-1"></i>
                                 </a>
 
 
@@ -158,30 +158,29 @@ if (@$_GET['funcao'] == "editar") {
                     <div class="row">
                         <div class="col-md-4">
                             <div class="mb-3">
-                                <label for="exampleFormControlInput1" class="form-label">Código</label>
+                                <label for="codigo" class="form-label">Código</label>
                                 <input type="number" class="form-control" id="codigo" name="codigo" placeholder="Código" required="" value="<?php echo @$codigo ?>">
                             </div>
 
                         </div>
                         <div class="col-md-4">
                             <div class="mb-3">
-                                <label for="exampleFormControlInput1" class="form-label">Nome</label>
+                                <label for="nome" class="form-label">Nome</label>
                                 <input type="text" class="form-control" id="nome" name="nome" placeholder="Nome" required="" value="<?php echo @$nome ?>">
                             </div>
                         </div>
                         <div class="col-md-4">
                             <div class="mb-3">
-                                <label for="exampleFormControlInput1" class="form-label">Valor Venda</label>
+                                <label for="valor_venda" class="form-label">Valor Venda</label>
                                 <input type="text" class="form-control" id="valor_venda" name="valor_venda" placeholder="Valor Venda" required="" value="<?php echo @$valor_venda ?>">
                             </div>
                         </div>
                     </div>
-
+                    
                     <div class="mb-3">
-                        <label for="exampleFormControlInput1" class="form-label">Descrição do Produto</label>
-                        <textarea type="text" class="form-control" id="descricao" name="descricao" maxlength="200"><?php echo @$descricao ?></textarea>
+                        <label for="descricao" class="form-label">Descrição do Produto</label>
+                        <input type="text" class="form-control" id="nome" name="descricao" placeholder="Descrição" required="" value="<?php echo @$descricao ?>">
                     </div>
-
 
                     <div class="row">
                         <div class="col-md-4">
@@ -222,7 +221,7 @@ if (@$_GET['funcao'] == "editar") {
                     </div>
 
                     <div class="col-md-4">
-                        <div id="divImgConta" class="mt-4">
+                        <div id="divImgConta" class="mt-4 mb-4">
                             <?php if (@$imagem != "") { ?>
                                 <img src="../assets/img/produtos/<?php echo $imagem ?>" width="150px" id="target">
                             <?php  } else { ?>
@@ -307,12 +306,14 @@ if (@$_GET['funcao'] == "editar") {
                 <strong>Categoria: </strong>
                 <span id="categoria-registro"></span>
                 <hr>
-                <strong>Fornecedor: </strong>
-                <span id="fornecedor-registro"></span>
-                <hr>
-                <strong>Telefone: </strong>
-                <span id="telefone-registro"></span>
-                <hr>
+                <div class="div-forn">
+                    <strong>Fornecedor: </strong>
+                    <span id="fornecedor-registro"></span>
+                    <hr>
+                    <strong>Telefone: </strong>
+                    <span id="telefone-registro"></span>
+                    <hr>
+                </div>
                 <strong>Lucro: </strong>
                 <span id="lucro-registro"></span>
                 <hr>
@@ -340,36 +341,32 @@ if (@$_GET['funcao'] == "editar") {
                 <div class="modal-body">
 
                     <div class="mb-3">
-                        <label for="exampleFormControlInput1" class="form-label">Fornecedor</label>
+                        <label for="fornecedor" class="form-label">Fornecedor</label>
                         <select class="form-select mt-1" aria-label="Default select example" name="fornecedor">
                             <?php
+                            
                             $query = $pdo->query("SELECT * from fornecedores order by nome asc");
                             $res = $query->fetchAll(PDO::FETCH_ASSOC);
                             $total_reg = @count($res);
                             if ($total_reg > 0) {
-
                                 for ($i = 0; $i < $total_reg; $i++) {
                                     foreach ($res[$i] as $key => $value) {
                                     }
                             ?>
-
                                     <option value="<?php echo $res[$i]['id'] ?>"><?php echo $res[$i]['nome'] ?></option>
-
                             <?php }
                             } else {
                                 echo '<option value="">Cadastre um Fornecedor</option>';
                             } ?>
 
-
                         </select>
                     </div>
-
 
                     <div class="row">
                         <div class="col-6">
 
                             <div class="mb-3">
-                                <label for="exampleFormControlInput1" class="form-label">Valor Compra</label>
+                                <label for="valor_compra" class="form-label">Valor Compra</label>
                                 <input type="text" class="form-control" id="valor_compra" name="valor_compra" placeholder="Valor Compra" required="">
                             </div>
 
@@ -377,7 +374,7 @@ if (@$_GET['funcao'] == "editar") {
                         <div class="col-6">
 
                             <div class="mb-3">
-                                <label for="exampleFormControlInput1" class="form-label">Quantidade</label>
+                                <label for="quantidade" class="form-label">Quantidade</label>
                                 <input type="number" class="form-control" id="quantidade" name="quantidade" placeholder="Quantidade" required="">
                             </div>
 
@@ -385,9 +382,7 @@ if (@$_GET['funcao'] == "editar") {
                     </div>
 
                     <small>
-                        <div align="center" class="mt-1" id="mensagem-comprar">
-
-                        </div>
+                        <div align="center" class="mt-1" id="mensagem-comprar"></div>
                     </small>
 
                 </div>
@@ -528,6 +523,7 @@ if (@$_GET['funcao'] == "deletar") { ?>
 <!--AJAX ORDENAR DATATABLE -->
 <script type="text/javascript">
     $(document).ready(function() {
+        gerarCodigo();
         $('#usuarios').DataTable({
             "ordering": false
         });
@@ -563,10 +559,22 @@ if (@$_GET['funcao'] == "deletar") { ?>
     function mostrarDados(descricao, categoria, nome_forn, tel_forn, lucro, estoque_min, imagem) {
         event.preventDefault();
 
+
         $('#descricao-registro').text(descricao);
         $('#categoria-registro').text(categoria);
-        $('#fornecedor-registro').text(nome_forn);
-        $('#telefone-registro').text(tel_forn);
+        if (nome_forn === '') {
+            const divFornecedor = document.querySelector('.div-forn');
+            if (divFornecedor) {
+                divFornecedor.style.display = 'none';
+            }
+        } else {
+            const divFornecedor = document.querySelector('.div-forn');
+            if (divFornecedor) {
+                divFornecedor.style.display = 'block'; // Mostra a di
+            }
+            $('#fornecedor-registro').text(nome_forn);
+            $('#telefone-registro').text(tel_forn);
+        }
         $('#lucro-registro').text(lucro);
         $('#estoque-min-registro').text(estoque_min);
         $('#imagem-registro').attr('src', '../assets/img/produtos/' + imagem);
@@ -587,7 +595,8 @@ if (@$_GET['funcao'] == "deletar") { ?>
     });
 </script>
 <script type="text/javascript">
-    var pagina = "<?= $pagina ?>";    
+    var pagina = "<?= $pagina ?>";
+
     function gerarCodigo() {
         $.ajax({
             url: pagina + "/barras.php",
@@ -638,30 +647,22 @@ if (@$_GET['funcao'] == "deletar") { ?>
 
                     //$('#nome').val('');
                     //$('#cpf').val('');
-                    $('#btn-fechar').click();
-                    window.location = "index.php?pagina=" + pag;
+                    $('#btn-fechar-comprar').click();
+                    window.location = "index.php?pagina=" + pagina;
 
                 } else {
 
                     $('#mensagem-comprar').addClass('text-danger')
                 }
 
-                $('#mensagem-comprar').text(mensagem)
+                $('#mensagem-comprar').html(mensagem)
 
             },
 
             cache: false,
             contentType: false,
             processData: false,
-            xhr: function() { // Custom XMLHttpRequest
-                var myXhr = $.ajaxSettings.xhr();
-                if (myXhr.upload) { // Avalia se tem suporte a propriedade upload
-                    myXhr.upload.addEventListener('progress', function() {
-                        /* faz alguma coisa durante o progresso do upload */
-                    }, false);
-                }
-                return myXhr;
-            }
+            
         });
     });
 </script>

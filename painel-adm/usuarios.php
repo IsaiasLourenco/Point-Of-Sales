@@ -51,7 +51,7 @@
                                     <td class="text-center"><?php echo $res[$i]['senha'] ?></td>
                                     <td><?php echo $res[$i]['nivel'] ?></td>
                                     <td>
-                                        <a href="index.php?pagina=<?php echo $pagina ?>&funcao=editar&id=<?php echo $res[$i]['id'] ?>" title="Editar">
+                                        <a href="index.php?pagina=<?php echo $pagina ?>&funcao=editar&id=<?php echo $res[$i]['id'] ?>" title="Editar" style="text-decoration: none">
                                             <i class="bi bi-pencil-square text-primary"></i>
                                         </a>
 

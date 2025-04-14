@@ -49,11 +49,11 @@
                                     <td class="text-center"><?php echo $res[$i]['email'] ?></td>
                                     <td class="text-center"><?php echo $res[$i]['telefone'] ?></td>
                                     <td>
-                                        <a href="index.php?pagina=<?php echo $pagina ?>&funcao=editar&id=<?php echo $res[$i]['id'] ?>" title="Editar">
+                                        <a href="index.php?pagina=<?php echo $pagina ?>&funcao=editar&id=<?php echo $res[$i]['id'] ?>" title="Editar" style="text-decoration: none;">
                                             <i class="bi bi-pencil-square text-success"></i>
                                         </a>
 
-                                        <a href="index.php?pagina=<?php echo $pagina ?>&funcao=deletar&id=<?php echo $res[$i]['id'] ?>" title="Excluir">
+                                        <a href="index.php?pagina=<?php echo $pagina ?>&funcao=deletar&id=<?php echo $res[$i]['id'] ?>" title="Excluir" style="text-decoration: none;">
                                             <i class="bi bi-trash text-danger mx-1"></i>
                                         </a>
 
