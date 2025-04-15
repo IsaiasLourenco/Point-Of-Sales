@@ -89,6 +89,19 @@ $nivel_usu = $res[0]['nivel'];
                             <li><a class="dropdown-item" href="index.php?pagina=<?php echo $menu6 ?>">Compras</a></li>
                         </ul>
                     </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownRel" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            Relatórios
+                        </a>
+                        <ul class="dropdown-menu" aria-labelledby="navbarDropdownRel">
+                            <li><a class="dropdown-item" href="../rel/relProdutos_class.php" target="_blank">Relatório de Produtos</a></li>
+                            <li><a class="dropdown-item" href="" target="_blank" data-bs-toggle="modal" data-bs-target="#modalRelCompras">Relatório de Compras</a></li>
+                            <li>
+                                <hr class="dropdown-divider">
+                            </li>
+                            <li><a class="dropdown-item" href="" target="_blank">Relatório de Categorias</a></li>
+                        </ul>
+                    </li>
                 </ul>
 
                 <form class="d-flex">
@@ -208,6 +221,57 @@ $nivel_usu = $res[0]['nivel'];
     </div>
 </div>
 <!-- Fim Modal de Inserção Edição -->
+
+<!-- Modal de Relatório de Compras -->
+<div class="modal fade" id="modalRelCompras" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Compras</h5>
+            </div>
+
+            <form action="../rel/relCompras_class.php" method="POST" target="_blank">
+                <div class="modal-body">
+
+                    <div class="row">
+
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label>Data Inicial</label>
+                                <input value="<?php echo date('Y-m-d') ?>" type="date" class="form-control" name="dataInicial">
+                            </div>
+                        </div>
+
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label>Data Final</label>
+                                <input value="<?php echo date('Y-m-d') ?>" type="date" class="form-control" name="dataFinal">
+                            </div>
+                        </div>
+
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label>Pago</label>
+                                <select class="form-control" name="status">
+                                    <option value="">Todas</option>
+                                    <option value="Sim">Sim</option>
+                                    <option value="Não">Não</option>
+                                </select>
+                            </div>
+                        </div>
+
+                    </div>
+
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-danger">Gerar Relatório</button>
+                </div>
+            </form>
+
+        </div>
+    </div>
+</div>
+<!-- Fim Modal de Relatório de Compras -->
 
 <!-- Script Mascaras -->
 <script type="text/javascript" src="../assets/js/mascara.js"></script>

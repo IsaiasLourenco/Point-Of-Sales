@@ -1,62 +1,61 @@
-# Sistema de Ponto de Venda (PDV)
+# PointOfSales Pro 🌐
 
-## Visão Geral
+Bem-vindo ao repositório oficial da **PointOfSales Pro**! 🚀  
+Nossa missão é simplificar e revolucionar o gerenciamento de vendas e estoques através de soluções tecnológicas inovadoras e acessíveis.
 Este projeto é um **Sistema de Ponto de Venda (PDV)** robusto e completo, projetado para otimizar o gerenciamento de vendas, estoque e finanças de um estabelecimento comercial. Ele oferece controle total de estoque, suporte para vendas a prazo, gestão de sangrias e uma ampla variedade de relatórios gerenciais, além de muitas outras funcionalidades essenciais para um PDV moderno.
 
-## Funcionalidades Principais
-### Controle de Estoque
-- Cadastro completo de produtos com descrição, código, preço, categoria e unidade.
-- Controle de entradas e saídas de estoque.
-- Relatórios de estoque mínimo e alerta de reposição automática.
-- Histórico detalhado de movimentações de estoque.
+## 🧩 Quem somos?
 
-### Vendas
-- Venda rápida e intuitiva com suporte a múltiplos métodos de pagamento.
-- Suporte para vendas a prazo, incluindo registro de parcelas e controle de inadimplências.
-- Emissão de comprovantes fiscais e recibos.
-- Aplicação de descontos personalizados por produto ou total.
+**PointOfSales Pro** é uma solução completa para sistemas de ponto de venda, desenvolvida para atender às necessidades de pequenos e grandes negócios. Nosso objetivo é oferecer ferramentas intuitivas que otimizem operações e impulsionem resultados.
 
-### Sangrias e Gestão Financeira
-- Registro de sangrias para controle de valores retirados do caixa.
-- Relatórios detalhados de entrada e saída no caixa por período.
-- Controle de despesas operacionais integradas ao fluxo financeiro.
+## 🔧 Tecnologias
 
-### Relatórios Gerenciais
-- Relatório diário de vendas (itens vendidos, valor total, pagamentos recebidos).
-- Análise de performance por produto, categoria ou vendedor.
-- Relatórios personalizados com filtros avançados (datas, clientes, produtos).
-- Exportação de dados em formatos como PDF e Excel.
+Nossa plataforma foi construída com as melhores tecnologias do mercado, garantindo desempenho, escalabilidade e segurança. 
 
-### Cadastro e Gestão de Usuários
-- Sistema de permissão para diferentes níveis de acesso (administrador, vendedor, financeiro).
-- Histórico de atividades por usuário.
+### Frontend:
+- **HTML**, **CSS** 
+- **Bootstrap**, **JavaScript**
 
-### Outras Funcionalidades
-- Backup automático de dados.
-- Suporte multi-idiomas e multi-moeda.
-- Integração com sistemas de fidelidade e promoções.
-- Interface simples e intuitiva com suporte para dispositivos móveis e desktop.
+### Backend:
+- **PHP**, **AJAX**
+- **Apache XAMPP**, **Microsserviços**
 
-## Requisitos do Sistema
-- **Backend**: Node.js, PHP, AJAX.
-- **Frontend**: React, HTML, Bootstrap.
-- Banco de Dados: MySQL ou PostgreSQL.
-- Sistema Operacional: Compatível com Windows, macOS e Linux.
+### Banco de Dados:
+- **MySQL**, **Apache XAMPP**
 
-## Como Instalar
-1. Clone este repositório:
-   ```bash
-   git clone https://github.com/seuusuario/pdv.git
+### DevOps:
+- **Docker**
 
-
-- Instale as dependências:npm install
+## 🌟 Serviços
 
-- Configure as variáveis de ambiente no arquivo .env.
-- Inicie o servidor:npm start
+- **Gestão de vendas**: Ferramentas robustas para controle de vendas e relatórios.
+- **Controle de estoque**: Monitoramento em tempo real e gestão eficiente.
+- **Integrações personalizadas**: Conexões com sistemas de pagamento, ERPs e mais.
+- **Suporte e consultoria**: Equipe dedicada para ajudar em cada etapa do processo.
 
+## 🏆 Diferenciais
 
-Contribuição
-Contribuições são bem-vindas! Por favor, envie um pull request ou abra um issue para reportar problemas ou sugerir melhorias.
+- **Interface intuitiva**: Foco na usabilidade para facilitar o dia a dia dos usuários.
+- **Segurança avançada**: Proteção de dados sensíveis com criptografia de ponta.
+- **Escalabilidade garantida**: Ideal para negócios que buscam crescimento contínuo.
+- **Atualizações constantes**: Sempre alinhado às tendências e necessidades do mercado.
 
-- Iniciativa levada adiante pela empresa de tecnologia ®Vetor256. https://isaiaslourenco.github.io/vetor256/
+## 💡 Visão e Valores
 
+Acreditamos que a tecnologia pode transformar a forma como os negócios operam. Nossa visão é proporcionar ferramentas que impulsionem crescimento e facilitem a gestão com eficiência e inovação.
+
+## 📫 Entre em contato
+
+Quer saber mais ou iniciar um projeto conosco?  
+**E-mail:** adm.vetor256@gmail.com.br  
+**Site:** [www.vetor256.com.br](https://isaiaslourenco.github.io/vetor256/)  
+
+<img src="./assets/img/logotipo-do-github.png" alt="Github"> [GitHub](https://github.com/pointofsalespro)<br>
+<img src="./assets/img/logotipo-do-linkedin.png" alt="LinkedIn"> [LinkedIn](https://linkedin.com/company/pointofsalespro)
+
+---
+
+**© 2025 PointOfSales Pro - 2025** **©Vetor256**<br>  Construindo o futuro, uma linha de código por vez. ✨<br>
+                    - Juntos com você na era da informação. ✨
+
+<img src="./assets/img/pdv.gif" alt="PointOfSales Pro.">
