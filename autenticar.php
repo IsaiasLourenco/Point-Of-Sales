@@ -22,7 +22,14 @@ if (count($res) > 0) {
     if ($nivel == 'Administrador') {
         header("Location: painel-adm");
         exit();
-    } else {
+    } 
+    
+    if($nivel == 'Tesoureiro'){
+        header("Location: painel-finan");
+        exit();
+    }
+
+    else {
         echo "<script>alert('Dados incorretos!'); window.location='../pdv';</script>";
         exit();
     }

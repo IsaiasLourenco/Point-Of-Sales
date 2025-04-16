@@ -245,8 +245,8 @@ if (@$_GET['funcao'] == "editar") {
                     <button type="submit" class="btn btn-sm btn-secondary" name="btn-salvar" id="btn-salvar">Salvar</button>
 
                     <input name="id" type="hidden" value="<?php echo @$_GET['id'] ?>">
-
                     <input name="nome_double" type="hidden" value="<?php echo @$nome ?>">
+                    <input name="codigo_double" type="hidden" value="<?php echo @$codigo ?>">
 
 
                 </div>

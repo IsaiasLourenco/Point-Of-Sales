@@ -5,11 +5,9 @@ require_once('verificar-permissao.php');
 
 //VARIAVEIS DO MENU ADMINISTRATIVO
 $menu1 = 'home';
-$menu2 = 'usuarios';
-$menu3 = 'fornecedores';
-$menu4 = 'categorias';
-$menu5 = 'produtos';
-$menu6 = 'compras';
+$menu2 = 'contas_pagar';
+$menu3 = 'contas_receber';
+$menu4 = 'movimentacoes';   
 
 //RECUPERAR DADOS DO USUÁRIO
 $query = $pdo->query("SELECT * FROM usuarios WHERE id = '$_SESSION[id_usuario]'");
@@ -28,7 +26,7 @@ $nivel_usu = $res[0]['nivel'];
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Painel Administrativo</title>
+    <title>Painel Financeiro</title>
 
     <!-- FavIcon -->
     <link rel="shortcut icon" href="../assets/img/ico.ico" type="image/x-icon">
@@ -71,10 +69,10 @@ $nivel_usu = $res[0]['nivel'];
                         <a class="nav-link active" aria-current="page" href="index.php?pagina=<?php echo $menu1 ?>">Home</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="index.php?pagina=<?php echo $menu2 ?>">Usuários</a>
+                        <a class="nav-link" href="index.php?pagina=<?php echo $menu2 ?>">Contas à Pagar</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="index.php?pagina=<?php echo $menu3 ?>">Fornecedores</a>
+                        <a class="nav-link" href="index.php?pagina=<?php echo $menu3 ?>">Contas à Receber</a>
                     </li>
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">

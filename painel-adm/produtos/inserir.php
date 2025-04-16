@@ -9,6 +9,7 @@ $valor_venda = str_replace(',', '.', $valor_venda);
 $descricao = $_POST['descricao'];
 $categoria = $_POST['categoria'];
 $nome_double = $_POST['nome_double'];
+$codigo_double = $_POST['codigo_double'];
 
 // EVITAR DUPLICIDADE NO NOME
 if($nome_double != $nome){
@@ -18,6 +19,18 @@ if($nome_double != $nome){
 	$res_con = $query_con->fetchAll(PDO::FETCH_ASSOC);
 	if(@count($res_con) > 0){
 		echo 'Produto já Cadastrado!';
+		exit();
+	}
+}
+
+// EVITAR DUPLICIDADE NO CÓDIGO
+if($codigo_double != $codigo){
+	$query_cod = $pdo->prepare("SELECT * from produtos WHERE codigo = :codigo");
+	$query_cod->bindValue(":codigo", $codigo);
+	$query_cod->execute();
+	$res_cod = $query_cod->fetchAll(PDO::FETCH_ASSOC);
+	if(@count($res_cod) > 0){
+		echo 'Código do produto já Cadastrado!';
 		exit();
 	}
 }

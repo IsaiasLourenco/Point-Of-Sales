@@ -2,9 +2,9 @@
 
 require_once('../config.php');
 
-$dataInicial = $_POST['dataInicial']; 
+$dataInicial = $_POST['dataInicial'];
 $dataFinal = $_POST['dataFinal'];
-$status = $_POST['status'];	
+$status = $_POST['status'];
 
 //ALIMENTAR OS DADOS NO RELATÓRIO
 $html = file_get_contents($url_sistema."rel/relCompras.php?dataInicial=$dataInicial&dataFinal=$dataFinal&status=$status");
@@ -26,10 +26,10 @@ $options->set('isRemoteEnabled', true);
 $pdf = new DOMPDF($options);
 
 //Definir o tamanho do papel e orientação da página
-$pdf->setPaper('A4', 'portrait'); //caso queira a folha em paisagem use landscape em vez de portrait
+$pdf->set_paper('A4', 'portrait'); //caso queira a folha em paisagem use landscape em vez de portrait
 
 //CARREGAR O CONTEÚDO HTML
-$pdf->loadHtml($html);
+$pdf->load_html($html);
 
 //RENDERIZAR O PDF
 $pdf->render();

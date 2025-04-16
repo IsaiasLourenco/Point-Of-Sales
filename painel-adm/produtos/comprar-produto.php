@@ -36,6 +36,11 @@
     $res_compra->bindValue(":quantidade", "$quantidade");
     $res_compra->bindValue(":produto", "$id");
     $res_compra->execute();
+    
+    $res_compra = $pdo->prepare("INSERT INTO contas_pagar SET descricao = 'Compra de Produtos para o Estoque', valor = :valor, data_conta = curDate(), usuario = :usuario, pago = 'Não', arquivo = 'sem-foto.jpg'");
+    $res_compra->bindValue(":valor", "$total");
+    $res_compra->bindValue(":usuario", "$id_usuario");
+    $res_compra->execute();
 
     echo 'Salvo com Sucesso!';
 ?>
