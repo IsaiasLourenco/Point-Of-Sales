@@ -8,19 +8,19 @@ $descricao = $_POST['descricao'];
 $valor = $_POST['valor'];
 $vencimento = $_POST['vencimento'];
 
-$query = $pdo->query("SELECT * from contas_pagar where id = '$id'");
+$query = $pdo->query("SELECT * FROM contas_pagar WHERE id = '$id'");
 $res = $query->fetchAll(PDO::FETCH_ASSOC);
 $total_reg = @count($res);
 if ($total_reg > 0) {
     $pago = $res[0]['pago'];
-    $descricao = $res[0]['descricao'];
-    if ($pago == 'Sim') {
-        echo 'Essa conta já está paga, você não pode editá-la!';
+    $descricao2 = $res[0]['descricao'];
+    if ($pago == "Sim") {
+        echo "Esta conta já foi paga! Você <strong>NÃO</strong> pode editá-la!";
         exit();
     }
 
-    if ($descricao == 'Compra de Produtos') {
-        echo 'Essa conta foi lançada pelo Gerente / Administrador, você não pode editá-la!';
+    if ($descricao2 == 'Compra de Produtos para o Estoque') {
+        echo 'Conta vinda das compras para o Estoque. Você <strong>NÃO</strong> tem privilégios de exclusão!!';
         exit();
     }
 }
@@ -44,28 +44,49 @@ if ($ext == 'png' or $ext == 'jpg' or $ext == 'jpeg' or $ext == 'gif' or $ext ==
 }
 
 if ($id == "") {
-    $res = $pdo->prepare("INSERT INTO contas_pagar SET vencimento = :vencimento, pago = 'Não', data_conta = curDate(), usuario = '$id_usuario', descricao = :descricao, valor = :valor, arquivo = :foto");
+    $res = $pdo->prepare("INSERT INTO contas_pagar SET  vencimento = :vencimento, 
+                                                        pago = 'Não', 
+                                                        data_conta = curDate(), 
+                                                        usuario = '$id_usuario', 
+                                                        descricao = :descricao, 
+                                                        valor = :valor, 
+                                                        arquivo = :foto");
+    $res->bindValue(":vencimento", $vencimento);
     $res->bindValue(":descricao", $descricao);
     $res->bindValue(":valor", $valor);
     $res->bindValue(":foto", $imagem);
-    $res->bindValue(":vencimento", $vencimento);
     $res->execute();
 } else {
 
     if ($imagem != 'sem-foto.jpg') {
-        $res = $pdo->prepare("UPDATE contas_pagar SET vencimento = :vencimento, usuario = '$id_usuario', descricao = :descricao, valor = :valor, arquivo = :foto WHERE id = :id");
-        $res->bindValue(":foto", $imagem);
+        $res = $pdo->prepare("UPDATE contas_pagar SET   vencimento = :vencimento, 
+                                                        pago = 'Não', 
+                                                        data_conta = curDate(), 
+                                                        usuario = '$id_usuario', 
+                                                        descricao = :descricao, 
+                                                        valor = :valor, 
+                                                        arquivo = :foto 
+                                                        WHERE 
+                                                        id = :id");
+        $res->bindValue(":id", $id);
+        $res->bindValue(":vencimento", $vencimento);
         $res->bindValue(":descricao", $descricao);
         $res->bindValue(":valor", $valor);
-        $res->bindValue(":vencimento", $vencimento);
-        $res->bindValue(":id", $id);
+        $res->bindValue(":foto", $imagem);
         $res->execute();
     } else {
-        $res = $pdo->prepare("UPDATE contas_pagar SET vencimento = :vencimento, pago = 'Não', data_conta = curDate(), usuario = '$id_usuario', descricao = :descricao, valor = :valor WHERE id = :id");
+        $res = $pdo->prepare("UPDATE contas_pagar SET   vencimento = :vencimento, 
+                                                        pago = 'Não', 
+                                                        data_conta = curDate(), 
+                                                        usuario = '$id_usuario', 
+                                                        descricao = :descricao, 
+                                                        valor = :valor 
+                                                        WHERE 
+                                                        id = :id");
+        $res->bindValue(":id", $id);
+        $res->bindValue(":vencimento", $vencimento);
         $res->bindValue(":descricao", $descricao);
         $res->bindValue(":valor", $valor);
-        $res->bindValue(":vencimento", $vencimento);
-        $res->bindValue(":id", $id);
         $res->execute();
     }
 }

@@ -18,7 +18,7 @@ require_once('verificar-permissao.php');
 </body>
 
 </html>
-<h5 style="text-align: center; color: darkgray;">Produtos</h5>
+<h5 style="text-align: center; color: darkgray;">PRODUTOS</h5>
 <a href="index.php?pagina=<?php echo $pagina ?>&funcao=novo" type="button" class="btn btn-sm btn-secondary mt-2 mb-2">Novo Produto</a>
 
 <div class="mt-4" style="margin-right:25px">
@@ -78,7 +78,6 @@ require_once('verificar-permissao.php');
                             <td>R$ <?php echo number_format($res[$i]['valor_compra'], 2, ',', '.'); ?></td>
                             <td>R$ <?php echo number_format($res[$i]['valor_venda'], 2, ',', '.'); ?></td>
                             <td><?php echo $nome_forn ?></td>
-
                             <td><img src="../assets/img/produtos/<?php echo $res[$i]['imagem'] ?>" width="40"></td>
                             <td>
                                 <a href="index.php?pagina=<?php echo $pagina ?>&funcao=editar&id=<?php echo $res[$i]['id'] ?>" title="Editar Registro" style="text-decoration: none">
@@ -95,6 +94,7 @@ require_once('verificar-permissao.php');
                                                                     '<?php echo $tel_forn ?> ',
                                                                     '<?php echo $res[$i]['lucro'] ?>',  
                                                                     '<?php echo $res[$i]['estoque_min'] ?>',  
+                                                                    '<?php echo $res[$i]['prazo'] ?>',  
                                                                     '<?php echo $res[$i]['imagem'] ?>')"
                                     title="Dados Adicionais" style="text-decoration: none">
                                     <i class="bi bi-info-circle-fill text-primary mx-1"></i>
@@ -137,6 +137,7 @@ if (@$_GET['funcao'] == "editar") {
         $estoque = $res[0]['estoque'];
         $valor_compra = $res[0]['valor_compra'];
         $valor_venda = $res[0]['valor_venda'];
+        $prazo = $res[0]['prazo'];
         $imagem = $res[0]['imagem'];
     }
 } else {
@@ -176,13 +177,14 @@ if (@$_GET['funcao'] == "editar") {
                             </div>
                         </div>
                     </div>
-                    
+
                     <div class="mb-3">
                         <label for="descricao" class="form-label">Descrição do Produto</label>
                         <input type="text" class="form-control" id="nome" name="descricao" placeholder="Descrição" required="" value="<?php echo @$descricao ?>">
                     </div>
 
                     <div class="row">
+
                         <div class="col-md-4">
                             <div class="mb-3">
                                 <label for="exampleFormControlInput1" class="form-label">Categoria</label>
@@ -192,21 +194,23 @@ if (@$_GET['funcao'] == "editar") {
                                     $res = $query->fetchAll(PDO::FETCH_ASSOC);
                                     $total_reg = @count($res);
                                     if ($total_reg > 0) {
-
                                         for ($i = 0; $i < $total_reg; $i++) {
                                             foreach ($res[$i] as $key => $value) {
                                             }
                                     ?>
-
                                             <option <?php if (@$categoria == $res[$i]['id']) { ?> selected <?php } ?> value="<?php echo $res[$i]['id'] ?>"><?php echo $res[$i]['nome'] ?></option>
-
                                     <?php }
                                     } else {
                                         echo '<option value="">Cadastre uma Categoria</option>';
                                     } ?>
-
-
                                 </select>
+                            </div>
+                        </div>
+
+                        <div class="col-md-4">
+                            <div class="mb-3">
+                                <label for="prazo" class="form-label">Prazo para pagamento/compras</label>
+                                <input type="number" class="form-control" id="prazo" name="prazo" placeholder="Prazo" required="" value="<?php echo @$prazo ?>">
                             </div>
                         </div>
 
@@ -320,6 +324,9 @@ if (@$_GET['funcao'] == "editar") {
                 <strong>Estoque Mínimo: </strong>
                 <span id="estoque-min-registro"></span>
                 <hr>
+                <strong>Prazo Pagamento: </strong>
+                <span id="prazo-registro"></span>
+                <hr>
                 <img id="imagem-registro" src="" class="mt-4" width="200">
 
             </div>
@@ -344,7 +351,7 @@ if (@$_GET['funcao'] == "editar") {
                         <label for="fornecedor" class="form-label">Fornecedor</label>
                         <select class="form-select mt-1" aria-label="Default select example" name="fornecedor">
                             <?php
-                            
+
                             $query = $pdo->query("SELECT * from fornecedores order by nome asc");
                             $res = $query->fetchAll(PDO::FETCH_ASSOC);
                             $total_reg = @count($res);
@@ -556,7 +563,7 @@ if (@$_GET['funcao'] == "deletar") { ?>
 
 <!--SCRIPT PARA MODAL DADOS -->
 <script type="text/javascript">
-    function mostrarDados(descricao, categoria, nome_forn, tel_forn, lucro, estoque_min, imagem) {
+    function mostrarDados(descricao, categoria, nome_forn, tel_forn, lucro, estoque_min, prazo, imagem) {
         event.preventDefault();
 
 
@@ -577,6 +584,7 @@ if (@$_GET['funcao'] == "deletar") { ?>
         }
         $('#lucro-registro').text(lucro);
         $('#estoque-min-registro').text(estoque_min);
+        $('#prazo-registro').text(prazo);
         $('#imagem-registro').attr('src', '../assets/img/produtos/' + imagem);
 
         var myModal = new bootstrap.Modal(document.getElementById('modalDados'), {
@@ -662,7 +670,7 @@ if (@$_GET['funcao'] == "deletar") { ?>
             cache: false,
             contentType: false,
             processData: false,
-            
+
         });
     });
 </script>

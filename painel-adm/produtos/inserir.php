@@ -8,6 +8,7 @@ $valor_venda = $_POST['valor_venda'];
 $valor_venda = str_replace(',', '.', $valor_venda);
 $descricao = $_POST['descricao'];
 $categoria = $_POST['categoria'];
+$prazo = $_POST['prazo'];
 $nome_double = $_POST['nome_double'];
 $codigo_double = $_POST['codigo_double'];
 
@@ -54,33 +55,57 @@ move_uploaded_file($imagem_temp, $caminho);
 }
 
 if($id == ""){
-	$res = $pdo->prepare("INSERT INTO produtos SET codigo = :codigo, nome = :nome, valor_venda = :valor_venda, descricao = :descricao, categoria = :categoria, imagem = :imagem");
+	$res = $pdo->prepare("INSERT INTO produtos SET 	codigo = :codigo, 
+													nome = :nome, 
+													valor_venda = :valor_venda, 
+													descricao = :descricao, 
+													categoria = :categoria,
+													prazo = :prazo, 
+													imagem = :imagem");
 	$res->bindValue(":codigo", $codigo);
 	$res->bindValue(":nome", $nome);
 	$res->bindValue(":valor_venda", $valor_venda);
 	$res->bindValue(":descricao", $descricao);
 	$res->bindValue(":categoria", $categoria);
+	$res->bindValue(":prazo", $prazo);
 	$res->bindValue(":imagem", $imagem);
 	$res->execute();
 }else{
 	if($imagem != 'sem-foto.jpg'){
-		$res = $pdo->prepare("UPDATE produtos SET codigo = :codigo, nome = :nome, valor_venda = :valor_venda, descricao = :descricao, categoria = :categoria, imagem = :imagem WHERE id = :id");
+		$res = $pdo->prepare("UPDATE produtos SET 	codigo = :codigo, 
+													nome = :nome, 
+													valor_venda = :valor_venda, 
+													descricao = :descricao, 
+													categoria = :categoria,
+													prazo = :prazo, 
+													imagem = :imagem 
+													WHERE 
+													id = :id");
 		$res->bindValue(":id", $id);
 		$res->bindValue(":codigo", $codigo);
 		$res->bindValue(":nome", $nome);
 		$res->bindValue(":valor_venda", $valor_venda);
 		$res->bindValue(":descricao", $descricao);
 		$res->bindValue(":categoria", $categoria);
+		$res->bindValue(":prazo", $prazo);
 		$res->bindValue(":imagem", $imagem);
 		$res->execute();
 	}else{
-		$res = $pdo->prepare("UPDATE produtos SET codigo = :codigo, nome = :nome, valor_venda = :valor_venda, descricao = :descricao, categoria = :categoria WHERE id = :id");
+		$res = $pdo->prepare("UPDATE produtos SET 	codigo = :codigo, 
+													nome = :nome, 
+													valor_venda = :valor_venda, 
+													descricao = :descricao, 
+													categoria = :categoria, 
+													prazo = :prazo 
+													WHERE 
+													id = :id");
 		$res->bindValue(":id", $id);
 		$res->bindValue(":codigo", $codigo);
 		$res->bindValue(":nome", $nome);
 		$res->bindValue(":valor_venda", $valor_venda);
 		$res->bindValue(":descricao", $descricao);
 		$res->bindValue(":categoria", $categoria);
+		$res->bindValue(":prazo", $prazo);
 		$res->execute();
 	}
 	
