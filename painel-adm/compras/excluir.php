@@ -14,6 +14,9 @@
         }
     }
 
+    $query = $pdo->query("DELETE FROM contas_pagar WHERE id_compra = '$id'");
+    
     $query = $pdo->query("DELETE FROM compras WHERE id = '$id'");
     echo 'Excluído com Sucesso!';
+
 ?>

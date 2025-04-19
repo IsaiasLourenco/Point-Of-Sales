@@ -1,5 +1,5 @@
 <?php
-$pag = 'contas_pagar';
+$pag = 'contas_receber';
 @session_start();
 
 require_once('../conexao.php');
@@ -9,7 +9,7 @@ require_once('verificar-permissao.php')
 <a href="index.php?pagina=<?php echo $pag ?>&funcao=novo" type="button" class="btn btn-secondary mt-2">Nova Conta</a>
 <div class="mt-4" style="margin-right:25px">
 	<?php
-	$query = $pdo->query("SELECT * FROM contas_pagar ORDER BY id ASC");
+	$query = $pdo->query("SELECT * FROM contas_receber ORDER BY id ASC");
 	$res = $query->fetchAll(PDO::FETCH_ASSOC);
 	$total_reg = @count($res);
 	if ($total_reg > 0) {
@@ -84,7 +84,7 @@ require_once('verificar-permissao.php')
 <?php
 if (@$_GET['funcao'] == "editar") {
 	$titulo_modal = 'Editar';
-	$query = $pdo->query("SELECT * from contas_pagar where id = '$_GET[id]'");
+	$query = $pdo->query("SELECT * from contas_receber where id = '$_GET[id]'");
 	$res = $query->fetchAll(PDO::FETCH_ASSOC);
 	$total_reg = @count($res);
 	if ($total_reg > 0) {
@@ -188,12 +188,12 @@ if (@$_GET['funcao'] == "editar") {
 </div>
 <!-- FIM MODAL DELETAR -->
 
-<!-- MODAL PAGAR -->
+<!-- MODAL RECEBER -->
 <div class="modal fade" tabindex="-1" id="modalBaixar">
 	<div class="modal-dialog">
 		<div class="modal-content">
 			<div class="modal-header">
-				<h5 class="modal-title">Pagar Conta</h5>
+				<h5 class="modal-title">Receber Conta</h5>
 				<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 			</div>
 			<form method="POST" id="form-baixar">
@@ -206,8 +206,8 @@ if (@$_GET['funcao'] == "editar") {
 				</div>
 				<div class="modal-footer">
 					<button type="button" id="btn-fechar-baixar" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
-					<button name="btn-baixar" id="btn-excluir" type="submit" class="btn btn-danger">Pagar</button>
-					<input name="id-pagar" type="hidden" value="<?php echo @$_GET['id'] ?>">
+					<button name="btn-baixar" id="btn-excluir" type="submit" class="btn btn-danger">Receber</button>
+					<input name="id" type="hidden" value="<?php echo @$_GET['id'] ?>">
 				</div>
 			</form>
 		</div>
@@ -357,7 +357,7 @@ if (@$_GET['funcao'] == "baixar") { ?>
 </script>
 <!--FIM AJAX PARA EXCLUIR DADOS -->
 
-<!--AJAX PARA PAGAR CONTAS -->
+<!--AJAX PARA RECEBER CONTAS -->
 <script type="text/javascript">
 	$("#form-baixar").submit(function() {
 		var pag = "<?= $pag ?>";
@@ -365,7 +365,7 @@ if (@$_GET['funcao'] == "baixar") { ?>
 		var formData = new FormData(this);
 		
 		$.ajax({
-			url: pag + "/pagar.php",
+			url: pag + "/receber.php",
 			type: 'POST',
 			data: formData,
 			
@@ -373,7 +373,7 @@ if (@$_GET['funcao'] == "baixar") { ?>
 
 				$('#mensagem-baixar').removeClass()
 				
-				if (mensagem.trim() == "Conta efetivamente Paga!") {
+				if (mensagem.trim() == "Acerto efetivamente Recebido!") {
 					
 					$('#mensagem-baixar').addClass('text-success')
 					
@@ -396,7 +396,7 @@ if (@$_GET['funcao'] == "baixar") { ?>
 		});
 	});
 </script>
-<!-- FIM AJAX PARA PAGAR CONTAS -->
+<!-- FIM AJAX PARA RECEBER CONTAS -->
 
 <!-- ORDENAR DATABLE -->
 <script type="text/javascript">

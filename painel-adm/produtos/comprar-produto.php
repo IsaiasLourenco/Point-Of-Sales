@@ -47,6 +47,7 @@ $res_compra->bindValue(":fornecedor", "$fornecedor");
 $res_compra->bindValue(":quantidade", "$quantidade");
 $res_compra->bindValue(":produto", "$id");
 $res_compra->execute();
+$id_compra = $pdo->lastInsertId();
 
 //SCRIPT PARA SUBIR FOTO NO BANCO
 $nome_img = preg_replace('/[ -]+/', '-', @$_FILES['imagem']['name']);
@@ -72,6 +73,7 @@ if ($ext == 'png' or $ext == 'jpg' or $ext == 'jpeg' or $ext == 'gif' or $ext ==
                                                                 vencimento = DATE_ADD(CURDATE(), INTERVAL $prazo DAY), 
                                                                 usuario = :usuario, 
                                                                 pago = 'Não', 
+                                                                id_compra = '$id_compra', 
                                                                 arquivo = :imagem ");
     $res_compra->bindValue(":valor", "$total");
     $res_compra->bindValue(":usuario", "$id_usuario");
