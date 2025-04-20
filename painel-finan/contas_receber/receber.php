@@ -10,9 +10,7 @@ $query = $pdo->query("UPDATE contas_receber SET pago = 'Sim',
                                                 usuario = '$id_usuario'
                                                 WHERE 
                                                 id = '$id'");
-
                                              
-
 $query_valor = $pdo->query("SELECT * FROM   contas_receber 
                                             WHERE 
                                             id = '$id'");
@@ -30,7 +28,9 @@ if ($total_reg > 0) {
                                                             id_mov = '$id'");
 
 $query_venda = $pdo->query("UPDATE vendas SET   valor_recebido = '$valor', 
-                                                status_venda = 'Fechada'");                                                               
+                                                status_venda = 'Fechada'
+                                                WHERE
+                                                id = '$id'");
 }
 
-echo 'Acerto efetivamente Recebido!!';
+echo 'Acerto efetivamente Recebido!';
