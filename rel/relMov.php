@@ -14,10 +14,10 @@ $status_like = '%' . $status . '%';
 $dataInicialF = implode('/', array_reverse(explode('-', $dataInicial)));
 $dataFinalF = implode('/', array_reverse(explode('-', $dataFinal)));
 
-if ($status == 'Sim') {
-	$status_serv = 'Pagas ';
-} else if ($status == 'Não') {
-	$status_serv = 'Pendentes';
+if ($status == 'Entrada') {
+	$status_serv = 'de Entradas';
+} else if ($status == 'Saída') {
+	$status_serv = 'de Saídas';
 } else {
 	$status_serv = '';
 }
@@ -34,7 +34,7 @@ if ($dataInicial != $dataFinal) {
 <html>
 
 <head>
-	<title>Relatório de Compras</title>
+	<title>Relatório de Movimentações</title>
 	<link rel="shortcut icon" href="../assets/img/ico.ico" />
 
 	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
@@ -200,64 +200,76 @@ if ($dataInicial != $dataFinal) {
 	<div class="container">
 
 		<div style="text-align: center;">
-			<span class="titulorel">Relatório de Compras <?php echo $status_serv  ?> </span>
+			<span class="titulorel">Relatório de Movimentações <?php echo $status_serv  ?> </span>
 		</div>
 
 		<hr>
 
 		<table class='table' width='100%' cellspacing='0' cellpadding='3'>
 			<tr style="background-color: #f9f9f9;">
-				<th>Total</th>
+				<th>Tipo</th>
+				<th>Descrição</th>
+				<th>Valor</th>
+				<th>Usuário</th>
 				<th>Data</th>
-				<th>Gerente</th>
-				<th>Fornecedor</th>
-				<th>Pago</th>
 
 			</tr>
 			<?php
 			$saldo = 0;
-			$query = $pdo->query("SELECT * FROM compras where data_compra >= '$dataInicial' and data_compra <= '$dataFinal' and pago LIKE '$status_like' order by id desc");
+			$entradas = 0;
+			$saidas = 0;
+			var_dump($status);
+			$query = $pdo->query("SELECT * FROM movimentacoes where data_mov >= '$dataInicial' and data_mov <= '$dataFinal' and tipo LIKE '$status_like' order by id desc");
 			$res = $query->fetchAll(PDO::FETCH_ASSOC);
 			$totalItens = @count($res);
 
 			for ($i = 0; $i < @count($res); $i++) {
 				foreach ($res[$i] as $key => $value) {
 				}
-				$total = $res[$i]['total'];
-				$data = $res[$i]['data_compra'];
-				$usuario = $res[$i]['usuario'];
-				$fornecedor = $res[$i]['fornecedor'];
-				$pago = $res[$i]['pago'];
+				$tipo = $res[$i]['tipo'];
+				$descricao = $res[$i]['descricao'];
+				$valor = $res[$i]['valor'];
+				$id_usuario = $res[$i]['usuario'];
+				$data = $res[$i]['data_mov'];
 				$id = $res[$i]['id'];
 
-				$saldo = $saldo + $total;
-				$saldoF = number_format($saldo, 2, ',', '.');
-				$total = number_format($total, 2, ',', '.');
+				$saldo += (float) $valor;
 
 				$data = implode('/', array_reverse(explode('-', $data)));
 
-				$query_usu = $pdo->query("SELECT * FROM usuarios where id = '$usuario'");
+				$query_usu = $pdo->query("SELECT * FROM usuarios where id = '$id_usuario'");
 				$res_usu = $query_usu->fetchAll(PDO::FETCH_ASSOC);
 				$nome_usu = $res_usu[0]['nome'];
 
-				$query_usu = $pdo->query("SELECT * FROM fornecedores where id = '$fornecedor'");
-				$res_usu = $query_usu->fetchAll(PDO::FETCH_ASSOC);
-				$nome_forn = $res_usu[0]['nome'];
-
-				if ($pago == 'Sim') {
+				if ($res[$i]['tipo'] == 'Entrada') {
 					$foto = 'verde.jpg';
-				} else {
+					$entradas += (float) $res[$i]['valor'];
+				} else if ($res[$i]['tipo'] == 'Saída') {
 					$foto = 'vermelho.jpg';
+					$saidas += $res[$i]['valor'];
 				}
+
+				$saldo = (float) $entradas - (float) $saidas;
+				
+				if($saldo < 0){
+					$classeSaldo = 'text-danger';
+				}else{
+					$classeSaldo = 'text-success';
+				}
+				
+				$valorF = number_format($valor, 2, ',', '.');
+				$entradasF = number_format($entradas, 2, ',', '.');
+				$saidasF = number_format($saidas, 2, ',', '.');
+				$saldoF = number_format($saldo, 2, ',', '.');
 			?>
 
 				<tr>
 
-					<td>R$ <?php echo $total ?> </td>
-					<td><?php echo $data ?> </td>
-					<td><?php echo $nome_usu ?> </td>
-					<td><?php echo $nome_forn ?> </td>
 					<td><img src="<?php echo $url_sistema ?>assets/img/<?php echo $foto ?>" width="13px"> </td>
+					<td><?php echo $descricao ?> </td>
+					<td>R$ <?php echo $valorF ?> </td>
+					<td><?php echo $nome_usu ?> </td>
+					<td><?php echo $data ?> </td>
 
 				</tr>
 			<?php } ?>
@@ -268,12 +280,12 @@ if ($dataInicial != $dataFinal) {
 
 		<div class="row">
 			<div class="col-sm-8 esquerda">
-				<span class=""> <b> Período da Apuração </b> </span>
+				<span> <b> Período da Apuração </b> </span>
 
-				<span class=""> <?php echo $apuracao ?> </span>
+				<span> <?php echo $apuracao ?> </span>
 			</div>
 			<div class="col-sm-4 direita" style="text-align: right;">
-				<span class=""> <b> Total R$ <?php echo @$saldoF ?> </b> </span>
+				<span class="<?php echo $classeSaldo?>"> <strong> Total R$ <?php echo @$saldoF ?> </strong> </span>
 			</div>
 		</div>
 
@@ -282,7 +294,7 @@ if ($dataInicial != $dataFinal) {
 	</div>
 
 	<div class="footer">
-		<p style="font-size:14px; text-align:center"><?php echo $rodape_relatorios ?></p>
+		<p style="font-size:14px; text-align: center"><?php echo $rodape_relatorios ?></p>
 	</div>
 
 </body>

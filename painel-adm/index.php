@@ -210,7 +210,7 @@ $nivel_usu = $res[0]['nivel'];
                     <input name="email_double-perfil" type="hidden" value="<?php echo @$email_usu ?>">
 
                     <small>
-                        <div align="center" id="mensagem-perfil">
+                        <div style="text-align: center;" id="mensagem-perfil">
 
                         </div>
                     </small>

@@ -176,7 +176,7 @@ $data_hoje = strtoupper(iconv('ISO-8859-1', 'UTF-8', strftime('%A, %d de %B de %
 
     <div class="container">
 
-        <div align="center" class="">
+        <div style="text-align: center;">
             <span class="titulorel">Catálogo de Produtos </span>
         </div>
         <hr>
@@ -221,7 +221,7 @@ $data_hoje = strtoupper(iconv('ISO-8859-1', 'UTF-8', strftime('%A, %d de %B de %
 
         <div class="row margem-superior">
             <div class="col-md-12">
-                <div class="" align="right">
+                <div style="text-align: right;">
 
                     <span class=""> <b> Total de Produtos : <?php echo $totalItens ?> </b> </span>
                 </div>
@@ -233,7 +233,7 @@ $data_hoje = strtoupper(iconv('ISO-8859-1', 'UTF-8', strftime('%A, %d de %B de %
 
     </div>
     <div class="footer">
-        <p style="font-size:14px" align="center"><?php echo $rodape_relatorios ?> - https://isaiaslourenco.github.io/vetor256/</p>
+        <p style="font-size:14px; text-align:center"><?php echo $rodape_relatorios ?> - https://isaiaslourenco.github.io/vetor256/</p>
     </div>
 
 </body>

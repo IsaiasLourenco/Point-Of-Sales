@@ -178,7 +178,7 @@ if (@$_GET['funcao'] == "editar") {
 					</small>
 				</div>
 				<div class="modal-footer">
-					<button type="button" id="btn-fechar" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
+					<button type="button" id="btn-fechar-excluir" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
 					<button name="btn-excluir" id="btn-excluir" type="submit" class="btn btn-danger">Excluir</button>
 					<input name="id" type="hidden" value="<?php echo @$_GET['id'] ?>">
 				</div>
@@ -206,7 +206,7 @@ if (@$_GET['funcao'] == "editar") {
 				</div>
 				<div class="modal-footer">
 					<button type="button" id="btn-fechar-baixar" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
-					<button name="btn-baixar" id="btn-excluir" type="submit" class="btn btn-danger">Receber</button>
+					<button name="btn-baixar" id="btn-receber" type="submit" class="btn btn-danger">Receber</button>
 					<input name="id" type="hidden" value="<?php echo @$_GET['id'] ?>">
 				</div>
 			</form>
@@ -336,7 +336,7 @@ if (@$_GET['funcao'] == "baixar") { ?>
 					
 					$('#mensagem-excluir').addClass('text-success')
 					
-					$('#btn-fechar').click();
+					$('#btn-fechar-excluir').click();
 					window.location = "index.php?pagina=" + pag;
 					
 				} else {

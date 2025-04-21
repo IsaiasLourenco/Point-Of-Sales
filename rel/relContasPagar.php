@@ -15,9 +15,9 @@ $dataInicialF = implode('/', array_reverse(explode('-', $dataInicial)));
 $dataFinalF = implode('/', array_reverse(explode('-', $dataFinal)));
 
 if ($status == 'Sim') {
-	$status_serv = 'Pagas ';
+	$status_serv = ' já pagas.';
 } else if ($status == 'Não') {
-	$status_serv = 'Pendentes';
+	$status_serv = 'ainda pendentes.';
 } else {
 	$status_serv = '';
 }
@@ -34,7 +34,7 @@ if ($dataInicial != $dataFinal) {
 <html>
 
 <head>
-	<title>Relatório de Compras</title>
+	<title>Relatório de Contas à Pagar</title>
 	<link rel="shortcut icon" href="../assets/img/ico.ico" />
 
 	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
@@ -200,49 +200,45 @@ if ($dataInicial != $dataFinal) {
 	<div class="container">
 
 		<div style="text-align: center;">
-			<span class="titulorel">Relatório de Compras <?php echo $status_serv  ?> </span>
+			<span class="titulorel">Relatório de Contas à Pagar <?php echo $status_serv  ?> </span>
 		</div>
 
 		<hr>
 
 		<table class='table' width='100%' cellspacing='0' cellpadding='3'>
 			<tr style="background-color: #f9f9f9;">
-				<th>Total</th>
-				<th>Data</th>
-				<th>Gerente</th>
-				<th>Fornecedor</th>
 				<th>Pago</th>
+				<th>Descrição</th>
+				<th>Valor</th>
+				<th>Usuário</th>
+				<th>Data</th>
 
 			</tr>
 			<?php
 			$saldo = 0;
-			$query = $pdo->query("SELECT * FROM compras where data_compra >= '$dataInicial' and data_compra <= '$dataFinal' and pago LIKE '$status_like' order by id desc");
+			$query = $pdo->query("SELECT * FROM contas_pagar where data_conta >= '$dataInicial' and data_conta <= '$dataFinal' and pago LIKE '$status_like' order by id desc");
 			$res = $query->fetchAll(PDO::FETCH_ASSOC);
 			$totalItens = @count($res);
 
 			for ($i = 0; $i < @count($res); $i++) {
 				foreach ($res[$i] as $key => $value) {
 				}
-				$total = $res[$i]['total'];
-				$data = $res[$i]['data_compra'];
-				$usuario = $res[$i]['usuario'];
-				$fornecedor = $res[$i]['fornecedor'];
 				$pago = $res[$i]['pago'];
+				$descricao = $res[$i]['descricao'];
+				$valor = $res[$i]['valor'];
+				$usuario = $res[$i]['usuario'];
+				$data_conta = $res[$i]['data_conta'];
 				$id = $res[$i]['id'];
 
-				$saldo = $saldo + $total;
+				$saldo = $saldo + $valor;
 				$saldoF = number_format($saldo, 2, ',', '.');
-				$total = number_format($total, 2, ',', '.');
+				$valor = number_format($valor, 2, ',', '.');
 
-				$data = implode('/', array_reverse(explode('-', $data)));
+				$data_conta = implode('/', array_reverse(explode('-', $data_conta)));
 
 				$query_usu = $pdo->query("SELECT * FROM usuarios where id = '$usuario'");
 				$res_usu = $query_usu->fetchAll(PDO::FETCH_ASSOC);
 				$nome_usu = $res_usu[0]['nome'];
-
-				$query_usu = $pdo->query("SELECT * FROM fornecedores where id = '$fornecedor'");
-				$res_usu = $query_usu->fetchAll(PDO::FETCH_ASSOC);
-				$nome_forn = $res_usu[0]['nome'];
 
 				if ($pago == 'Sim') {
 					$foto = 'verde.jpg';
@@ -253,11 +249,11 @@ if ($dataInicial != $dataFinal) {
 
 				<tr>
 
-					<td>R$ <?php echo $total ?> </td>
-					<td><?php echo $data ?> </td>
-					<td><?php echo $nome_usu ?> </td>
-					<td><?php echo $nome_forn ?> </td>
 					<td><img src="<?php echo $url_sistema ?>assets/img/<?php echo $foto ?>" width="13px"> </td>
+					<td><?php echo $descricao ?> </td>
+					<td>R$ <?php echo $valor ?> </td>
+					<td><?php echo $nome_usu ?> </td>
+					<td><?php echo $data_conta ?> </td>
 
 				</tr>
 			<?php } ?>
