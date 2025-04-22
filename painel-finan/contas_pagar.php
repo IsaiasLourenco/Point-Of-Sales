@@ -7,6 +7,7 @@ require_once('verificar-permissao.php')
 
 ?>
 <h5 style="text-align: center;" class="text-secondary">CONTAS À PAGAR</h5>
+<a href="index.php" title="Home"><h5 style="text-align: center;" class="text-secondary"><i class="bi bi-house-door"></i></h5></a>
 <a href="index.php?pagina=<?php echo $pag ?>&funcao=novo" type="button" class="btn btn-secondary mt-2">Nova Conta</a>
 <div class="mt-4" style="margin-right:25px">
 	<?php

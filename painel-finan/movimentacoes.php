@@ -7,12 +7,13 @@ require_once('verificar-permissao.php');
 
 ?>
 <h5 style="text-align: center;" class="text-secondary">MOVIMENTAÇÕES</h5>
+<a href="index.php" title="Home"><h5 style="text-align: center;" class="text-secondary"><i class="bi bi-house-door"></i></h5></a>
 <div class="mt-4" style="margin-right:25px">
     <?php
     $entradas = 0;
     $saidas = 0;
     $total = 0;
-    $query = $pdo->query("SELECT * FROM movimentacoes ORDER BY id ASC");
+    $query = $pdo->query("SELECT * FROM movimentacoes ORDER BY id DESC");
     $res = $query->fetchAll(PDO::FETCH_ASSOC);
     $total_reg = @count($res);
     if ($total_reg > 0) {

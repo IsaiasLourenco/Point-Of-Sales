@@ -13,6 +13,7 @@ $menu6 = 'compras';
 $menu7 = 'contas_pagar_vencidas';
 $menu8 = 'contas_pagar_hoje';
 $menu9 = 'contas_receber_vencidas';
+$menu10 = 'contas_receber_hoje';
 
 //RECUPERAR DADOS DO USUÁRIO
 $query = $pdo->query("SELECT * FROM usuarios WHERE id = '$_SESSION[id_usuario]'");
@@ -101,6 +102,9 @@ $nivel_usu = $res[0]['nivel'];
                             <li class="nav-item">
                                 <a class="nav-link" href="index.php?pagina=<?php echo $menu8 ?>">À Pagar Hoje</a>
                             </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="index.php?pagina=<?php echo $menu10 ?>">À Receber Hoje</a>
+                            </li>
                         </ul>
                     </li>
 
@@ -179,6 +183,8 @@ $nivel_usu = $res[0]['nivel'];
             require_once($menu8 . '.php');
         } else if (@$_GET['pagina'] == $menu9) {
             require_once($menu9 . '.php');
+        } else if (@$_GET['pagina'] == $menu10) {
+            require_once($menu10 . '.php');
         } else {
             require_once($menu1 . '.php');
         }

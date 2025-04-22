@@ -1,16 +1,16 @@
 <?php
-$pag = 'contas_pagar_vencidas';
+$pag = 'contas_receber_hoje';
 @session_start();
 
 require_once('../conexao.php');
 require_once('verificar-permissao.php')
 
 ?>
-<h5 style="text-align: center;" class="text-secondary">À PAGAR VENCIDAS</h5>
+<h5 style="text-align: center;" class="text-secondary">À RECEBER HOJE</h5>
 <a href="index.php" title="Home"><h5 style="text-align: center;" class="text-secondary"><i class="bi bi-house-door"></i></h5></a>
 <div class="mt-4" style="margin-right:25px">
 	<?php
-	$query = $pdo->query("SELECT * FROM contas_pagar WHERE vencimento < curDate() AND pago != 'Sim' ORDER BY vencimento ASC");
+	$query = $pdo->query("SELECT * FROM contas_receber WHERE vencimento = curDate() AND pago != 'Sim' ORDER BY id ASC");
 	$res = $query->fetchAll(PDO::FETCH_ASSOC);
 	$total_reg = @count($res);
 	if ($total_reg > 0) {
@@ -55,8 +55,8 @@ require_once('verificar-permissao.php')
 							<td style="text-align: center;">R$ <?php echo number_format($res[$i]['valor'], 2, ',', '.'); ?></td>
 							<td style="text-align: center;"><?php echo $nome_usu ?></td>
 							<td style="text-align: center;"><?php echo implode('/', array_reverse(explode('-', $res[$i]['vencimento']))); ?></td>
-							<td style="text-align: center;"><a href="../assets/img/contas_pagar/<?php echo $res[$i]['arquivo'] ?>" title="Ver Arquivo" style="text-decoration: none" target="_blank">
-									<img src="../assets/img/contas_pagar/<?php echo $arquivo_pasta ?>" width="20">
+							<td style="text-align: center;"><a href="../assets/img/contas_receber/<?php echo $res[$i]['arquivo'] ?>" title="Ver Arquivo" style="text-decoration: none" target="_blank">
+									<img src="../assets/img/contas_receber/<?php echo $arquivo_pasta ?>" width="20">
 								</a>
 							</td>
 							<td style="text-align: center;">
@@ -86,7 +86,7 @@ require_once('verificar-permissao.php')
 				<div class="modal-body">
 					<p>Deseja Realmente confirmar o Recebimento da conta <strong><?php echo @$_GET['id'] ?></strong>?</p>
 					<small>
-						<div align="center" class="mt-1" id="mensagem-baixar">
+						<div style="text-align: center;" class="mt-1" id="mensagem-baixar">
 						</div>
 					</small>
 				</div>
@@ -134,7 +134,7 @@ if (@$_GET['funcao'] == "baixar") { ?>
 					$('#mensagem-baixar').addClass('text-success')
 
 					$('#btn-fechar-baixar').click();
-					window.location = "index.php?pagina=contas_pagar_vencidas";
+					window.location = "index.php?pagina=contas_pagar_hoje";
 
 				} else {
 
