@@ -10,6 +10,9 @@ $menu3 = 'contas_receber';
 $menu4 = 'movimentacoes';
 $menu5 = 'vendas';
 $menu6 = 'compras';
+$menu7 = 'contas_pagar_vencidas';
+$menu8 = 'contas_pagar_hoje';
+$menu9 = 'contas_receber_vencidas';
 
 //RECUPERAR DADOS DO USUÁRIO
 $query = $pdo->query("SELECT * FROM usuarios WHERE id = '$_SESSION[id_usuario]'");
@@ -83,6 +86,21 @@ $nivel_usu = $res[0]['nivel'];
                             <li class="nav-item">
                                 <a class="nav-link" href="index.php?pagina=<?php echo $menu3 ?>">Contas à Receber</a>
                             </li>
+                            <li>
+                                <hr class="dropdown-divider">
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="index.php?pagina=<?php echo $menu7 ?>">À Pagar Vencidas</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="index.php?pagina=<?php echo $menu9 ?>">À Receber Vencidas</a>
+                            </li>
+                            <li>
+                                <hr class="dropdown-divider">
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="index.php?pagina=<?php echo $menu8 ?>">À Pagar Hoje</a>
+                            </li>
                         </ul>
                     </li>
 
@@ -109,12 +127,13 @@ $nivel_usu = $res[0]['nivel'];
                             Relatórios
                         </a>
                         <ul class="dropdown-menu" aria-labelledby="navbarDropdownRel">
-                            <li><a class="dropdown-item" href="" data-bs-toggle="modal" data-bs-target="#modalRelMov">Relatório de Movimentações</a></li>
                             <li><a class="dropdown-item" href="" data-bs-toggle="modal" data-bs-target="#modalRelContasPagar">Relatório de Contas à Pagar</a></li>
+                            <li>
+                            <li><a class="dropdown-item" href="" data-bs-toggle="modal" data-bs-target="#modalRelContasReceber">Relatório de Contas à Receber</a></li>
                             <li>
                                 <hr class="dropdown-divider">
                             </li>
-                            <li><a class="dropdown-item" href="" target="_blank">Relatório de Categorias</a></li>
+                            <li><a class="dropdown-item" href="" data-bs-toggle="modal" data-bs-target="#modalRelMov">Relatório de Movimentações</a></li>
                         </ul>
                     </li>
                 </ul>
@@ -154,6 +173,12 @@ $nivel_usu = $res[0]['nivel'];
             require_once($menu5 . '.php');
         } else if (@$_GET['pagina'] == $menu6) {
             require_once($menu6 . '.php');
+        } else if (@$_GET['pagina'] == $menu7) {
+            require_once($menu7 . '.php');
+        } else if (@$_GET['pagina'] == $menu8) {
+            require_once($menu8 . '.php');
+        } else if (@$_GET['pagina'] == $menu9) {
+            require_once($menu9 . '.php');
         } else {
             require_once($menu1 . '.php');
         }
@@ -338,6 +363,57 @@ $nivel_usu = $res[0]['nivel'];
     </div>
 </div>
 <!-- Fim Modal de Relatório de Contas Á Pagar -->
+
+<!-- Modal de Relatório de Contas Á Receber -->
+<div class="modal fade" id="modalRelContasReceber" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Contas à Receber</h5>
+            </div>
+
+            <form action="../rel/relContasReceber_class.php" method="POST" target="_blank">
+                <div class="modal-body">
+
+                    <div class="row">
+
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label>Data Inicial</label>
+                                <input value="<?php echo date('Y-m-d') ?>" type="date" class="form-control" name="dataInicial">
+                            </div>
+                        </div>
+
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label>Data Final</label>
+                                <input value="<?php echo date('Y-m-d') ?>" type="date" class="form-control" name="dataFinal">
+                            </div>
+                        </div>
+
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label>Pago</label>
+                                <select class="form-control" name="status">
+                                    <option value="">Todas</option>
+                                    <option value="Sim">Sim</option>
+                                    <option value="Não">Não</option>
+                                </select>
+                            </div>
+                        </div>
+
+                    </div>
+
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-danger">Gerar Relatório</button>
+                </div>
+            </form>
+
+        </div>
+    </div>
+</div>
+<!-- Fim Modal de Relatório de Contas Á Receber -->
 
 <!-- Script Mascaras -->
 <script type="text/javascript" src="../assets/js/mascara.js"></script>

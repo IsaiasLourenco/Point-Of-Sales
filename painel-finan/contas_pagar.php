@@ -6,10 +6,11 @@ require_once('../conexao.php');
 require_once('verificar-permissao.php')
 
 ?>
+<h5 style="text-align: center;" class="text-secondary">CONTAS À PAGAR</h5>
 <a href="index.php?pagina=<?php echo $pag ?>&funcao=novo" type="button" class="btn btn-secondary mt-2">Nova Conta</a>
 <div class="mt-4" style="margin-right:25px">
 	<?php
-	$query = $pdo->query("SELECT * FROM contas_pagar ORDER BY id ASC");
+	$query = $pdo->query("SELECT * FROM contas_pagar ORDER BY id DESC");
 	$res = $query->fetchAll(PDO::FETCH_ASSOC);
 	$total_reg = @count($res);
 	if ($total_reg > 0) {
@@ -18,13 +19,13 @@ require_once('verificar-permissao.php')
 			<table id="example" class="table table-hover my-4" style="width:100%; font-size: 10px;">
 				<thead>
 					<tr>
-						<th>Pago</th>
-						<th>Descrição</th>
-						<th>Valor</th>
-						<th>Usuário</th>
-						<th>Vencimento</th>
-						<th>Arquivo</th>
-						<th>Ações</th>
+						<th style="text-align: center;">Pago</th>
+						<th style="text-align: center;">Descrição</th>
+						<th style="text-align: center;">Valor</th>
+						<th style="text-align: center;">Usuário</th>
+						<th style="text-align: center;">Vencimento</th>
+						<th style="text-align: center;">Arquivo</th>
+						<th style="text-align: center;">Ações</th>
 					</tr>
 				</thead>
 				<tbody>
@@ -49,16 +50,16 @@ require_once('verificar-permissao.php')
 						}
 					?>
 						<tr>
-							<td> <i class="bi bi-square-fill <?php echo $classe ?>"></i></td>
-							<td><?php echo $res[$i]['descricao'] ?></td>
-							<td>R$ <?php echo number_format($res[$i]['valor'], 2, ',', '.'); ?></td>
-							<td><?php echo $nome_usu ?></td>
-							<td><?php echo implode('/', array_reverse(explode('-', $res[$i]['vencimento']))); ?></td>
-							<td><a href="../assets/img/<?php echo $pag ?>/<?php echo $res[$i]['arquivo'] ?>" title="Ver Arquivo" style="text-decoration: none" target="_blank">
-									<img src="../assets/img/<?php echo $pag ?>/<?php echo $arquivo_pasta ?>" width="40">
+							<td style="text-align: center;"> <i class="bi bi-square-fill <?php echo $classe ?>"></i></td>
+							<td style="text-align: center;"><?php echo $res[$i]['descricao'] ?></td>
+							<td style="text-align: center;">R$ <?php echo number_format($res[$i]['valor'], 2, ',', '.'); ?></td>
+							<td style="text-align: center;"><?php echo $nome_usu ?></td>
+							<td style="text-align: center;"><?php echo implode('/', array_reverse(explode('-', $res[$i]['vencimento']))); ?></td>
+							<td style="text-align: center;"><a href="../assets/img/<?php echo $pag ?>/<?php echo $res[$i]['arquivo'] ?>" title="Ver Arquivo" style="text-decoration: none" target="_blank">
+									<img src="../assets/img/<?php echo $pag ?>/<?php echo $arquivo_pasta ?>" width="20">
 								</a>
 							</td>
-							<td>
+							<td style="text-align: center;">
 								<?php if ($res[$i]['pago'] != 'Sim') { ?>
 									<a href="index.php?pagina=<?php echo $pag ?>&funcao=editar&id=<?php echo $res[$i]['id'] ?>" title="Editar" style="text-decoration: none">
 										<i class="bi bi-pencil-square text-primary"></i>

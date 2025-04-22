@@ -1,15 +1,15 @@
 <?php
 @session_start();
-$pagina = 'compras';
+$pagina = 'vendas';
 
 require_once('../conexao.php');
 require_once('verificar-permissao.php');
 
 ?>
-<h5 style="text-align: center;" class="text-secondary">COMPRAS</h5>
+<h5 style="text-align: center;" class="text-secondary">VENDAS</h5>
 <div class="mt-4" style="margin-right:25px">
     <?php
-    $query = $pdo->query("SELECT * FROM compras ORDER BY id ASC");
+    $query = $pdo->query("SELECT * FROM vendas ORDER BY id DESC");
     $res = $query->fetchAll(PDO::FETCH_ASSOC);
     $total_reg = @count($res);
     if ($total_reg > 0) {
@@ -18,12 +18,10 @@ require_once('verificar-permissao.php');
             <table id="example" class="table table-hover my-4" style="width:100%; font-size: 10px;">
                 <thead>
                     <tr>
-                        <th class="text-center">Pago</th>
+                        <th class="text-center">Status</th>
                         <th class="text-center">Total</th>
                         <th class="text-center">Data</th>
                         <th class="text-center">Usuário</th>
-                        <th class="text-center">Fornecedor</th>
-                        <th class="text-center">Tel Fornecedor</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -34,7 +32,7 @@ require_once('verificar-permissao.php');
                         }
 
                         //BUSCAR OS DADOS DO USUARIO
-                        $id_usu = $res[$i]['usuario'];
+                        $id_usu = $res[$i]['operador'];
                         $query_f = $pdo->query("SELECT * from usuarios where id = '$id_usu'");
                         $res_f = $query_f->fetchAll(PDO::FETCH_ASSOC);
                         $total_reg_f = @count($res_f);
@@ -42,19 +40,9 @@ require_once('verificar-permissao.php');
                             $nome_usuario = $res_f[0]['nome'];
                         }
 
-                        //BUSCAR OS DADOS DO FORNECEDOR
-                        $id_forn = $res[$i]['fornecedor'];
-                        $query_f = $pdo->query("SELECT * from fornecedores where id = '$id_forn'");
-                        $res_f = $query_f->fetchAll(PDO::FETCH_ASSOC);
-                        $total_reg_f = @count($res_f);
-                        if ($total_reg_f > 0) {
-                            $nome_forn = $res_f[0]['nome'];
-                            $tel_forn = $res_f[0]['telefone'];
-                        }
-
-                        if ($res[$i]['pago'] == 'Sim') {
+                        if ($res[$i]['status_venda'] == 'Fechada') {
                             $classe = 'text-success';
-                        } else {
+                        } else if ($res[$i]['status_venda'] == 'Aberta') {
                             $classe = 'text-danger';
                         }
 
@@ -62,11 +50,9 @@ require_once('verificar-permissao.php');
 
                         <tr>
                             <td class="text-center"> <i class="bi bi-square-fill <?php echo $classe ?>"></i></td>
-                            <td class="text-center">R$ <?php echo number_format($res[$i]['total'], 2, ',', '.'); ?></td>
-                            <td class="text-center"><?php echo implode('/', array_reverse(explode('-', $res[$i]['data_compra']))); ?></td>
-                            <td class="text-center"><?php echo $nome_usuario ?></td>
-                            <td class="text-center"><?php echo $nome_forn ?></td>
-                            <td class="text-center"><?php echo $tel_forn ?></td>    
+                            <td class="text-center">R$ <?php echo number_format($res[$i]['valor'], 2, ',', '.'); ?></td>
+                            <td class="text-center"><?php echo implode('/', array_reverse(explode('-', $res[$i]['data_venda']))); ?></td>
+                            <td class="text-center"><?php echo $nome_usuario ?></td>  
 
                         </tr>
 

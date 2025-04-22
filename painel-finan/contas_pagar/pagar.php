@@ -10,8 +10,6 @@ $query = $pdo->query("UPDATE contas_pagar SET   pago = 'Sim',
                                                     WHERE 
                                                     id = '$id'");
 
-
-
 //VERIFICAR SE É COMPRA DE PRODUTOS PARA ESTOQUE
 $query_select = $pdo->query("SELECT * FROM contas_pagar WHERE id = '$id'");
 $res = $query_select->fetchAll(PDO::FETCH_ASSOC);
@@ -30,6 +28,12 @@ if ($total_reg > 0) {
                                                                 data_mov = curDate(), 
                                                                 id_mov = '$id'");
     }
+    $query_mov = $pdo->query("INSERT INTO movimentacoes SET tipo = 'Saída', 
+    descricao = '$descricao',
+    valor = '$valor',
+    usuario = '$id_usuario',
+    data_mov = curDate(), 
+    id_mov = '$id'");
 }
 
 echo 'Conta efetivamente Paga!';

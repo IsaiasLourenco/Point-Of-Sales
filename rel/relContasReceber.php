@@ -15,7 +15,7 @@ $dataInicialF = implode('/', array_reverse(explode('-', $dataInicial)));
 $dataFinalF = implode('/', array_reverse(explode('-', $dataFinal)));
 
 if ($status == 'Sim') {
-	$status_serv = ' já pagas.';
+	$status_serv = ' já recebidas.';
 } else if ($status == 'Não') {
 	$status_serv = 'ainda pendentes.';
 } else {
@@ -200,14 +200,14 @@ if ($dataInicial != $dataFinal) {
 	<div class="container">
 
 		<div style="text-align: center;">
-			<span class="titulorel">Relatório de Contas à Pagar <?php echo $status_serv  ?> </span>
+			<span class="titulorel">Relatório de Contas à Receber <?php echo $status_serv  ?> </span>
 		</div>
 
 		<hr>
 		<small>
 			<table class='table' width='100%' cellspacing='0' cellpadding='3'>
 				<tr style="background-color: #f9f9f9;">
-					<th>Pago</th>
+					<th>Recebido</th>
 					<th>Descrição</th>
 					<th>Valor</th>
 					<th>Usuário</th>
@@ -217,7 +217,7 @@ if ($dataInicial != $dataFinal) {
 				</tr>
 				<?php
 				$saldo = 0;
-				$query = $pdo->query("SELECT * FROM contas_pagar WHERE data_conta >= '$dataInicial' AND data_conta <= '$dataFinal' AND pago LIKE '$status_like' ORDER BY data_conta ASC");
+				$query = $pdo->query("SELECT * FROM contas_receber WHERE data_compra >= '$dataInicial' AND data_compra <= '$dataFinal' AND pago LIKE '$status_like' ORDER BY data_compra ASC");
 				$res = $query->fetchAll(PDO::FETCH_ASSOC);
 				$totalItens = @count($res);
 
@@ -228,7 +228,7 @@ if ($dataInicial != $dataFinal) {
 					$descricao = $res[$i]['descricao'];
 					$valor = $res[$i]['valor'];
 					$usuario = $res[$i]['usuario'];
-					$data_conta = $res[$i]['data_conta'];
+					$data_compra = $res[$i]['data_compra'];
 					$vencimento = $res[$i]['vencimento'];
 					$id = $res[$i]['id'];
 
@@ -236,7 +236,7 @@ if ($dataInicial != $dataFinal) {
 					$saldoF = number_format($saldo, 2, ',', '.');
 					$valor = number_format($valor, 2, ',', '.');
 
-					$data_conta = implode('/', array_reverse(explode('-', $data_conta)));
+					$data_compra = implode('/', array_reverse(explode('-', $data_compra)));
 					$vencimento = implode('/', array_reverse(explode('-', $vencimento)));
 
 					$query_usu = $pdo->query("SELECT * FROM usuarios where id = '$usuario'");
@@ -256,7 +256,7 @@ if ($dataInicial != $dataFinal) {
 						<td><?php echo $descricao ?> </td>
 						<td>R$ <?php echo $valor ?> </td>
 						<td><?php echo $nome_usu ?> </td>
-						<td><?php echo $data_conta ?> </td>
+						<td><?php echo $data_compra ?> </td>
 						<td><?php echo $vencimento ?> </td>
 
 					</tr>
