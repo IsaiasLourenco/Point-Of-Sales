@@ -177,25 +177,31 @@ if ($dataInicial != $dataFinal) {
 
 <body>
 
-	<div class="cabecalho">
-
-		<div class="row titulos">
-			<div class="col-sm-2 esquerda_float image">
-				<img src="<?php echo $url_sistema ?>assets/img/logo.jpg" width="90px">
-			</div>
-			<div class="col-sm-10 esquerda_float">
-				<h2 class="titulo"><b><?php echo strtoupper($nome_sistema) ?></b></h2>
-
-				<div class="areaSubtituloCab">
-					<h6 class="subtitulo"><?php echo $endereco_sistema . ' Tel: ' . $telefone_sistema  ?></h6>
-
-					<p class="subtitulo"><?php echo $data_hoje ?></p>
-				</div>
-
-			</div>
+	<?php if ($cabecalho_img_rel == 'Sim') { ?>
+		<div class="img-cabecalho">
+			<img src="<?php echo $url_sistema ?>assets/img/topo.jpg" width="100%">
 		</div>
+	<?php } else { ?>
+		<div class="cabecalho">
 
-	</div>
+			<div class="row titulos">
+				<div class="col-sm-2 esquerda_float image">
+					<img src="<?php echo $url_sistema ?>assets/img/logo.jpg" width="90px">
+				</div>
+				<div class="col-sm-10 esquerda_float">
+					<h2 class="titulo"><b><?php echo strtoupper($nome_sistema) ?></b></h2>
+
+					<div class="areaSubtituloCab">
+						<h6 class="subtitulo"><?php echo $endereco_sistema . ' Tel: ' . $telefone_sistema  ?></h6>
+
+						<p class="subtitulo"><?php echo $data_hoje ?></p>
+					</div>
+
+				</div>
+			</div>
+
+		</div>
+	<?php } ?>
 
 	<div class="container">
 
@@ -250,13 +256,13 @@ if ($dataInicial != $dataFinal) {
 				}
 
 				$saldo = (float) $entradas - (float) $saidas;
-				
-				if($saldo < 0){
+
+				if ($saldo < 0) {
 					$classeSaldo = 'text-danger';
-				}else{
+				} else {
 					$classeSaldo = 'text-success';
 				}
-				
+
 				$valorF = number_format($valor, 2, ',', '.');
 				$entradasF = number_format($entradas, 2, ',', '.');
 				$saidasF = number_format($saidas, 2, ',', '.');
@@ -285,7 +291,7 @@ if ($dataInicial != $dataFinal) {
 				<span> <?php echo $apuracao ?> </span>
 			</div>
 			<div class="col-sm-4 direita" style="text-align: right;">
-				<span class="<?php echo $classeSaldo?>"> <strong> Total R$ <?php echo @$saldoF ?> </strong> </span>
+				<span class="<?php echo $classeSaldo ?>"> <strong> Total R$ <?php echo @$saldoF ?> </strong> </span>
 			</div>
 		</div>
 

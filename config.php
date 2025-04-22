@@ -25,3 +25,5 @@ $banco = 'pdv';
 
 //CONFIGURAÇÕES DO SISTEMA
 $relatorio_pdf = 'Sim';
+
+$cabecalho_img_rel = '';

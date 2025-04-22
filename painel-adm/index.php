@@ -96,10 +96,6 @@ $nivel_usu = $res[0]['nivel'];
                         <ul class="dropdown-menu" aria-labelledby="navbarDropdownRel">
                             <li><a class="dropdown-item" href="../rel/relProdutos_class.php" target="_blank">Relatório de Produtos</a></li>
                             <li><a class="dropdown-item" href="" target="_blank" data-bs-toggle="modal" data-bs-target="#modalRelCompras">Relatório de Compras</a></li>
-                            <li>
-                                <hr class="dropdown-divider">
-                            </li>
-                            <li><a class="dropdown-item" href="" target="_blank">Relatório de Categorias</a></li>
                         </ul>
                     </li>
                 </ul>

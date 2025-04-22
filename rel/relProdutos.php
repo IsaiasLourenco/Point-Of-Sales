@@ -154,25 +154,31 @@ $data_hoje = strtoupper(iconv('ISO-8859-1', 'UTF-8', strftime('%A, %d de %B de %
 
 <body>
 
-    <div class="cabecalho">
-
-        <div class="row titulos">
-            <div class="col-sm-2 esquerda_float image">
-                <img src="<?php echo $url_sistema ?>assets/img/logo.jpg" width="90px">
-            </div>
-            <div class="col-sm-10 esquerda_float">
-                <h2 class="titulo"><b><?php echo strtoupper($nome_sistema) ?></b></h2>
-
-                <div class="areaSubtituloCab">
-                    <h6 class="subtitulo"><?php echo $endereco_sistema . ' - Tel: ' . $telefone_sistema  ?></h6>
-                    <h6 class="subtitulo">CNPJ - <?php echo $cnpj_sistema ?></h6>
-                    <p class="subtitulo"><?php echo $data_hoje ?></p>
-                </div>
-
-            </div>
+    <?php if ($cabecalho_img_rel == 'Sim') { ?>
+        <div class="img-cabecalho">
+            <img src="<?php echo $url_sistema ?>assets/img/topo.jpg" width="100%">
         </div>
+    <?php } else { ?>
+        <div class="cabecalho">
 
-    </div>
+            <div class="row titulos">
+                <div class="col-sm-2 esquerda_float image">
+                    <img src="<?php echo $url_sistema ?>assets/img/logo.jpg" width="90px">
+                </div>
+                <div class="col-sm-10 esquerda_float">
+                    <h2 class="titulo"><b><?php echo strtoupper($nome_sistema) ?></b></h2>
+
+                    <div class="areaSubtituloCab">
+                        <h6 class="subtitulo"><?php echo $endereco_sistema . ' Tel: ' . $telefone_sistema  ?></h6>
+
+                        <p class="subtitulo"><?php echo $data_hoje ?></p>
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+    <?php } ?>
 
     <div class="container">
 
