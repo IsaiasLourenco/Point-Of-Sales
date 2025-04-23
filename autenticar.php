@@ -28,6 +28,11 @@ if (count($res) > 0) {
         header("Location: painel-finan");
         exit();
     }
+    
+    if($nivel == 'Operador'){
+        header("Location: painel-operador");
+        exit();
+    }
 
     else {
         echo "<script>alert('Dados incorretos!'); window.location='../pdv';</script>";

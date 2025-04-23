@@ -5,12 +5,6 @@ require_once('verificar-permissao.php');
 
 //VARIAVEIS DO MENU ADMINISTRATIVO
 $menu1 = 'home';
-$menu2 = 'usuarios';
-$menu3 = 'fornecedores';
-$menu4 = 'categorias';
-$menu5 = 'produtos';
-$menu6 = 'compras';
-$menu7 = 'caixas';
 
 //RECUPERAR DADOS DO USUÁRIO
 $query = $pdo->query("SELECT * FROM usuarios WHERE id = '$_SESSION[id_usuario]'");
@@ -29,7 +23,7 @@ $nivel_usu = $res[0]['nivel'];
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Painel Administrativo</title>
+    <title>Painel do Operador</title>
 
     <!-- FavIcon -->
     <link rel="shortcut icon" href="../assets/img/ico.ico" type="image/x-icon">
@@ -68,40 +62,7 @@ $nivel_usu = $res[0]['nivel'];
             </button>
             <div class="collapse navbar-collapse" id="navbarSupportedContent">
                 <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                    <li class="nav-item">
-                        <a class="nav-link active" aria-current="page" href="index.php?pagina=<?php echo $menu1 ?>">Home</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="index.php?pagina=<?php echo $menu2 ?>">Usuários</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="index.php?pagina=<?php echo $menu3 ?>">Fornecedores</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="index.php?pagina=<?php echo $menu7 ?>">Caixas</a>
-                    </li>
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                            Produtos
-                        </a>
-                        <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-                            <li><a class="dropdown-item" href="index.php?pagina=<?php echo $menu5 ?>">Cadastro de Produtos</a></li>
-                            <li><a class="dropdown-item" href="index.php?pagina=<?php echo $menu4 ?>">Cadastro de Categorias</a></li>
-                            <li>
-                                <hr class="dropdown-divider">
-                            </li>
-                            <li><a class="dropdown-item" href="index.php?pagina=<?php echo $menu6 ?>">Compras</a></li>
-                        </ul>
-                    </li>
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownRel" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                            Relatórios
-                        </a>
-                        <ul class="dropdown-menu" aria-labelledby="navbarDropdownRel">
-                            <li><a class="dropdown-item" href="../rel/relProdutos_class.php" target="_blank">Relatório de Produtos</a></li>
-                            <li><a class="dropdown-item" href="" target="_blank" data-bs-toggle="modal" data-bs-target="#modalRelCompras">Relatório de Compras</a></li>
-                        </ul>
-                    </li>
+
                 </ul>
 
                 <form class="d-flex">
@@ -129,18 +90,6 @@ $nivel_usu = $res[0]['nivel'];
         <?php
         if (@$_GET['pagina'] == $menu1) {
             require_once($menu1 . '.php');
-        } else if (@$_GET['pagina'] == $menu2) {
-            require_once($menu2 . '.php');
-        } else if (@$_GET['pagina'] == $menu3) {
-            require_once($menu3 . '.php');
-        } else if (@$_GET['pagina'] == $menu4) {
-            require_once($menu4 . '.php');
-        } else if (@$_GET['pagina'] == $menu5) {
-            require_once($menu5 . '.php');
-        } else if (@$_GET['pagina'] == $menu6) {
-            require_once($menu6 . '.php');
-        } else if (@$_GET['pagina'] == $menu7) {
-            require_once($menu7 . '.php');
         } else {
             require_once($menu1 . '.php');
         }
@@ -212,7 +161,7 @@ $nivel_usu = $res[0]['nivel'];
                     <input name="email_double-perfil" type="hidden" value="<?php echo @$email_usu ?>">
 
                     <small>
-                        <div style="text-align: center;" id="mensagem-perfil">
+                        <div style="text-align:center" id="mensagem-perfil">
 
                         </div>
                     </small>
@@ -223,57 +172,6 @@ $nivel_usu = $res[0]['nivel'];
     </div>
 </div>
 <!-- Fim Modal de Inserção Edição -->
-
-<!-- Modal de Relatório de Compras -->
-<div class="modal fade" id="modalRelCompras" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLabel">Compras</h5>
-            </div>
-
-            <form action="../rel/relCompras_class.php" method="POST" target="_blank">
-                <div class="modal-body">
-
-                    <div class="row">
-
-                        <div class="col-md-4">
-                            <div class="form-group">
-                                <label>Data Inicial</label>
-                                <input value="<?php echo date('Y-m-d') ?>" type="date" class="form-control" name="dataInicial">
-                            </div>
-                        </div>
-
-                        <div class="col-md-4">
-                            <div class="form-group">
-                                <label>Data Final</label>
-                                <input value="<?php echo date('Y-m-d') ?>" type="date" class="form-control" name="dataFinal">
-                            </div>
-                        </div>
-
-                        <div class="col-md-4">
-                            <div class="form-group">
-                                <label>Pago</label>
-                                <select class="form-control" name="status">
-                                    <option value="">Todas</option>
-                                    <option value="Sim">Sim</option>
-                                    <option value="Não">Não</option>
-                                </select>
-                            </div>
-                        </div>
-
-                    </div>
-
-                </div>
-                <div class="modal-footer">
-                    <button type="submit" class="btn btn-danger">Gerar Relatório</button>
-                </div>
-            </form>
-
-        </div>
-    </div>
-</div>
-<!-- Fim Modal de Relatório de Compras -->
 
 <!-- Script Mascaras -->
 <script type="text/javascript" src="../assets/js/mascara.js"></script>
@@ -313,7 +211,3 @@ $nivel_usu = $res[0]['nivel'];
     });
 </script>
 <!-- FIM AJAX PARA INSERÇÃO E EDIÇÃO DOS DADOS -->
-
-<?PHP 
-
-?>
