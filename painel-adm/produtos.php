@@ -389,7 +389,7 @@ if (@$_GET['funcao'] == "editar") {
                     </div>
 
                     <small>
-                        <div align="center" class="mt-1" id="mensagem-comprar"></div>
+                        <div style="text-align: center;" class="mt-1" id="mensagem-comprar"></div>
                     </small>
 
                 </div>
@@ -602,6 +602,7 @@ if (@$_GET['funcao'] == "deletar") { ?>
         gerarCodigo();
     });
 </script>
+<!-- CONTINUAÇÃO -->
 <script type="text/javascript">
     var pagina = "<?= $pagina ?>";
 

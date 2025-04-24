@@ -61,8 +61,8 @@ $tipoMov = $res[0]['tipo'];
 //BUSCAR CONTAS A PAGAR VENCENDO HOJE
 $query = $pdo->query("SELECT * FROM contas_pagar WHERE vencimento = curDate() AND pago != 'Sim' ORDER BY vencimento ASC LIMIT 1");
 $res = $query->fetchAll(PDO::FETCH_ASSOC);
-$valorVenceHoje = $res[0]['valor'];
-$descricaoVenceHoje = $res[0]['descricao'];
+$valorVenceHoje = @$res[0]['valor'];
+$descricaoVenceHoje = @$res[0]['descricao'];
 $valorVenceHoje = number_format($valorVenceHoje, 2, ',', '.');
 //FIM BUSCAR CONTAS A PAGAR VENCENDO HOJE
 
@@ -77,8 +77,8 @@ $valorVencida = number_format($valorVencida, 2, ',', '.');
 //BUSCAR CONTAS A RECEBER VENCENDO HOJE
 $query = $pdo->query("SELECT * FROM contas_receber WHERE vencimento = curDate() AND pago != 'Sim' ORDER BY vencimento ASC LIMIT 1");
 $res = $query->fetchAll(PDO::FETCH_ASSOC);
-$valorRecebeVenceHoje = $res[0]['valor'];
-$descricaoRecebeVenceHoje = $res[0]['descricao'];
+$valorRecebeVenceHoje = @$res[0]['valor'];
+$descricaoRecebeVenceHoje = @$res[0]['descricao'];
 $valorRecebeVenceHoje = number_format($valorRecebeVenceHoje, 2, ',', '.');
 //FIN BUSCAR CONTAS A RECEBER VENCENDO HOJE
 
@@ -506,7 +506,7 @@ $totalvendasMes = number_format($totalvendasMes, 2, ',', '.');
 
             </div>
 
-        </section id="stats-subtitle">
+        <!-- </section id="stats-subtitle">
         <div class="row mb-2">
             <div class="col-12 mt-3 mb-1">
                 <h4 class="text-uppercase">Gráfico</h4>
@@ -574,9 +574,9 @@ $totalvendasMes = number_format($totalvendasMes, 2, ',', '.');
                 </div>
             <?php } ?>
         </div>
-        <section>
+        <section> -->
 
-        </section>
+        <!-- </section> -->
 
     </div>
 </body>

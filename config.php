@@ -27,3 +27,5 @@ $banco = 'pdv';
 $relatorio_pdf = 'Sim';
 
 $cabecalho_img_rel = '';
+
+$desconto_porcentagem='Sim';
