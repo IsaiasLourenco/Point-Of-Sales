@@ -8,3 +8,8 @@
     box-shadow: 6px 6px 15px rgba(0, 0, 0, 0.3);
     transform: scale(1.05);
 }
+
+.titulo {
+    color: red;
+    font-weight: bold;
+}

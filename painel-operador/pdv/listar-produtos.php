@@ -32,7 +32,7 @@ if ($total_reg > 0) {
         <div style="margin-left: 10px;">
             <h4>'.$quantidade.' - '.mb_strtoupper($nome_produto). ' 
                 <a href="#" onclick="modalExcluir('.$id_item.')" title="Excluir Item" style="text-decoration: none">
-                    <i class="bi bi-trash text-danger mx-1"></i>
+                    <i class="bi bi-x text-danger mx-1"></i>
                 </a>
             </h4>
             <h5 class="item-total" style="color:black;">R$ '.$valor_total.'</h5>

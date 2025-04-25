@@ -29,7 +29,7 @@ require_once('verificar-permissao.php');
     if ($total_reg > 0) {
     ?>
         <small>
-            <table id="example" class="table table-hover" style="width:100%; font-size: 10px;">
+            <table id="produtos" class="table table-hover" style="width:100%; font-size: 10px;">
                 <thead>
                     <tr>
                         <th>Nome</th>
@@ -532,7 +532,7 @@ if (@$_GET['funcao'] == "deletar") { ?>
 <script type="text/javascript">
     $(document).ready(function() {
         gerarCodigo();
-        $('#usuarios').DataTable({
+        $('#produtos').DataTable({
             "ordering": false
         });
     });

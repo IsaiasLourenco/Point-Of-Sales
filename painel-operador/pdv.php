@@ -47,6 +47,7 @@ if ($desconto_porcentagem == 'Sim') {
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 
     <link rel="stylesheet" href="../assets/css/telapdv.css">
+    <link rel="stylesheet" href="../assets/css/style.css">
     <link rel="shortcut icon" href="../assets/img/ico.ico" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.3.0/font/bootstrap-icons.css">
 </head>
@@ -142,11 +143,11 @@ if ($desconto_porcentagem == 'Sim') {
 </html>
 
 <!-- MODAL DELETAR ITEM -->
-<div class="modal fade" tabindex="-1" id="modalDeletar">
+<div class="modal fade" tabindex="-1" id="modalExcluir">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title">Excluir Item</h5>
+                <h5 class="modal-title titulo">Excluir Item</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <form method="POST" id="form-excluir">
@@ -185,7 +186,7 @@ if ($desconto_porcentagem == 'Sim') {
 
                 </div>
                 <div class="modal-footer">
-                    <button type="button" id="btn-fechar" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
+                    <button type="button" id="btn-fechar-excluir" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
                     <button name="btn-excluir" id="btn-excluir" type="submit" class="btn btn-danger">Excluir</button>
 
                     <input name="id" type="hidden" id="id_deletar_item">
@@ -255,6 +256,7 @@ if ($desconto_porcentagem == 'Sim') {
         listarProdutos();
         document.getElementById('codigo').focus();
         document.getElementById('quantidade').value = '001';
+        buscarDados();
     });
 </script>
 <!-- FIM SCRIPT PARA INICIAR VENDA -->
@@ -285,7 +287,7 @@ if ($desconto_porcentagem == 'Sim') {
         clearTimeout(Timer); //Limpa o timer
         Timer = setTimeout(() => {
             if (!isProcessing) {
-                isProcessing = true; //Ativa a Fla anti duplicidades
+                isProcessing = true; //Ativa a Flag anti duplicidades
                 buscarDados();
             }
         }, 100);
@@ -297,6 +299,7 @@ if ($desconto_porcentagem == 'Sim') {
     let subTotal = 0;
 
     function buscarDados() {
+        console.log($('#form-buscar').serialize());
         $.ajax({
             url: pagina + "/buscar-dados.php",
             method: 'POST',
@@ -304,6 +307,7 @@ if ($desconto_porcentagem == 'Sim') {
             dataType: "html",
 
             success: function(result) {
+                console.log(result);
                 var array = result.split("&-/z");
                 var nome = array[0];
                 var descricao = array[1];
@@ -344,9 +348,7 @@ if ($desconto_porcentagem == 'Sim') {
                         listarProdutos();
                     }, 100);
 
-
                 }
-
 
                 isProcessing = false; //Desativa a flag antiduplicidade após concluir a requisição do produto
             },
@@ -391,7 +393,7 @@ if ($desconto_porcentagem == 'Sim') {
         let novoSubTotal = 0;
 
         $(".item-total").each(function() {
-        
+
             let valor = $(this).text().replace("R$ ", "").replace(",", ".");
             let valorFloat = parseFloat(valor);
 
@@ -402,9 +404,95 @@ if ($desconto_porcentagem == 'Sim') {
 
         let subTotalF = novoSubTotal.toFixed(2).replace(".", ",");
         let valor = document.getElementById('sub_total_item').value = "R$ " + subTotalF;
-        
+
         // Atualiza a variável global, se necessário
         subTotal = novoSubTotal;
     }
 </script>
 <!-- FIM RECALCULA TOTAIS -->
+
+<!-- SCRIPT PARA CHAMAR MODAL EXCLUI ITEM -->
+<script type="text/javascript">
+    function modalExcluir(id) {
+        event.preventDefault();
+        document.getElementById('id_deletar_item').value = id;
+        var myModal = new bootstrap.Modal(document.getElementById('modalExcluir'), {})
+        myModal.show();
+    }
+</script>
+<!-- FIM SCRIPT PARA CHAMAR MODAL EXCLUI ITEM -->
+
+<!-- AJAX EXCLUI ITEM -->
+<script type="text/javascript">
+    $("#form-excluir").submit(function() {
+        var pagina = "<?= $pagina ?>";
+        event.preventDefault();
+        var formData = new FormData(this);
+        $.ajax({
+            url: pagina + "/excluir-item.php",
+            type: 'POST',
+            data: formData,
+            success: function(mensagem) {
+                $('#mensagem').removeClass()
+                if (mensagem.trim() == "Excluído com Sucesso!") {
+                    $('#mensagem-excluir').addClass('text-success')
+                    $('#btn-fechar-excluir').click();
+                    window.location = "pdv.php";
+                } else {
+                    $('#mensagem-excluir').addClass('text-danger')
+                }
+                $('#mensagem-excluir').text(mensagem)
+            },
+            cache: false,
+            contentType: false,
+            processData: false,
+        });
+    });
+</script>
+<!-- FIM AJAX EXCLUI ITEM -->
+
+<!-- SCRIPT PARA APLICAR DESCONTO -->
+<script type="text/javascript">
+    // Formatar o campo quando o usuário sair do campo (blur)
+    $("#desconto").on("blur", function() {
+        let valor = $(this).val().replace("R$", "").replace(",", ".").trim(); // Remove "R$" e vírgula para tratar como número
+        if (valor === "" || isNaN(valor)) {
+            valor = 0; // Define valor como 0 se o campo estiver vazio ou inválido
+        } else {
+            valor = parseFloat(valor); // Converte para número
+        }
+
+        // Formata o valor no campo com "R$" e duas casas decimais
+        $(this).val("R$ " + valor.toFixed(2).replace(".", ","));
+
+        // Chama a função para aplicar o desconto com o valor formatado corretamente
+        aplicarDesconto();
+    });
+
+    // Função para aplicar o desconto
+    function aplicarDesconto() {
+        let valorCampo = $("#desconto").val().replace("R$", "").replace(",", ".").trim(); // Remove "R$" e converte para número
+        let desconto = parseFloat(valorCampo) || 0; // Garante um número válido
+
+        $.ajax({
+            url: pagina + "/aplicar-desconto.php", // Endpoint para processar o desconto no back-end
+            method: "POST",
+            data: {
+                desconto: desconto
+            }, // Envia apenas o valor numérico ao servidor
+            dataType: "html",
+            success: function(result) {
+                console.log(result); // Verifique o retorno para depuração, se necessário
+                var array = result.split("&-/z");
+                var totalCompra = array[0]; // Total atualizado com desconto
+
+                // Atualiza o campo de total da compra
+                document.getElementById("total_compra").value = "R$ " + totalCompra;
+            },
+            error: function(xhr, status, error) {
+                console.error("Erro ao aplicar o desconto:", status, error); // Log de erro
+            },
+        });
+    }
+</script>
+<!-- FIM SCRIPT PARA APLICAR DESCONTO -->

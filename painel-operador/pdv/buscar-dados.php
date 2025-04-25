@@ -14,6 +14,7 @@ $valor_total = "NÃO ENCONTRADO!!!";
 $codigo = $_POST['codigo'];
 // INICIALIZA TOTAL DA COMPRA
 $total_compra = 0;
+$valor_recebido = $_POST['valor_recebido'];
 
 $query = $pdo->query("SELECT * FROM produtos WHERE codigo = '$codigo'");
 $res = $query->fetchAll(PDO::FETCH_ASSOC);
@@ -36,11 +37,30 @@ if (@count($res) > 0) {
     $query_iten->bindValue(":usuario", $id_usuario);
     $query_iten->execute();
 
+    //ATUALIZA O ESTOQUE
+    $query_est = $pdo->query("SELECT * FROM produtos WHERE id = '$id_produto'");
+    $res_est = $query_est->fetchAll(PDO::FETCH_ASSOC);
+    if (@count($res_est) > 0) {
+        $estoque = $res_est[0]['estoque'];
+
+        //RETIRA PRODUTOS DO ESTOQUE
+        $estoque = $estoque - $quantidade;
+        $res_est = $pdo->prepare("UPDATE produtos SET estoque = :estoque WHERE id = '$id_produto'");
+        $res_est->bindValue(":estoque", $estoque);
+        $res_est->execute();
+    }
+
     // Soma o total da compra
     $query_total = $pdo->query("SELECT SUM(valor_total) as total FROM itens_venda WHERE usuario = '$id_usuario' AND venda = 0");
     $res_total = $query_total->fetchAll(PDO::FETCH_ASSOC);
     $total_compra = $res_total[0]['total'];
+
+    if ($valor_recebido == "") {
+        $valor_recebido = $total_compra;
+    }
+    
 }
 
-$dados = $nome . '&-/z' . $descricao . '&-/z' . $valor . '&-/z' . $estoque . '&-/z' . $imagem . '&-/z' . $valor_total . '&-/z' . number_format($total_compra, 2, ',', '.');
+
+$dados = $nome . '&-/z' . $descricao . '&-/z' . $valor . '&-/z' . $estoque . '&-/z' . $imagem . '&-/z' . $valor_total . '&-/z' . number_format($total_compra, 2, ',', '.' . '&-/z' . $valor_recebido);
 echo $dados;
