@@ -111,7 +111,7 @@ if ($desconto_porcentagem == 'Sim') {
                             <input type="text" class="form-control form-control-md" id="total_item" name="total_item" placeholder="Total por Itens">
 
                             <p class="background mt-3">SUB TOTAL</p>
-                            <input type="text" class="subTotal form-control  form-control-md" id="sub_total_item" name="sub_total" placeholder="Sub Total">
+                            <input type="text" class="subTotal form-control  form-control-md" id="sub_total_item" name="sub_total_item" placeholder="Sub Total">
 
                             <p class="background mt-3">DESCONTO EM <?php echo $desc ?></p>
                             <input type="text" class="form-control  form-control-md" id="desconto" name="desconto" placeholder="Desconto em <?php echo $desc ?>">
@@ -299,7 +299,6 @@ if ($desconto_porcentagem == 'Sim') {
     let subTotal = 0;
 
     function buscarDados() {
-        console.log($('#form-buscar').serialize());
         $.ajax({
             url: pagina + "/buscar-dados.php",
             method: 'POST',
@@ -307,7 +306,6 @@ if ($desconto_porcentagem == 'Sim') {
             dataType: "html",
 
             success: function(result) {
-                console.log(result);
                 var array = result.split("&-/z");
                 var nome = array[0];
                 var descricao = array[1];
@@ -452,47 +450,132 @@ if ($desconto_porcentagem == 'Sim') {
 <!-- FIM AJAX EXCLUI ITEM -->
 
 <!-- SCRIPT PARA APLICAR DESCONTO -->
+<?php if ($desconto_porcentagem === 'Sim') : ?>
+    <!-- Script para Desconto em Porcentagem -->
+    <script type="text/javascript">
+        $(document).ready(function() {
+            
+            $("#desconto").on("blur", function() {
+                let valor = $(this).val().replace("%", "").replace(",", ".").trim(); // Remove "%"
+                if (valor === "" || isNaN(valor)) {
+                    valor = 0; // Define como 0 se inválido
+                } else {
+                    valor = parseFloat(valor); // Converte para número
+                }
+
+                $(this).val(valor.toFixed(2) + "%"); // Formata como porcentagem
+
+                aplicarDesconto();
+            });
+
+            function aplicarDesconto() {
+                let valorCampo = $("#desconto").val().replace("%", "").replace(",", ".").trim(); // Remove "%"
+                let desconto = parseFloat(valorCampo) || 0; // Garante número válido
+
+                let totalCompra = parseFloat($("#total_compra").val().replace("R$", "").replace(",", ".")) || 0;
+
+                let descontoAplicado = totalCompra * (desconto / 100); // Cálculo de porcentagem
+
+                $.ajax({
+                    url: pagina + "/aplicar-desconto-porcentagem.php",
+                    method: "POST",
+                    data: {
+                        "desconto": desconto
+                    }, // Envia desconto já aplicado
+                    dataType: "html",
+                    success: function(result) {
+                        var array = result.split("&-/z");
+                        var totalCompra = array[0]; // Total atualizado
+                        document.getElementById("total_compra").value = "R$ " + totalCompra;
+                    },
+                    error: function(xhr, status, error) {
+                        console.error("Erro ao aplicar o desconto:", status, error);
+                    },
+                });
+            }
+            
+        });
+    </script>
+<?php else : ?>
+    <!-- Script para Desconto em Moeda -->
+    <script type="text/javascript">
+        $(document).ready(function() {
+            $("#desconto").on("blur", function() {
+                let valor = $(this).val().replace("R$", "").replace(",", ".").trim(); // Remove "R$"
+                if (valor === "" || isNaN(valor)) {
+                    valor = 0; // Define como 0 se inválido
+                } else {
+                    valor = parseFloat(valor); // Converte para número
+                }
+
+                $(this).val("R$ " + valor.toFixed(2).replace(".", ",")); // Formata como moeda
+
+                aplicarDesconto();
+            });
+
+            function aplicarDesconto() {
+                let valorCampo = $("#desconto").val().replace("R$", "").replace(",", ".").trim(); // Remove "R$"
+                let desconto = parseFloat(valorCampo) || 0; // Garante número válido
+
+                $.ajax({
+                    url: pagina + "/aplicar-desconto-moeda.php",
+                    method: "POST",
+                    data: {
+                        desconto: desconto
+                    }, // Envia valor do desconto
+                    dataType: "html",
+                    success: function(result) {
+                        var array = result.split("&-/z");
+                        var totalCompra = array[0]; // Total atualizado
+                        document.getElementById("total_compra").value = "R$ " + totalCompra;
+                    },
+                    error: function(xhr, status, error) {
+                        console.error("Erro ao aplicar o desconto:", status, error);
+                    },
+                });
+            }
+        });
+    </script>
+<?php endif; ?>
+<!-- FIM SCRIPT PARA APLICAR DESCONTO -->
+
+<!-- TROCO E VALOR RECEBIDO -->
 <script type="text/javascript">
-    // Formatar o campo quando o usuário sair do campo (blur)
-    $("#desconto").on("blur", function() {
-        let valor = $(this).val().replace("R$", "").replace(",", ".").trim(); // Remove "R$" e vírgula para tratar como número
+    // Evento para calcular o troco ao sair do campo "Valor Recebido"
+    $("#valor_recebido").on("blur", function() {
+        let valor = $(this).val().replace("R$", "").replace(",", ".").trim();
         if (valor === "" || isNaN(valor)) {
-            valor = 0; // Define valor como 0 se o campo estiver vazio ou inválido
+            valor = 0; // Define como 0 se vazio ou inválido
         } else {
             valor = parseFloat(valor); // Converte para número
         }
 
-        // Formata o valor no campo com "R$" e duas casas decimais
+        // Formata o valor com "R$" e duas casas decimais
         $(this).val("R$ " + valor.toFixed(2).replace(".", ","));
 
-        // Chama a função para aplicar o desconto com o valor formatado corretamente
-        aplicarDesconto();
+        calcularTroco();
     });
 
-    // Função para aplicar o desconto
-    function aplicarDesconto() {
-        let valorCampo = $("#desconto").val().replace("R$", "").replace(",", ".").trim(); // Remove "R$" e converte para número
-        let desconto = parseFloat(valorCampo) || 0; // Garante um número válido
+    function calcularTroco() {
+        // Captura o valor recebido pelo cliente
+        let valorRecebido = $("#valor_recebido").val().replace("R$", "").replace(",", ".").trim();
+        valorRecebido = parseFloat(valorRecebido) || 0; // Garante um número válido
 
-        $.ajax({
-            url: pagina + "/aplicar-desconto.php", // Endpoint para processar o desconto no back-end
-            method: "POST",
-            data: {
-                desconto: desconto
-            }, // Envia apenas o valor numérico ao servidor
-            dataType: "html",
-            success: function(result) {
-                console.log(result); // Verifique o retorno para depuração, se necessário
-                var array = result.split("&-/z");
-                var totalCompra = array[0]; // Total atualizado com desconto
+        // Captura o total da compra
+        let totalCompra = $("#total_compra").val().replace("R$", "").replace(",", ".").trim();
+        totalCompra = parseFloat(totalCompra) || 0; // Garante um número válido
 
-                // Atualiza o campo de total da compra
-                document.getElementById("total_compra").value = "R$ " + totalCompra;
-            },
-            error: function(xhr, status, error) {
-                console.error("Erro ao aplicar o desconto:", status, error); // Log de erro
-            },
-        });
+        // Calcula o troco
+        let troco = valorRecebido - totalCompra;
+
+        // Se o troco for negativo, alerta que o valor recebido é insuficiente
+        if (troco < 0) {
+            alert("O valor recebido é insuficiente!");
+            troco = 0; // Define troco como 0 para evitar exibição negativa
+        }
+
+        // Formata o troco como moeda e atualiza o campo "Troco"
+        $("#troco").val("R$ " + troco.toFixed(2).replace(".", ","));
     }
 </script>
-<!-- FIM SCRIPT PARA APLICAR DESCONTO -->
+<!-- FIM TROCO E VALOR RECEBIDO -->
