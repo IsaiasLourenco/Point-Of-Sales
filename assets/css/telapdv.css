@@ -175,3 +175,12 @@ Payment
   padding:3px 10px;
   margin-bottom:5px;
 }
+
+/*--------------------
+Estilização do subtotal
+---------------------*/
+.subTotal {
+  font-size: 24px;
+  font-weight: bold;
+  color: #FF0000;
+}

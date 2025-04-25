@@ -107,10 +107,10 @@ if ($desconto_porcentagem == 'Sim') {
                         <div class="col-md-5">
 
                             <p class="background">TOTAL DO ITEM</p>
-                            <input type="text" class="form-control form-control-md" id="total_item" name="total_item" placeholder="Código de Barras">
+                            <input type="text" class="form-control form-control-md" id="total_item" name="total_item" placeholder="Total por Itens">
 
                             <p class="background mt-3">SUB TOTAL</p>
-                            <input type="text" class="form-control  form-control-md" id="sub_total_item" name="sub_total" placeholder="Sub Total">
+                            <input type="text" class="subTotal form-control  form-control-md" id="sub_total_item" name="sub_total" placeholder="Sub Total">
 
                             <p class="background mt-3">DESCONTO EM <?php echo $desc ?></p>
                             <input type="text" class="form-control  form-control-md" id="desconto" name="desconto" placeholder="Desconto em <?php echo $desc ?>">
@@ -156,7 +156,7 @@ if ($desconto_porcentagem == 'Sim') {
                         <label for="exampleFormControlInput1" class="form-label">Gerente</label>
                         <select class="form-select mt-1" aria-label="Default select example" name="gerente">
                             <?php
-                            $query = $pdo->query("SELECT * from usuarios where nivel = 'Administrador' order by nome asc");
+                            $query = $pdo->query("SELECT * FROM usuarios WHERE nivel = 'Administrador' ORDER BY nome ASC");
                             $res = $query->fetchAll(PDO::FETCH_ASSOC);
                             $total_reg = @count($res);
                             if ($total_reg > 0) {
@@ -249,28 +249,52 @@ if ($desconto_porcentagem == 'Sim') {
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.mask/1.14.11/jquery.mask.min.js"></script>
 <!-- Fim Ajax para funcionar Mascaras JS -->
 
-<!-- SCRIPT PARA CHAMAR MODAL -->
+<!-- SCRIPT PARA INICIAR VENDA -->
 <script type="text/javascript">
     $(document).ready(function() {
+        listarProdutos();
         document.getElementById('codigo').focus();
         document.getElementById('quantidade').value = '001';
     });
 </script>
-<!-- FIM SCRIPT PARA CHAMAR MODAL -->
+<!-- FIM SCRIPT PARA INICIAR VENDA -->
 
-<!--AJAX PARA BUSCAR DADOS DO PRODUTO -->
+<!-- AJAX PARA BUSCAR DADOS DO PRODUTO E MOSTRAR NOS CAMPOS -->
 <script type="text/javascript">
-        let isProcessing = false; //Flag para evitar duplicidades no leitor
-    $("#codigo").keyup(function() {
-        if (!isProcessing) {
-            isProcessing = true; //Ativa a Fla anti duplicidades
-            buscarDados();
+    document.getElementById('quantidade').addEventListener('input', function() {
+        // Obtém o valor digitado no campo Quantidade
+        let quantidade = document.getElementById('quantidade').value;
+
+        // Verifica se o número é muito longo (ajuste o limite conforme necessário)
+        if (quantidade.length > 5) { // Exemplo: limite de 5 dígitos
+            alert("O valor digitado é muito longo! Verifique a quantidade.");
+
+            // Adiciona um pequeno atraso antes de resetar e mover o foco
+            setTimeout(() => {
+                // Reseta o campo Quantidade para "001"
+                document.getElementById('quantidade').value = "001";
+
+                // Foca automaticamente no campo Código de Barras
+                document.getElementById('codigo').focus();
+            }, 200); // Espera 200ms para dar tempo de leitura do alerta
         }
+    });
+    let isProcessing = false; //Flag para evitar duplicidades no leitor
+    let Timer;
+    $("#codigo").keyup(function() {
+        clearTimeout(Timer); //Limpa o timer
+        Timer = setTimeout(() => {
+            if (!isProcessing) {
+                isProcessing = true; //Ativa a Fla anti duplicidades
+                buscarDados();
+            }
+        }, 100);
     });
 </script>
 <!-- CONTINUAÇÃO -->
 <script type="text/javascript">
     var pagina = "<?= $pagina ?>";
+    let subTotal = 0;
 
     function buscarDados() {
         $.ajax({
@@ -286,26 +310,101 @@ if ($desconto_porcentagem == 'Sim') {
                 var valor = array[2];
                 var estoque = array[3];
                 var imagem = array[4];
-                document.getElementById('produto').value = nome;
-                document.getElementById('descricao').value = descricao;
-                document.getElementById('valor_unitario').value = valor;
-                document.getElementById('estoque').value = estoque;
-                $('#imagem').attr('src', '../assets/img/produtos/' + imagem);
+                var totalItem = array[5];
+                var totalCompra = array[6];
 
                 if (nome.trim() != "PRODUTO NÃO ENCONTRADO!!!") {
+                    document.getElementById('produto').value = nome;
+                    document.getElementById('descricao').value = descricao;
+                    valor = "R$ " + valor.replace(".", ",");
+                    document.getElementById('valor_unitario').value = valor;
+                    document.getElementById('estoque').value = estoque;
+                    $('#imagem').attr('src', '../assets/img/produtos/' + imagem);
+
                     var audio = new Audio('../assets/img/barCode.wav');
                     audio.addEventListener('canplaythrough', function() {
                         audio.play();
                     })
+                    totalItem = parseFloat(totalItem).toFixed(2);
+                    totalItem = "R$ " + totalItem.replace(".", ",");
+                    document.getElementById('total_item').value = totalItem;
+
+                    document.getElementById("total_compra").value = "R$ " + totalCompra;
+
+                    // **Novas funcionalidades**
+                    // Resetar quantidade para "001"
+                    document.getElementById('quantidade').value = "001";
+
+                    // Limpar o campo código de barras
+                    document.getElementById('codigo').value = "";
+                    document.getElementById('codigo').focus();
+
+                    // Garantir que listarProdutos() seja executado depois
+                    setTimeout(() => {
+                        listarProdutos();
+                    }, 100);
+
+
                 }
 
-                
+
                 isProcessing = false; //Desativa a flag antiduplicidade após concluir a requisição do produto
             },
-            error: function(){
+            error: function() {
                 isProcessing = false; //Destrava a flag em caso de erro.
+
             }
         });
     }
 </script>
-<!--FIM AJAX PARA BUSCAR DADOS DO PRODUTO -->
+<!-- FIM AJAX PARA BUSCAR DADOS DO PRODUTO E MOSTRAR NOS CAMPOS -->
+
+<!-- AJAX PARA LISTAR PRODUTOS -->
+<script type="text/javascript">
+    var pagina = "<?= $pagina ?>";
+
+    function listarProdutos() {
+        $.ajax({
+            url: pagina + "/listar-produtos.php",
+            method: 'POST',
+            data: $('#form-buscar').serialize(),
+            dataType: "html",
+
+            success: function(result) {
+                $("#listar").html(result);
+                // Recalcula o subtotal com base nos itens listados
+                recalcularSubTotal();
+
+            },
+            error: function(xhr, status, error) {
+                console.error("Erro ao listar produtos:", status, error);
+            }
+
+        });
+    }
+</script>
+<!-- FIM AJAX PARA LISTAR PRODUTOS -->
+
+<!-- RECALCULA TOTAIS -->
+<script type="text/javascript">
+    function recalcularSubTotal() {
+        let novoSubTotal = 0;
+
+        $(".item-total").each(function() {
+        
+            let valor = $(this).text().replace("R$ ", "").replace(",", ".");
+            let valorFloat = parseFloat(valor);
+
+            if (!isNaN(valorFloat)) {
+                novoSubTotal += valorFloat; // Soma os valores ao subtotal
+            }
+        });
+
+        let subTotalF = novoSubTotal.toFixed(2).replace(".", ",");
+        let valor = document.getElementById('sub_total_item').value = "R$ " + subTotalF;
+        
+        // Atualiza a variável global, se necessário
+        subTotal = novoSubTotal;
+    }
+</script>
+<!-- FIM RECALCULA TOTAIS -->

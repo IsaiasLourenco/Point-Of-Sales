@@ -448,6 +448,7 @@ if (@$_GET['funcao'] == "deletar") { ?>
 <!--AJAX PARA INSERÇÃO E EDIÇÃO DOS DADOS -->
 <script type="text/javascript">
     $("#form").submit(function() {
+        document.getElementById('codigo').focus();
         var pagina = "<?= $pagina ?>";
         event.preventDefault();
         var formData = new FormData(this);
