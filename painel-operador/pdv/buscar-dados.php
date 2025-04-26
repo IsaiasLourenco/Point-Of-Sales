@@ -26,9 +26,10 @@ if (@count($res) > 0) {
     $estoque = $res[0]['estoque'];
     $imagem = $res[0]['imagem'];
 
+    // VALIDA SE O ESTOQUE É SUFICIENTE
     if ($estoque < $quantidade) {
-        echo 'Quantidade em estoque insuficiente para venda!! Estoque atual ' .$estoque;
-        exit();
+        echo "Estoque insuficiente! $nome tem apenas $estoque unidades disponíveis.";
+        exit; // Interrompe o script
     }
 
     $valor_total = $quantidade * $valor;
@@ -58,7 +59,6 @@ if (@count($res) > 0) {
     $query_total = $pdo->query("SELECT SUM(valor_total) as total FROM itens_venda WHERE usuario = '$id_usuario' AND venda = 0");
     $res_total = $query_total->fetchAll(PDO::FETCH_ASSOC);
     $total_compra = $res_total[0]['total'];
-    
 }
 
 

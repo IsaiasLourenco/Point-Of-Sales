@@ -62,7 +62,7 @@ if ($desconto_porcentagem == 'Sim') {
                     <p class="background">
                         Caixa <strong><?php echo $id_caixa ?></strong> aberto. Operado por <strong><?php echo $nome_operador ?></strong>
                         &nbsp;&nbsp;
-                        <a href="index.php" title="Voltar para a Home">
+                        <a href="../painel-operador/index.php" title="Voltar para a Home">
                             <i class="bi bi-house"></i>
                         </a>
                     </p>
@@ -154,8 +154,8 @@ if ($desconto_porcentagem == 'Sim') {
                 <div class="modal-body">
 
                     <div class="mb-3">
-                        <label for="exampleFormControlInput1" class="form-label">Gerente</label>
-                        <select class="form-select mt-1" aria-label="Default select example" name="gerente">
+                        <label for="gerente" class="form-label">Gerente</label>
+                        <select class="form-select mt-1" aria-label="Default select example" name="gerente" id="gerente">
                             <?php
                             $query = $pdo->query("SELECT * FROM usuarios WHERE nivel = 'Administrador' ORDER BY nome ASC");
                             $res = $query->fetchAll(PDO::FETCH_ASSOC);
@@ -174,7 +174,7 @@ if ($desconto_porcentagem == 'Sim') {
                     </div>
 
                     <div class="mb-3">
-                        <label for="exampleFormControlInput1" class="form-label">Senha Gerente</label>
+                        <label for="senha_gerente" class="form-label">Senha Gerente</label>
                         <input type="password" class="form-control" id="senha_gerente" name="senha_gerente" placeholder="Senha Gerente" required="">
                     </div>
 
@@ -210,7 +210,7 @@ if ($desconto_porcentagem == 'Sim') {
                 <div class="modal-body">
 
                     <div class="mb-3">
-                        <label for="exampleFormControlInput1" class="form-label">Forma de Pagamento</label>
+                        <label for="forma_pgto" class="form-label">Forma de Pagamento</label>
                         <select class="form-select mt-1" aria-label="Default select example" name="forma_pgto" id="forma_pgto">
                             <?php
                             $query = $pdo->query("SELECT * from forma_pgtos order by id asc");
@@ -264,33 +264,27 @@ if ($desconto_porcentagem == 'Sim') {
 <!-- AJAX PARA BUSCAR DADOS DO PRODUTO E MOSTRAR NOS CAMPOS -->
 <script type="text/javascript">
     document.getElementById('quantidade').addEventListener('input', function() {
-        // Obtém o valor digitado no campo Quantidade
         let quantidade = document.getElementById('quantidade').value;
-
-        // Verifica se o número é muito longo (ajuste o limite conforme necessário)
-        if (quantidade.length > 5) { // Exemplo: limite de 5 dígitos
-            alert("O valor digitado é muito longo! Verifique a quantidade.");
-
-            // Adiciona um pequeno atraso antes de resetar e mover o foco
+        if (quantidade.length > 5) {
+            document.activeElement.blur();
             setTimeout(() => {
-                // Reseta o campo Quantidade para "001"
+                alert("O valor digitado é muito longo! Verifique a quantidade.");
                 document.getElementById('quantidade').value = "001";
-
-                // Foca automaticamente no campo Código de Barras
                 document.getElementById('codigo').focus();
-            }, 200); // Espera 200ms para dar tempo de leitura do alerta
+            }, 100);
         }
+
     });
-    let isProcessing = false; //Flag para evitar duplicidades no leitor
+    let isProcessing = false;
     let Timer;
     $("#codigo").keyup(function() {
-        clearTimeout(Timer); //Limpa o timer
+        clearTimeout(Timer);
         Timer = setTimeout(() => {
             if (!isProcessing) {
-                isProcessing = true; //Ativa a Flag anti duplicidades
+                isProcessing = true;
                 buscarDados();
             }
-        }, 100);
+        }, 300);
     });
 </script>
 <!-- CONTINUAÇÃO -->
@@ -299,59 +293,87 @@ if ($desconto_porcentagem == 'Sim') {
     let subTotal = 0;
 
     function buscarDados() {
+        console.log("Iniciando buscarDados..."); //1
+
         $.ajax({
             url: pagina + "/buscar-dados.php",
             method: 'POST',
             data: $('#form-buscar').serialize(),
             dataType: "html",
-
             success: function(result) {
-                var array = result.split("&-/z");
-                var nome = array[0];
-                var descricao = array[1];
-                var valor = array[2];
-                var estoque = array[3];
-                var imagem = array[4];
-                var totalItem = array[5];
-                var totalCompra = array[6];
 
-                if (nome.trim() != "PRODUTO NÃO ENCONTRADO!!!") {
-                    document.getElementById('produto').value = nome;
-                    document.getElementById('descricao').value = descricao;
-                    valor = "R$ " + valor.replace(".", ",");
-                    document.getElementById('valor_unitario').value = valor;
-                    document.getElementById('estoque').value = estoque;
-                    $('#imagem').attr('src', '../assets/img/produtos/' + imagem);
+                console.log("Resposta recebida (primeira execução):", result); //2
 
-                    var audio = new Audio('../assets/img/barCode.wav');
-                    audio.addEventListener('canplaythrough', function() {
-                        audio.play();
-                    })
-                    totalItem = parseFloat(totalItem).toFixed(2);
-                    totalItem = "R$ " + totalItem.replace(".", ",");
-                    document.getElementById('total_item').value = totalItem;
+                if (!result) {
+                    console.error("Resposta vazia ou erro no servidor."); //3
 
-                    document.getElementById("total_compra").value = "R$ " + totalCompra;
-
-                    // **Novas funcionalidades**
-                    // Resetar quantidade para "001"
-                    document.getElementById('quantidade').value = "001";
-
-                    // Limpar o campo código de barras
-                    document.getElementById('codigo').value = "";
-                    document.getElementById('codigo').focus();
-
-                    // Garantir que listarProdutos() seja executado depois
-                    setTimeout(() => {
-                        listarProdutos();
-                    }, 100);
-
+                    alert("Erro ao processar os dados. Tente novamente.");
+                    isProcessing = false;
+                    return;
                 }
 
-                isProcessing = false; //Desativa a flag antiduplicidade após concluir a requisição do produto
+                if (result.includes("Estoque insuficiente!")) {
+                    alert(result);
+                    console.log("Estoque insuficiente detectado. Interrompendo fluxo..."); //4
+
+                    document.getElementById('codigo').value = "";
+                    document.getElementById('codigo').focus();
+                    isProcessing = false;
+                    return;
+                } else {
+                    var array = result.split("&-/z");
+                    console.log("Array gerado após split:", array); //5
+
+                    var nome = array[0];
+                    var descricao = array[1];
+                    var valor = array[2];
+                    var estoque = array[3];
+                    var imagem = array[4];
+                    var totalItem = array[5];
+                    var totalCompra = array[6];
+                    if (nome.trim() != "PRODUTO NÃO ENCONTRADO!!!") {
+                        console.log("Produto encontrado:", nome); //6
+
+                        document.getElementById('produto').value = nome;
+                        document.getElementById('descricao').value = descricao;
+                        valor = valor ? "R$ " + valor.replace(".", ",") : "R$ 0,00"; // Garantir que valor não seja undefined
+                        document.getElementById('valor_unitario').value = valor;
+                        document.getElementById('estoque').value = estoque;
+                        if (!imagem) {
+                            $('#imagem').attr('src', '../assets/img/produtos/sem-foto.jpg');
+                        } else {
+                            $('#imagem').attr('src', '../assets/img/produtos/' + imagem.replace(/\s/g, '%20'));
+                        }
+                        var audio = new Audio('../assets/img/barCode.wav');
+                        audio.addEventListener('canplaythrough', function() {
+                            audio.play();
+                        })
+                        totalItem = parseFloat(totalItem).toFixed(2);
+                        totalItem = "R$ " + totalItem.replace(".", ",");
+                        document.getElementById('total_item').value = totalItem;
+                        document.getElementById("total_compra").value = "R$ " + totalCompra;
+                        document.getElementById('quantidade').value = "001";
+                        document.getElementById('codigo').value = "";
+                        document.getElementById('codigo').focus();
+                        setTimeout(() => {
+                            console.log("Executando listarProdutos após atraso."); //7
+
+                            listarProdutos();
+                        }, 100);
+                    } else {
+                        console.warn("Produto não encontrado:", nome); //8
+
+                    }
+                }
+                console.log("Finalizando fluxo com sucesso."); //9
+
+                isProcessing = false;
             },
-            error: function() {
-                isProcessing = false; //Destrava a flag em caso de erro.
+            error: function(xhr, status, error) {
+                console.error("Erro na requisição AJAX:", error); //10
+                
+                alert("Erro ao buscar dados do servidor. Tente novamente.");
+                isProcessing = false;
 
             }
         });
@@ -369,12 +391,9 @@ if ($desconto_porcentagem == 'Sim') {
             method: 'POST',
             data: $('#form-buscar').serialize(),
             dataType: "html",
-
             success: function(result) {
                 $("#listar").html(result);
-                // Recalcula o subtotal com base nos itens listados
                 recalcularSubTotal();
-
             },
             error: function(xhr, status, error) {
                 console.error("Erro ao listar produtos:", status, error);
@@ -389,21 +408,16 @@ if ($desconto_porcentagem == 'Sim') {
 <script type="text/javascript">
     function recalcularSubTotal() {
         let novoSubTotal = 0;
-
         $(".item-total").each(function() {
-
             let valor = $(this).text().replace("R$ ", "").replace(",", ".");
             let valorFloat = parseFloat(valor);
 
             if (!isNaN(valorFloat)) {
-                novoSubTotal += valorFloat; // Soma os valores ao subtotal
+                novoSubTotal += valorFloat;
             }
         });
-
         let subTotalF = novoSubTotal.toFixed(2).replace(".", ",");
         let valor = document.getElementById('sub_total_item').value = "R$ " + subTotalF;
-
-        // Atualiza a variável global, se necessário
         subTotal = novoSubTotal;
     }
 </script>
@@ -454,38 +468,32 @@ if ($desconto_porcentagem == 'Sim') {
     <!-- Script para Desconto em Porcentagem -->
     <script type="text/javascript">
         $(document).ready(function() {
-            
             $("#desconto").on("blur", function() {
-                let valor = $(this).val().replace("%", "").replace(",", ".").trim(); // Remove "%"
+                let valor = $(this).val().replace("%", "").replace(",", ".").trim();
                 if (valor === "" || isNaN(valor)) {
-                    valor = 0; // Define como 0 se inválido
+                    valor = 0;
                 } else {
-                    valor = parseFloat(valor); // Converte para número
+                    valor = parseFloat(valor);
                 }
-
-                $(this).val(valor.toFixed(2) + "%"); // Formata como porcentagem
-
+                $(this).val(valor.toFixed(2) + "%");
                 aplicarDesconto();
             });
 
             function aplicarDesconto() {
-                let valorCampo = $("#desconto").val().replace("%", "").replace(",", ".").trim(); // Remove "%"
-                let desconto = parseFloat(valorCampo) || 0; // Garante número válido
-
+                let valorCampo = $("#desconto").val().replace("%", "").replace(",", ".").trim();
+                let desconto = parseFloat(valorCampo) || 0;
                 let totalCompra = parseFloat($("#total_compra").val().replace("R$", "").replace(",", ".")) || 0;
-
-                let descontoAplicado = totalCompra * (desconto / 100); // Cálculo de porcentagem
-
+                let descontoAplicado = totalCompra * (desconto / 100);
                 $.ajax({
                     url: pagina + "/aplicar-desconto-porcentagem.php",
                     method: "POST",
                     data: {
                         "desconto": desconto
-                    }, // Envia desconto já aplicado
+                    },
                     dataType: "html",
                     success: function(result) {
                         var array = result.split("&-/z");
-                        var totalCompra = array[0]; // Total atualizado
+                        var totalCompra = array[0];
                         document.getElementById("total_compra").value = "R$ " + totalCompra;
                     },
                     error: function(xhr, status, error) {
@@ -493,7 +501,6 @@ if ($desconto_porcentagem == 'Sim') {
                     },
                 });
             }
-            
         });
     </script>
 <?php else : ?>
@@ -501,32 +508,29 @@ if ($desconto_porcentagem == 'Sim') {
     <script type="text/javascript">
         $(document).ready(function() {
             $("#desconto").on("blur", function() {
-                let valor = $(this).val().replace("R$", "").replace(",", ".").trim(); // Remove "R$"
+                let valor = $(this).val().replace("R$", "").replace(",", ".").trim();
                 if (valor === "" || isNaN(valor)) {
-                    valor = 0; // Define como 0 se inválido
+                    valor = 0;
                 } else {
-                    valor = parseFloat(valor); // Converte para número
+                    valor = parseFloat(valor);
                 }
-
-                $(this).val("R$ " + valor.toFixed(2).replace(".", ",")); // Formata como moeda
-
+                $(this).val("R$ " + valor.toFixed(2).replace(".", ","));
                 aplicarDesconto();
             });
 
             function aplicarDesconto() {
-                let valorCampo = $("#desconto").val().replace("R$", "").replace(",", ".").trim(); // Remove "R$"
-                let desconto = parseFloat(valorCampo) || 0; // Garante número válido
-
+                let valorCampo = $("#desconto").val().replace("R$", "").replace(",", ".").trim();
+                let desconto = parseFloat(valorCampo) || 0;
                 $.ajax({
                     url: pagina + "/aplicar-desconto-moeda.php",
                     method: "POST",
                     data: {
                         desconto: desconto
-                    }, // Envia valor do desconto
+                    },
                     dataType: "html",
                     success: function(result) {
                         var array = result.split("&-/z");
-                        var totalCompra = array[0]; // Total atualizado
+                        var totalCompra = array[0];
                         document.getElementById("total_compra").value = "R$ " + totalCompra;
                     },
                     error: function(xhr, status, error) {
@@ -541,40 +545,27 @@ if ($desconto_porcentagem == 'Sim') {
 
 <!-- TROCO E VALOR RECEBIDO -->
 <script type="text/javascript">
-    // Evento para calcular o troco ao sair do campo "Valor Recebido"
     $("#valor_recebido").on("blur", function() {
         let valor = $(this).val().replace("R$", "").replace(",", ".").trim();
         if (valor === "" || isNaN(valor)) {
-            valor = 0; // Define como 0 se vazio ou inválido
+            valor = 0;
         } else {
-            valor = parseFloat(valor); // Converte para número
+            valor = parseFloat(valor);
         }
-
-        // Formata o valor com "R$" e duas casas decimais
         $(this).val("R$ " + valor.toFixed(2).replace(".", ","));
-
         calcularTroco();
     });
 
     function calcularTroco() {
-        // Captura o valor recebido pelo cliente
         let valorRecebido = $("#valor_recebido").val().replace("R$", "").replace(",", ".").trim();
-        valorRecebido = parseFloat(valorRecebido) || 0; // Garante um número válido
-
-        // Captura o total da compra
+        valorRecebido = parseFloat(valorRecebido) || 0;
         let totalCompra = $("#total_compra").val().replace("R$", "").replace(",", ".").trim();
-        totalCompra = parseFloat(totalCompra) || 0; // Garante um número válido
-
-        // Calcula o troco
+        totalCompra = parseFloat(totalCompra) || 0;
         let troco = valorRecebido - totalCompra;
-
-        // Se o troco for negativo, alerta que o valor recebido é insuficiente
         if (troco < 0) {
             alert("O valor recebido é insuficiente!");
-            troco = 0; // Define troco como 0 para evitar exibição negativa
+            troco = 0;
         }
-
-        // Formata o troco como moeda e atualiza o campo "Troco"
         $("#troco").val("R$ " + troco.toFixed(2).replace(".", ","));
     }
 </script>
