@@ -28,4 +28,4 @@ $relatorio_pdf = 'Sim';
 
 $cabecalho_img_rel = '';
 
-$desconto_porcentagem='Sim';
+$desconto_porcentagem = '';

@@ -13,7 +13,7 @@ $query_con->execute();
 $res_con = $query_con->fetchAll(PDO::FETCH_ASSOC);
 
 if (@count($res_con) == 0) {
-    echo 'A senha do Gerente está Incorreta, Não foi possível excluir o item!';
+    echo 'A senha do Gerente está Incorreta, <strong>NÃO</strong> foi possível excluir o item!';
     exit();
 }
 

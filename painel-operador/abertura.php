@@ -21,7 +21,6 @@ if(@count($res_con) == 0){
 	}
 
 // VERIFICAR SE O CAIXA ESTÁ ABERTO
-
 $query_con = $pdo->prepare("SELECT * from caixa WHERE caixa = :caixa AND status_caixa = 'Aberto' ");
 $query_con->bindValue(":caixa", $caixa);
 $query_con->execute();

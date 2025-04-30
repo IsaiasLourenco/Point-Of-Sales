@@ -184,3 +184,17 @@ Estilização do subtotal
   font-weight: bold;
   color: #FF0000;
 }
+
+.total {
+  font-size: 24px;
+  font-weight: bold;
+  color: blue;
+}
+
+.Troco {
+  font-size: 24px;
+  font-weight: bold;
+  color: orange;
+  background-color: grey;
+}
+
