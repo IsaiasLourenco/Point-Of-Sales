@@ -2,10 +2,12 @@
 @session_start();
 require_once("../../conexao.php");
 
-error_reporting(E_ALL);
-ini_set('display_errors', 1);
+// Garante que os valores nunca sejam NULL
+$forma_pgto = $_POST['forma_pgto'] ?? '0';
+$desconto = str_replace("R$", "", $_POST['desconto'] ?? '0.00');
+$valor_recebido = str_replace("R$", "", $_POST['valor_recebido'] ?? '0.00');
+$troco = isset($_POST['troco_input']) ? str_replace(["R$", ","], ["", "."], trim($_POST['troco_input'])) : '0.00';
 
-// Registrar os dados recebidos para depuração
 error_log("Dados recebidos no POST: " . print_r($_POST, true));
 
 
@@ -14,31 +16,30 @@ $query_abertura = $pdo->query("SELECT * FROM caixa WHERE operador = '$id_usuario
 $res_abertura = $query_abertura->fetchAll(PDO::FETCH_ASSOC);
 $id_abertura = $res_abertura[0]['id'];
 
-$quantidade = $_POST['quantidade'];
+@$quantidade = $_POST['quantidade'];
 
 $imagem = "sem-foto.jpg";
-
-$codigo = $_POST['codigo'];
-$total_compra = 0;
-$query = $pdo->query("SELECT * FROM produtos WHERE codigo = '$codigo'");
-$res = $query->fetchAll(PDO::FETCH_ASSOC);
-
-$query_est = $pdo->query("SELECT * FROM produtos WHERE id = '$id_produto'");
-
+error_log("FORMA PGTO: $forma_pgto | DESCONTO: $desconto | VALOR RECEBIDO: $valor_recebido | TROCO: $troco");
 $query_total = $pdo->query("SELECT SUM(valor_total) as total FROM   itens_venda 
                                                                         WHERE 
                                                                         usuario = '$id_usuario' 
                                                                         AND 
                                                                         venda = 0");
 $res_total = $query_total->fetchAll(PDO::FETCH_ASSOC);
-$total_compra = $res_total[0]['total'];
+$total_compra = $res_total[0]['total'] ?? 0;
+// Validar se há itens antes de fechar a venda
+if ($total_compra <= 0) {
+    echo "Erro: Nenhum item foi adicionado à venda.";
+    exit();
+}
+
+error_log("POST recebido: " . print_r($_POST, true)); // Confirma o que está chegando do frontend
 
 
-// **2. Captura dos Dados Enviados**
-$forma_pgto = $_POST['forma_pgto_input'];
-$valor_recebido = str_replace(",", ".", $_POST['valor_recebido']);
-$troco = str_replace(",", ".", $_POST['valor_troco']);
-$desconto = str_replace(",", ".", $_POST['desconto']);
+
+error_log("Troco final após processamento: " . $troco);
+
+error_log("Capturado no backend -> FORMA PGTO: $forma_pgto | DESCONTO: $desconto | VALOR RECEBIDO: $valor_recebido | TROCO: $troco");
 
 
 // **4. Calcular total_compra no backend**
@@ -51,6 +52,8 @@ if ($total_compra <= 0) {
     echo "Erro: Total da compra é inválido.";
     exit();
 }
+error_log("Debug: Forma de pagamento = $forma_pgto"); 
+
 
 try {
     // **6. Registrar Venda na Tabela `vendas`**
@@ -92,6 +95,7 @@ try {
 
     // **9. Retornar Sucesso**
     echo "Venda finalizada com sucesso!";
+    echo "Ver banco de dados";
 } catch (Exception $e) {
     // Registrar Erro para Depuração
     error_log("Erro ao processar a venda: " . $e->getMessage());

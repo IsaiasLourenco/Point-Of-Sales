@@ -1,35 +1,35 @@
 <?php
-
 @session_start();
-$id_usuario = $_SESSION['id_usuario'];
 require_once('../conexao.php');
 require_once('verificar-permissao.php');
 
-$pag = 'pdv';
+$id_usuario = $_SESSION['id_usuario'];
+
+$pagina = 'pdv';
 
 //VERIFICAR SE O CAIXA ESTÁ ABERTO
-$query = $pdo->query("SELECT * from caixa where operador = '$id_usuario' and status_caixa = 'Aberto' ");
+$query = $pdo->query("SELECT * FROM caixa WHERE operador = '$id_usuario' AND status_caixa = 'Aberto' ");
 $res = $query->fetchAll(PDO::FETCH_ASSOC);
 $total_reg = @count($res);
 if ($total_reg == 0) {
-  echo "<script language='javascript'>window.location='index.php'</script>";
+    echo "<script language='javascript'>window.location='index.php'</script>";
 } else {
-  $id_caixa = $res[0]['id'];
-  $id_operador = $res[0]['operador'];
-  $id_caixa = str_pad($id_caixa, 3, "0", STR_PAD_LEFT);
+    $id_caixa = $res[0]['id'];
+    $id_operador = $res[0]['operador'];
+    $id_caixa = str_pad($id_caixa, 3, "0", STR_PAD_LEFT);
 
-  $query_op = $pdo->query("SELECT * FROM usuarios WHERE id = '$id_operador'");
-  $res_op = $query_op->fetchAll(PDO::FETCH_ASSOC);
-  $total_reg_op = @count($res_op);
-  if ($total_reg_op > 0) {
-    $nome_operador = $res_op[0]['nome'];
-  }
+    $query_op = $pdo->query("SELECT * FROM usuarios WHERE id = '$id_operador'");
+    $res_op = $query_op->fetchAll(PDO::FETCH_ASSOC);
+    $total_reg_op = @count($res_op);
+    if ($total_reg_op > 0) {
+        $nome_operador = $res_op[0]['nome'];
+    }
 }
 
 if ($desconto_porcentagem == 'Sim') {
-  $desc = '%';
+    $desc = '%';
 } else {
-  $desc = 'R$';
+    $desc = 'R$';
 }
 
 ?>
@@ -38,628 +38,574 @@ if ($desconto_porcentagem == 'Sim') {
 <html class="wide wow-animation" lang="pt-br">
 
 <head>
-  <title><?php echo $nome_sistema ?></title>
-  <meta name="format-detection" content="telephone=no">
-  <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <title><?php echo $nome_sistema ?></title>
+    <meta name="format-detection" content="telephone=no">
+    <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
 
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-giJF6kkoqNQ00vy+HMDP7azOuL0xtbfIcaT9wjKHr8RbDVddVHyTfAAsrekwKmP1" crossorigin="anonymous">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-giJF6kkoqNQ00vy+HMDP7azOuL0xtbfIcaT9wjKHr8RbDVddVHyTfAAsrekwKmP1" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/js/bootstrap.bundle.min.js" integrity="sha384-ygbV9kiqUc6oa4msXn9868pTtWMgiQaeYH7/t7LECLbyPA2x65Kgf80OJFdroafW" crossorigin="anonymous"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/js/bootstrap.bundle.min.js" integrity="sha384-ygbV9kiqUc6oa4msXn9868pTtWMgiQaeYH7/t7LECLbyPA2x65Kgf80OJFdroafW" crossorigin="anonymous"></script>
-
-  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-
-  <link rel="stylesheet" href="../assets/css/telapdv.css">
-  <link rel="stylesheet" href="../assets/css/style.css">
-
-  <link rel="shortcut icon" href="../assets/img/ico.ico" />
-
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.3.0/font/bootstrap-icons.css">
-
-
+    <link rel="stylesheet" href="../assets/css/telapdv.css">
+    <link rel="stylesheet" href="../assets/css/style.css">
+    <link rel="shortcut icon" href="../assets/img/ico.ico" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.3.0/font/bootstrap-icons.css">
 </head>
 
 <body>
 
+    <div class='checkout'>
 
-  <div class='checkout'>
-    <div class="row">
-      <div class="col-md-5 col-sm-12">
-        <div class='order py-2'>
+        <div class="row">
+            <div class="col-md-5 col-sm-12">
+                <div class='order py-2'>
+                    <p class="background">
+                        Caixa <strong><?php echo $id_caixa ?></strong> aberto. Operado por <strong><?php echo $nome_operador ?></strong>
+                        &nbsp;&nbsp;
+                        <a href="../painel-operador/index.php" title="Voltar para a Home">
+                            <i class="bi bi-house"></i>
+                        </a>
+                    </p>
+                    <p class="background">LISTA DE PRODUTOS</p>
+                    <span id="listar">
+                    </span>
+                </div>
+            </div>
 
-          <p class="background">
-            Caixa <strong><?php echo $id_caixa ?></strong> aberto. Operado por <strong><?php echo $nome_operador ?></strong>
-            &nbsp;&nbsp;
-            <a href="../painel-operador/index.php" title="Voltar para a Home">
-              <i class="bi bi-house"></i>
-            </a>
-          </p>
+            <div id='payment' class='payment col-md-7'>
+                <form method="post" id="form-buscar">
+                    <div class="row py-2">
+                        <div class="col-md-7">
 
-          <p class="background">LISTA DE PRODUTOS</p>
+                            <p class="background">CÓDIGO DE BARRAS</p>
+                            <input type="text" class="form-control form-control-lg" id="codigo" name="codigo" placeholder="Código de Barras">
 
-          <span id="listar">
+                            <p class="background mt-3">PRODUTO</p>
+                            <input type="text" class="form-control  form-control-md" id="produto" name="produto" placeholder="Produto" readonly>
 
-          </span>
+                            <p class="background mt-3">DESCRIÇÃO</p>
+                            <input type="text" class="form-control  form-control-md" id="descricao" name="descricao" placeholder="Descrição do Produto" readonly>
 
+                            <div class="row">
+                                <div class="col-6">
+                                    <p class="background mt-3">QUANTIDADE</p>
+                                    <input type="text" class="form-control  form-control-md" id="quantidade" name="quantidade" placeholder="Quantidade">
 
+                                    <p class="background mt-1">VALOR UNITÁRIO</p>
+                                    <input type="text" class="form-control  form-control-md" id="valor_unitario" name="valor_unitario" placeholder="Valor" readonly>
 
+                                    <p class="background mt-1">ESTOQUE</p>
+                                    <input type="text" class="form-control  form-control-md" id="estoque" name="estoque" placeholder="Estoque" readonly>
+                                </div>
+
+                                <div class="col-6 mt-4">
+                                    <img id="imagem" src="../assets/img/produtos/sem-foto.jpg" width="100%">
+                                </div>
+                            </div>
+
+                        </div>
+
+                        <div class="col-md-5">
+
+                            <p class="background">TOTAL DO ITEM</p>
+                            <input type="text" class="form-control form-control-md" id="total_item" name="total_item" placeholder="Total por Itens" readonly>
+
+                            <p class="background mt-3">SUB TOTAL</p>
+                            <input type="text" class="subTotal form-control  form-control-md" id="sub_total_item" name="sub_total_item" placeholder="Sub Total" readonly>
+
+                            <p class="background mt-3">DESCONTO EM <?php echo $desc ?></p>
+                            <input type="text" class="form-control  form-control-md" id="desconto" name="desconto" placeholder="Desconto em <?php echo $desc ?>">
+
+                            <p class="background mt-3">TOTAL COMPRA</p>
+                            <input type="text" class="total form-control  form-control-md" id="total_compra" name="total_compra" placeholder="Total da Compra" required="" readonly>
+
+                            <p class="background mt-3">VALOR RECEBIDO</p>
+                            <input type="text" class="form-control  form-control-md" id="valor_recebido" name="valor_recebido" placeholder="R$ 0,00">
+
+                            <p class="background mt-3">TROCO</p>
+                            <input type="text" class="troco form-control  form-control-md" id="troco" name="valor_troco" placeholder="Valor Troco" readonly>
+
+                            <span style="text-align:center">Use <strong>F2</strong> para fechar a venda</span>
+
+                            <input type="hidden" name="forma_pgto_input" id="forma_pgto_input">
+                            <input type="hidden" name="desconto_input" id="desconto_input">
+                            <input type="hidden" name="recebido_input" id="recebido_input">
+                            <input type="hidden" name="troco_input" id="troco_input">
+
+                        </div>
+                    </div>
+
+                </form>
+
+            </div>
 
         </div>
-      </div>
-
-
-
-      <div id='payment' class='payment col-md-7'>
-        <form method="post" id="form-buscar">
-          <div class="row py-2">
-            <div class="col-md-7">
-
-              <p class="background">CÓDIGO DE BARRAS</p>
-              <input type="text" class="form-control form-control-lg" id="codigo" name="codigo" placeholder="Código de Barras">
-
-              <p class="background mt-3">PRODUTO</p>
-              <input type="text" class="form-control  form-control-md" id="produto" name="produto" placeholder="Produto">
-
-              <p class="background mt-3">DESCRIÇÃO</p>
-              <input type="text" class="form-control  form-control-md" id="descricao" name="descricao" placeholder="Descrição do Produto">
-
-              <div class="row">
-                <div class="col-6">
-                  <p class="background mt-3">QUANTIDADE</p>
-                  <input type="text" class="form-control  form-control-md" id="quantidade" name="quantidade" placeholder="Quantidade">
-
-                  <p class="background mt-1">VALOR UNITÁRIO</p>
-                  <input type="text" class="form-control  form-control-md" id="valor_unitario" name="valor_unitario" placeholder="Valor">
-
-                  <p class="background mt-1">ESTOQUE</p>
-                  <input type="text" class="form-control  form-control-md" id="estoque" name="estoque" placeholder="Estoque">
-                </div>
-
-                <div class="col-6 mt-4">
-                  <img id="imagem" src="" width="100%">
-                </div>
-              </div>
-
-
-
-            </div>
-
-            <div class="col-md-5">
-
-              <p class="background">TOTAL DO ITEM</p>
-              <input type="text" class="form-control form-control-md" id="total_item" name="total_item" placeholder="Total do Item">
-
-              <p class="background mt-3">SUB TOTAL</p>
-              <input type="text" class="subTotal form-control  form-control-md" id="sub_total_item" name="sub_total_item" placeholder="Sub Total">
-
-              <p class="background mt-3">DESCONTO EM <?php echo $desc ?></p>
-              <input type="text" class="form-control  form-control-md" id="desconto" name="desconto" placeholder="Desconto em <?php echo $desc ?>">
-
-
-              <p class="background mt-3">TOTAL COMPRA</p>
-              <input type="text" class="form-control  form-control-md total" id="total_compra" name="total_compra" placeholder="Total da Compra" required="">
-
-              <p class="background mt-3">VALOR RECEBIDO</p>
-              <input type="text" class="form-control  form-control-md" id="valor_recebido" name="valor_recebido" placeholder="R$ 0,00">
-
-              <p class="background mt-3">TROCO</p>
-              <input type="text" class="Troco form-control  form-control-md" id="valor_troco" name="valor_troco" placeholder="Valor Troco">
-
-              <input type="hidden" name="forma_pgto_input" id="forma_pgto_input">
-
-
-            </div>
-          </div>
-
-        </form>
-
-
-
-      </div>
-
 
     </div>
-  </div>
 
 </body>
 
 </html>
 
-
-
-
-
-
-
-<div class="modal fade" tabindex="-1" id="modalDeletar">
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title titulo">Excluir Item</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-      </div>
-      <form method="POST" id="form-excluir">
-        <div class="modal-body">
-
-          <div class="mb-3">
-            <label for="exampleFormControlInput1" class="form-label">Gerente</label>
-            <select class="form-select mt-1" aria-label="Default select example" name="gerente">
-              <?php
-              $query = $pdo->query("SELECT * from usuarios where nivel = 'Administrador' order by nome asc");
-              $res = $query->fetchAll(PDO::FETCH_ASSOC);
-              $total_reg = @count($res);
-              if ($total_reg > 0) {
-
-                for ($i = 0; $i < $total_reg; $i++) {
-                  foreach ($res[$i] as $key => $value) {
-                  }
-              ?>
-
-                  <option value="<?php echo $res[$i]['id'] ?>"><?php echo $res[$i]['nome'] ?></option>
-
-              <?php }
-              } else {
-                echo '<option value="">Cadastre um Gerente Administrador</option>';
-              } ?>
-
-
-            </select>
-          </div>
-
-
-          <div class="mb-3">
-            <label for="exampleFormControlInput1" class="form-label">Senha Gerente</label>
-            <input type="password" class="form-control" id="senha_gerente" name="senha_gerente" placeholder="Senha Gerente" required="">
-          </div>
-
-          <small>
-            <div style="text-align: center;" class="mt-1" id="mensagem-excluir">
-
+<!-- MODAL DELETAR ITEM -->
+<div class="modal fade" tabindex="-1" id="modalExcluir">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title titulo">Excluir Item</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-          </small>
+            <form method="POST" id="form-excluir">
+                <div class="modal-body">
 
+                    <div class="mb-3">
+                        <label for="gerente" class="form-label">Gerente</label>
+                        <select class="form-select mt-1" aria-label="Default select example" name="gerente" id="gerente">
+                            <?php
+                            $query = $pdo->query("SELECT * FROM usuarios WHERE nivel = 'Administrador' ORDER BY nome ASC");
+                            $res = $query->fetchAll(PDO::FETCH_ASSOC);
+                            $total_reg = @count($res);
+                            if ($total_reg > 0) {
+                                for ($i = 0; $i < $total_reg; $i++) {
+                                    foreach ($res[$i] as $key => $value) {
+                                    }
+                            ?>
+                                    <option value="<?php echo $res[$i]['id'] ?>"><?php echo $res[$i]['nome'] ?></option>
+                            <?php }
+                            } else {
+                                echo '<option value="">Cadastre um Gerente Administrador</option>';
+                            } ?>
+                        </select>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="senha_gerente" class="form-label">Senha Gerente</label>
+                        <input type="password" class="form-control" id="senha_gerente" name="senha_gerente" placeholder="Senha Gerente" required="">
+                    </div>
+
+                    <small>
+                        <div style="text-align:center" class="mt-1" id="mensagem-excluir">
+
+                        </div>
+                    </small>
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" id="btn-fechar-excluir" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
+                    <button name="btn-excluir" id="btn-excluir" type="submit" class="btn btn-danger">Excluir</button>
+
+                    <input name="id" type="hidden" id="id_deletar_item">
+
+                </div>
+            </form>
         </div>
-        <div class="modal-footer">
-          <button type="button" id="btn-fechar" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
-          <button name="btn-excluir" id="btn-excluir" type="submit" class="btn btn-danger">Excluir</button>
-
-          <input name="id" type="hidden" id="id_deletar_item">
-
-        </div>
-      </form>
     </div>
-  </div>
 </div>
+<!-- FIM MODAL DELETAR ITEM -->
 
-
-
-
-
-
-
+<!-- MODAL FECHAR VENDA -->
 <div class="modal fade" tabindex="-1" id="modalVenda">
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h4 class="modal-title titulo">Fechar Venda</h4>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-      </div>
-      <form method="POST" id="form-fechar-venda">
-        <div class="modal-body">
-
-          <div class="mb-3">
-            <label for="exampleFormControlInput1" class="form-label">Forma de Pagamento</label>
-            <select class="form-select mt-1" aria-label="Default select example" name="forma_pgto" id="forma_pgto">
-              <?php
-              $query = $pdo->query("SELECT * from forma_pgtos order by id asc");
-              $res = $query->fetchAll(PDO::FETCH_ASSOC);
-              $total_reg = @count($res);
-              if ($total_reg > 0) {
-
-                for ($i = 0; $i < $total_reg; $i++) {
-                  foreach ($res[$i] as $key => $value) {
-                  }
-              ?>
-
-                  <option value="<?php echo $res[$i]['codigo'] ?>"><?php echo $res[$i]['nome'] ?></option>
-
-              <?php }
-              } else {
-                echo '<option value="">Cadastre uma Forma de Pagamento</option>';
-              } ?>
-
-
-            </select>
-          </div>
-
-
-
-          <small>
-            <div style="text-align: center;" class="mt-1" id="mensagem-venda">
-
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title titulo">Fechar Venda</h4>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-          </small>
+            <form method="POST" id="form-fechar-venda">
+                <div class="modal-body">
 
+                    <div class="mb-3">
+                        <label for="forma_pgto" class="form-label">Forma de Pagamento</label>
+                        <select class="form-select mt-1" aria-label="Default select example" name="forma_pgto" id="forma_pgto">
+                            <?php
+                            $query = $pdo->query("SELECT * from forma_pgtos order by id asc");
+                            $res = $query->fetchAll(PDO::FETCH_ASSOC);
+                            $total_reg = @count($res);
+                            if ($total_reg > 0) {
+                                for ($i = 0; $i < $total_reg; $i++) {
+                                    foreach ($res[$i] as $key => $value) {
+                                    }
+                            ?>
+                                    <option value="<?php echo $res[$i]['codigo'] ?>"><?php echo $res[$i]['nome'] ?></option>
+                            <?php }
+                            } else {
+                                echo '<option value="">Cadastre uma Forma de Pagamento</option>';
+                            } ?>
+                        </select>
+                    </div>
+
+                    <small>
+                        <div style="text-align: center;" class="mt-1" id="mensagem-venda">
+                        </div>
+                    </small>
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" id="btn-fechar-venda" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
+                    <button name="btn-venda" id="btn-venda" type="submit" class="btn btn-danger">Fechar Venda</button>
+
+                </div>
+            </form>
         </div>
-        <div class="modal-footer">
-          <button type="button" id="btn-fechar-venda" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
-          <button name="btn-venda" id="btn-venda" type="submit" class="btn btn-danger">Fechar Venda</button>
-
-
-        </div>
-      </form>
     </div>
-  </div>
 </div>
+<!-- FIM MODAL FECHAR VENDA -->
 
-
-
-
+<!-- Ajax para funcionar Mascaras JS -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.mask/1.14.11/jquery.mask.min.js"></script>
+<!-- Fim Ajax para funcionar Mascaras JS -->
 
-
-
-
+<!-- SCRIPT PARA INICIAR VENDA -->
 <script type="text/javascript">
-  $(document).ready(function() {
-    listarProdutos();
-    buscarDados();
-    document.getElementById('codigo').focus();
-    document.getElementById('quantidade').value = '001';
-    $('#imagem').attr('src', '../assets/img/produtos/sem-foto.jpg');
-  });
-</script>
-
-
-
-
-<!--AJAX PARA BUSCAR DADOS PARA OS INPUTS -->
-
-<script type="text/javascript">
-  document.getElementById('quantidade').addEventListener('input', function() {
-    let quantidade = document.getElementById('quantidade').value;
-    if (quantidade.length > 5) {
-      document.activeElement.blur();
-      setTimeout(() => {
-        alert("O valor digitado é muito longo! Verifique a quantidade.");
-        document.getElementById('quantidade').value = "001";
+    $(document).ready(function() {
+        listarProdutos();
         document.getElementById('codigo').focus();
-      }, 100);
-    }
-
-  });
-  let isProcessing = false;
-  let Timer;
-  $("#codigo").keyup(function() {
-    clearTimeout(Timer);
-    Timer = setTimeout(() => {
-      if (!isProcessing) {
-        isProcessing = true;
+        document.getElementById('quantidade').value = '001';
         buscarDados();
-      }
-    }, 300);
-  });
+    });
 </script>
+<!-- FIM SCRIPT PARA INICIAR VENDA -->
 
-
+<!-- AJAX PARA BUSCAR DADOS DO PRODUTO E MOSTRAR NOS CAMPOS -->
 <script type="text/javascript">
-  var pag = "<?= $pag ?>";
-
-  function buscarDados() {
-    $.ajax({
-      url: pag + "/buscar-dados.php",
-      method: 'POST',
-      data: $('#form-buscar').serialize(),
-      dataType: "html",
-
-      success: function(result) {
-        console.log("Dados recebidos do backend: ", result);
-        if (!result) {
-
-          alert("Erro ao processar os dados. Tente novamente.");
-          isProcessing = false;
-          return;
+    document.getElementById('quantidade').addEventListener('input', function() {
+        let quantidade = document.getElementById('quantidade').value;
+        if (quantidade.length > 5) {
+            document.activeElement.blur();
+            setTimeout(() => {
+                alert("O valor digitado é muito longo! Verifique a quantidade.");
+                document.getElementById('quantidade').value = "001";
+                document.getElementById('codigo').focus();
+            }, 100);
         }
 
-        $('#mensagem-venda').text("");
+    });
+    let isProcessing = false;
+    let Timer;
+    $("#codigo").keyup(function() {
+        clearTimeout(Timer);
+        Timer = setTimeout(() => {
+            if (!isProcessing) {
+                isProcessing = true;
+                buscarDados();
+            }
+        }, 300);
+    });
+</script>
+<!-- CONTINUAÇÃO -->
+<script type="text/javascript">
+    var pagina = "<?= $pagina ?>";
+    let subTotal = 0;
 
-        if (result && typeof result === 'string' && result.trim() === "Venda Salva!") {
-          $('#btn-fechar-venda').click();
-          window.location = "pdv.php";
-          return;
-        }
+    function buscarDados() {
+        $.ajax({
+            url: pagina + "/buscar-dados.php",
+            method: 'POST',
+            data: $('#form-buscar').serialize(),
+            dataType: "html",
+            success: function(result) {
+                if (!result) {
+                    alert("Erro ao processar os dados. Tente novamente.");
+                    isProcessing = false;
+                    return;
+                }
+                if (result.includes("Estoque insuficiente!")) {
+                    alert(result);
+                    document.getElementById('codigo').value = "";
+                    document.getElementById('codigo').focus();
+                    isProcessing = false;
+                    return;
+                } else {
+                    var array = result.split("&-/z");
+                    var nome = array[0];
+                    var descricao = array[1];
+                    var valor = array[2];
+                    var estoque = array[3];
+                    var imagem = array[4];
+                    var totalItem = array[5];
+                    var totalCompra = array[6];
+                    if (nome.trim() != "PRODUTO NÃO ENCONTRADO!!!") {
+                        document.getElementById('produto').value = nome;
+                        document.getElementById('descricao').value = descricao;
+                        valor = valor ? "R$ " + valor.replace(".", ",") : "R$ 0,00";
+                        document.getElementById('valor_unitario').value = valor;
+                        document.getElementById('estoque').value = estoque;
+                        if (!imagem) {
+                            $('#imagem').attr('src', '../assets/img/produtos/sem-foto.jpg');
+                        } else {
+                            $('#imagem').attr('src', '../assets/img/produtos/' + imagem.replace(/\s/g, '%20'));
+                        }
+                        var audio = new Audio('../assets/img/barCode.wav');
+                        document.addEventListener('click', function() {
+                            audio.play();
+                        }, {
+                            once: true
+                        });
 
+                        totalItem = parseFloat(totalItem).toFixed(2);
+                        totalItem = "R$ " + totalItem.replace(".", ",");
+                        document.getElementById('total_item').value = totalItem;
+                        document.getElementById("total_compra").value = "R$ " + totalCompra;
+                        document.getElementById('quantidade').value = "001";
+                        document.getElementById('codigo').value = "";
+                        document.getElementById('codigo').focus();
+                        document.getElementById('valor_recebido').value = "R$ " + totalCompra;
+                        setTimeout(() => {
+                            listarProdutos();
+                        }, 100);
+                    } else {
+                    }
+                }
+                isProcessing = false;
+            },
+            error: function(xhr, status, error) {
+                alert("Erro ao buscar dados do servidor. Tente novamente.");
+                isProcessing = false;
+            }
+        });
+    }
+</script>
+<!-- FIM AJAX PARA BUSCAR DADOS DO PRODUTO E MOSTRAR NOS CAMPOS -->
 
-        if (result && typeof result === 'string' && result.trim() === "Venda Salva!") {
-          $('#btn-fechar-venda').click();
-          window.location = "pdv.php";
-          return;
-        }
+<!-- AJAX PARA LISTAR PRODUTOS -->
+<script type="text/javascript">
+    var pagina = "<?= $pagina ?>";
 
-        if (result && typeof result === 'string' && result.trim() === "Não é possível efetuar uma venda sem itens!") {
-          $('#mensagem-venda').addClass('text-danger');
-          $('#mensagem-venda').text(result);
-          document.getElementById('forma_pgto_input').value = "";
-          isProcessing = false;
-          return;
-        }
-
-        if (result && typeof result === 'string' && result.trim() === "Código não Cadastrado") {
-          $('#mensagem-venda').addClass('text-danger')
-          $('#mensagem-venda').text(result)
-          document.getElementById('forma_pgto_input').value = "";
-          console.log('total');
-          isProcessing = false;
-          if (Number(document.getElementById('total_compra').value) === 0) {
-            document.getElementById('total_compra').value = 0;
-            document.getElementById('valor_troco').value = 0;
-          }
-        } else {
-
-          var array = result.split("&-/z");
-
-
-          if (array.length === 2) {
-            var ms1 = array[0];
-            var ms2 = array[1];
-            window.alert(ms1 + ms2)
-            document.getElementById('codigo').value = "";
-            document.getElementById('quantidade').value = "001";
-          } else {
-
-            var estoque = array[0];
-            var nome = array[1] || "";
-            var descricao = array[2] || "";
-            var imagem = array[3] || "";
-            var valor = array[4] || "0";
-            var subtotal = array[5] || "0";
-            var subtotalF = array[6] || "0";
-            var totalVenda = array[7] || "0";
-            var totalVendaF = array[8] || "0";
-            var troco = array[9] || "0";
-            var trocoF = array[10] || "0";
-            var valorTotalItem = array[11] || "0";
-
-            document.getElementById('total_compra').value = 'R$ ' + totalVendaF;
-
-            document.getElementById('valor_troco').value = 'R$ ' + trocoF;
-
-            if (nome && typeof nome === 'string' && nome.trim() != "Código não Cadastrado") {
-
-              document.getElementById('estoque').value = estoque;
-              document.getElementById('produto').value = nome;
-              document.getElementById('descricao').value = descricao;
-              document.getElementById('valor_unitario').value = 'R$ ' + valor;
-
-              valorItem = valor * quantidade;
-
-              if (!imagem || imagem.trim() === "") {
-                $('#imagem').attr('src', '../assets/img/produtos/sem-foto.jpg');
-              } else {
-                $('#imagem').attr('src', '../assets/img/produtos/' + imagem);
-              }
-
-
-              var audio = new Audio('../assets/img/barCode.wav');
-              audio.addEventListener('canplaythrough', function() {
-                audio.play();
-              });
-
-              document.getElementById('total_item').value = 'R$ ' + valorTotalItem;
-              document.getElementById('sub_total_item').value = 'R$ ' + totalVendaF;
-
-              document.getElementById('valor_recebido').value = 'R$' + valorRecebido;
-
-              document.getElementById('codigo').value = "";
-
-              valorTotalCompra = document.getElementById('total')
-
-              listarProdutos();
-
+    function listarProdutos() {
+        $.ajax({
+            url: pagina + "/listar-produtos.php",
+            method: 'POST',
+            data: $('#form-buscar').serialize(),
+            dataType: "html",
+            success: function(result) {
+                $("#listar").html(result);
+                recalcularSubTotal();
+            },
+            error: function(xhr, status, error) {
+                console.error("Erro ao listar produtos:", status, error);
             }
 
-          }
-          isProcessing = false;
-        }
-
-
-
-      }
-
-    });
-  }
+        });
+    }
 </script>
+<!-- FIM AJAX PARA LISTAR PRODUTOS -->
 
-
-
-
-
-
-
-<!--AJAX PARA MOSTRAR OS PRODUTOS DO ITEM DA VENDA -->
-
+<!-- RECALCULA TOTAIS -->
 <script type="text/javascript">
-  var pag = "<?= $pag ?>";
+    function recalcularSubTotal() {
+        let novoSubTotal = 0;
+        $(".item-total").each(function() {
+            let valor = $(this).text().replace("R$ ", "").replace(",", ".");
+            let valorFloat = parseFloat(valor);
 
-  function listarProdutos() {
-    $.ajax({
-      url: pag + "/listar-produtos.php",
-      method: 'POST',
-      data: $('#form-buscar').serialize(),
-      dataType: "html",
-
-      success: function(result) {
-        $("#listar").html(result);
-      }
-
-    });
-  }
+            if (!isNaN(valorFloat)) {
+                novoSubTotal += valorFloat;
+            }
+        });
+        let subTotalF = novoSubTotal.toFixed(2).replace(".", ",");
+        let valor = document.getElementById('sub_total_item').value = "R$ " + subTotalF;
+        subTotal = novoSubTotal;
+    }
 </script>
+<!-- FIM RECALCULA TOTAIS -->
 
-
-
-
-
-
-
-<!--AJAX PARA EXCLUIR DADOS -->
+<!-- SCRIPT PARA CHAMAR MODAL EXCLUI ITEM -->
 <script type="text/javascript">
-  $("#form-excluir").submit(function() {
-    var pag = "<?= $pag ?>";
-    event.preventDefault();
-    var formData = new FormData(this);
+    function modalExcluir(id) {
+        event.preventDefault();
+        document.getElementById('id_deletar_item').value = id;
+        var myModal = new bootstrap.Modal(document.getElementById('modalExcluir'), {})
+        myModal.show();
+    }
+</script>
+<!-- FIM SCRIPT PARA CHAMAR MODAL EXCLUI ITEM -->
 
-    $.ajax({
-      url: pag + "/excluir-item.php",
-      type: 'POST',
-      data: formData,
+<!-- AJAX EXCLUI ITEM -->
+<script type="text/javascript">
+    $("#form-excluir").submit(function() {
+        var pagina = "<?= $pagina ?>";
+        event.preventDefault();
+        var formData = new FormData(this);
+        $.ajax({
+            url: pagina + "/excluir-item.php",
+            type: 'POST',
+            data: formData,
+            success: function(mensagem) {
+                $('#mensagem').removeClass()
+                if (mensagem.trim() == "Excluído com Sucesso!") {
+                    $('#mensagem-excluir').addClass('text-success')
+                    $('#btn-fechar-excluir').click();
+                    window.location = "pdv.php";
+                } else {
+                    $('#mensagem-excluir').addClass('text-danger')
+                }
+                $('#mensagem-excluir').text(mensagem)
+            },
+            cache: false,
+            contentType: false,
+            processData: false,
+        });
+    });
+</script>
+<!-- FIM AJAX EXCLUI ITEM -->
 
-      success: function(mensagem) {
+<!-- SCRIPT PARA APLICAR DESCONTO -->
+<?php if ($desconto_porcentagem === 'Sim') : ?>
+    <!-- Script para Desconto em Porcentagem -->
+    <script type="text/javascript">
+        $(document).ready(function() {
+            $("#desconto").on("blur", function() {
+                let valor = $(this).val().replace("%", "").replace(",", ".").trim();
+                if (valor === "" || isNaN(valor)) {
+                    valor = 0;
+                } else {
+                    valor = parseFloat(valor);
+                }
+                $(this).val(valor.toFixed(2) + "%");
+                aplicarDesconto();
+            });
 
-        $('#mensagem').removeClass()
+            function aplicarDesconto() {
+                let valorCampo = $("#desconto").val().replace("%", "").replace(",", ".").trim();
+                let desconto = parseFloat(valorCampo) || 0;
+                let totalCompra = parseFloat($("#total_compra").val().replace("R$", "").replace(",", ".")) || 0;
+                let descontoAplicado = totalCompra * (desconto / 100);
+                $.ajax({
+                    url: pagina + "/aplicar-desconto-porcentagem.php",
+                    method: "POST",
+                    data: {
+                        "desconto": desconto
+                    },
+                    dataType: "html",
+                    success: function(result) {
+                        var array = result.split("&-/z");
+                        var totalCompra = array[0];
+                        document.getElementById("total_compra").value = "R$ " + totalCompra;
+                    },
+                    error: function(xhr, status, error) {
+                        console.error("Erro ao aplicar o desconto:", status, error);
+                    },
+                });
+            }
+        });
+    </script>
+<?php else : ?>
+    <!-- Script para Desconto em Moeda -->
+    <script type="text/javascript">
+        $(document).ready(function() {
+            $("#desconto").on("blur", function() {
+                let valor = $(this).val().replace("R$", "").replace(",", ".").trim();
+                if (valor === "" || isNaN(valor)) {
+                    valor = 0;
+                } else {
+                    valor = parseFloat(valor);
+                }
+                $(this).val("R$ " + valor.toFixed(2).replace(".", ","));
+                aplicarDesconto();
+            });
 
-        if (mensagem.trim() == "Excluído com Sucesso!") {
+            function aplicarDesconto() {
+                let valorCampo = $("#desconto").val().replace("R$", "").replace(",", ".").trim();
+                let desconto = parseFloat(valorCampo) || 0;
+                $.ajax({
+                    url: pagina + "/aplicar-desconto-moeda.php",
+                    method: "POST",
+                    data: {
+                        desconto: desconto
+                    },
+                    dataType: "html",
+                    success: function(result) {
+                        var array = result.split("&-/z");
+                        var totalCompra = array[0];
+                        document.getElementById("total_compra").value = "R$ " + totalCompra;
+                    },
+                    error: function(xhr, status, error) {
+                        console.error("Erro ao aplicar o desconto:", status, error);
+                    },
+                });
+            }
+        });
+    </script>
+<?php endif; ?>
+<!-- FIM SCRIPT PARA APLICAR DESCONTO -->
 
-          $('#mensagem-excluir').addClass('text-success')
-
-          $('#btn-fechar').click();
-          window.location = "pdv.php";
-          buscarDados()
-
+<!-- TROCO E VALOR RECEBIDO -->
+<script type="text/javascript">
+    $("#valor_recebido").on("blur", function() {
+        let valor = $(this).val().replace("R$", "").replace(",", ".").trim();
+        if (valor === "" || isNaN(valor)) {
+            valor = 0;
         } else {
-
-          $('#mensagem-excluir').addClass('text-danger')
+            valor = parseFloat(valor);
         }
-
-        $('#mensagem-excluir').text(mensagem)
-
-      },
-
-      cache: false,
-      contentType: false,
-      processData: false,
-
+        $(this).val("R$ " + valor.toFixed(2).replace(".", ","));
+        calcularTroco();
     });
-  });
+
+    function calcularTroco() {
+        let valorRecebido = $("#valor_recebido").val().replace("R$", "").replace(",", ".").trim();
+        valorRecebido = parseFloat(valorRecebido) || 0;
+        let totalCompra = $("#total_compra").val().replace("R$", "").replace(",", ".").trim();
+        totalCompra = parseFloat(totalCompra) || 0;
+        let troco = valorRecebido - totalCompra;
+        if (troco < 0) {
+            alert("O valor recebido é insuficiente!");
+            troco = 0;
+        }
+        $("#troco").val("R$ " + troco.toFixed(2).replace(".", ","));
+    }
 </script>
+<!-- FIM TROCO E VALOR RECEBIDO -->
 
-
-
-
-
-
+<!-- CHAMANDO MODAL FECHAR VENDA -->
 <script type="text/javascript">
-  function modalExcluir(id) {
+    $(document).keydown(function(e) {
+        if (e.which == 113) {
+            var myModal = new bootstrap.Modal(document.getElementById('modalVenda'), {})
+            myModal.show();
+        }
+    });
+</script>
+<!-- FIM CHAMANDO MODAL FECHAR VENDA -->
+
+<!-- FECHAR VENDA -->
+<script type="text/javascript">
+    $("#form-fechar-venda").submit(function(event) {
     event.preventDefault();
 
-    document.getElementById('id_deletar_item').value = id;
+    // Preencher os campos ocultos corretamente
+    $("#forma_pgto_input").val($("#forma_pgto").val());
+    $("#desconto_input").val($("#desconto").val().replace("R$", "").replace(",", "."));
+    $("#recebido_input").val($("#valor_recebido").val().replace("R$", "").replace(",", "."));
+    $("#troco_input").val($("#troco").val().replace("R$", "").replace(",", "."));
 
+    // Serializar dois formulários
+    var dados = $("#form-buscar").serialize() + "&" + $("#form-fechar-venda").serialize();
 
-    var myModal = new bootstrap.Modal(document.getElementById('modalDeletar'), {
+    setTimeout(() => {
+        fecharVenda(dados);
+    }, 200);
+});
 
-    })
-
-    myModal.show();
-  }
+function fecharVenda(dados) {
+    $.ajax({
+        url: "pdv/fechar-venda.php",
+        method: "POST",
+        data: dados, // Agora os dois formulários são enviados corretamente!
+        success: function(result) {
+            if (result.trim().includes("Venda finalizada com sucesso!")) {
+                // alert("Venda concluída!");
+                window.location = "pdv.php";
+            } else {
+                alert("Erro ao finalizar a venda: " + result);
+                console.log("Erro ao finalizar a venda: " + result);
+            }
+        },
+        error: function(xhr, status, error) {
+            console.error("Erro ao finalizar a venda:", error);
+            alert("Erro ao processar a venda. Tente novamente.");
+        }
+    });
+}
 </script>
-
-
-
-
-<script type="text/javascript">
-  $("#desconto").keyup(function() {
-    buscarDados();
-  });
-</script>
-
-<script type="text/javascript">
-  $("#valor_recebido").keyup(function() {
-    buscarDados();
-  });
-</script>
-
-
-<script type="text/javascript">
-  $(document).keyup(function(e) {
-    if (e.which == 113) {
-      var myModal = new bootstrap.Modal(document.getElementById('modalVenda'), {
-
-      })
-
-      myModal.show();
-    }
-  });
-</script>
-
-
-
-<script type="text/javascript">
-  $("#form-fechar-venda").submit(function() {
-    event.preventDefault();
-    var pgto = document.getElementById('forma_pgto').value;
-    document.getElementById('forma_pgto_input').value = pgto;
-    buscarDados();
-  })
-</script>
-
-<script type="text/javascript">
-  $("#quantidade").keyup(function() {
-    let valor = $(this).val();
-    document.getElementById('quantidade').value = valor.padStart(2, '0');
-  })
-</script>
-
-<script type="text/javascript">
-  document.getElementById('desconto').addEventListener('blur', function() {
-    // Formatação para porcentagem
-    let isPorcentagem = 0;
-    isPorcentagem = "<?php echo $desconto_porcentagem ?>" === "Sim";
-    if (isPorcentagem) {
-      let descontoPorcento = this.value ? this.value.replace(/[^\d,]/g, '').replace(',', '.') : '0';
-      descontoPorcento = parseFloat(descontoPorcento) || 0; // Converte para número ou define como 0, caso inválido
-      this.value = descontoPorcento.toFixed(2).replace('.', ',') + '%';
-    } else {
-      let descontoMoeda = this.value ? this.value.replace(/[^\d,]/g, '').replace(',', '.') : '0';
-      descontoMoeda = parseFloat(descontoMoeda) || 0; // Converte para número ou define como 0, caso inválido
-      this.value = 'R$ ' + descontoMoeda.toFixed(2).replace('.', ','); // Formata para moeda brasileira
-    }
-  });
-</script>
-
-<script type="text/javascript">
-  document.getElementById('valor_recebido').addEventListener('blur', function() {
-
-    let valorRecebeu = this.value ? this.value.replace(/[^\d,]/g, '').replace(',', '.') : '0';
-    valorRecebeu = parseFloat(valorRecebeu) || 0; // Converte para número ou define como 0, caso inválido
-    this.value = 'R$ ' + valorRecebeu.toFixed(2).replace('.', ','); // Formata para moeda brasileira
-  });
-</script>
-
-<script type="text/javascript">
-  document.getElementById('total_compra').addEventListener('blur', function() {
-    let valorTotalCompra = parseFloat(this.value.replace(/[^\d,]/g, '').replace(',', '.')) || 0;
-
-    // Garantir que o desconto já aplicado não seja alterado
-    if (valorTotalCompra !== 0 && valorTotalCompra <= parseFloat(document.getElementById('sub_total_item').value.replace(/[^\d,]/g, '').replace(',', '.'))) {
-      console.log('Mantendo o total com desconto aplicado:', valorTotalCompra);
-      this.value = 'R$ ' + valorTotalCompra.toFixed(2).replace('.', ',');
-      return;
-    }
-
-    let valorTotal = valorTotalCompra;
-    this.value = 'R$ ' + valorTotal.toFixed(2).replace('.', ',');
-    console.log('Recalculado Total Compra:', this.value);
-  });
-  // document.getElementById('total_compra').addEventListener('blur', function() {
-  //   let valorTotalCompra = document.getElementById('total_compra').value
-  //   console.log(valorTotalCompra);
-  //   let valorTotal = this.value.replace(/[^\d,]/g, '').replace(',', '.'); // Sanitiza o valor
-  //   valorTotal = parseFloat(valorTotal) || 0; // Garante um valor numérico válido
-  //   if (valorTotal === 0) {
-  //     // Não redefine para zero caso valor válido já exista
-  //     return;
-  //   }
-  //   console.log(valorTotalCompra);
-  //   this.value = 'R$ ' + valorTotal.toFixed(2).replace('.', ','); // Formata como moeda brasileira
-  //   console.log(valorTotalCompra);
-  // });
-</script>
+<!-- FIM FECHAR VENDA -->

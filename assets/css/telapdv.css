@@ -183,6 +183,7 @@ Estilização do subtotal
   font-size: 24px;
   font-weight: bold;
   color: #FF0000;
+  background-color: gray;
 }
 
 .total {
@@ -191,10 +192,10 @@ Estilização do subtotal
   color: blue;
 }
 
-.Troco {
+.troco {
   font-size: 24px;
   font-weight: bold;
-  color: orange;
-  background-color: grey;
+  color: red;
+  background-color: gray;
 }
 
