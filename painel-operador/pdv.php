@@ -303,7 +303,7 @@ if ($desconto_porcentagem == 'Sim') {
             method: 'POST',
             data: $('#form-buscar').serialize(),
             dataType: "html",
-            success: function(result) {
+            success: function(result) {                
                 if (!result) {
                     alert("Erro ao processar os dados. Tente novamente.");
                     isProcessing = false;
@@ -353,8 +353,7 @@ if ($desconto_porcentagem == 'Sim') {
                         setTimeout(() => {
                             listarProdutos();
                         }, 100);
-                    } else {
-                    }
+                    } else {}
                 }
                 isProcessing = false;
             },
@@ -571,41 +570,40 @@ if ($desconto_porcentagem == 'Sim') {
 <!-- FECHAR VENDA -->
 <script type="text/javascript">
     $("#form-fechar-venda").submit(function(event) {
-    event.preventDefault();
+        event.preventDefault();
 
-    // Preencher os campos ocultos corretamente
-    $("#forma_pgto_input").val($("#forma_pgto").val());
-    $("#desconto_input").val($("#desconto").val().replace("R$", "").replace(",", "."));
-    $("#recebido_input").val($("#valor_recebido").val().replace("R$", "").replace(",", "."));
-    $("#troco_input").val($("#troco").val().replace("R$", "").replace(",", "."));
+        // Preencher os campos ocultos corretamente
+        $("#forma_pgto_input").val($("#forma_pgto").val());
+        $("#desconto_input").val($("#desconto").val().replace("R$", "").replace(",", "."));
+        $("#recebido_input").val($("#valor_recebido").val().replace("R$", "").replace(",", "."));
+        $("#troco_input").val($("#troco").val().replace("R$", "").replace(",", "."));
 
-    // Serializar dois formulários
-    var dados = $("#form-buscar").serialize() + "&" + $("#form-fechar-venda").serialize();
+        // Serializar dois formulários
+        var dados = $("#form-buscar").serialize() + "&" + $("#form-fechar-venda").serialize();
 
-    setTimeout(() => {
-        fecharVenda(dados);
-    }, 200);
-});
-
-function fecharVenda(dados) {
-    $.ajax({
-        url: "pdv/fechar-venda.php",
-        method: "POST",
-        data: dados, // Agora os dois formulários são enviados corretamente!
-        success: function(result) {
-            if (result.trim().includes("Venda finalizada com sucesso!")) {
-                // alert("Venda concluída!");
-                window.location = "pdv.php";
-            } else {
-                alert("Erro ao finalizar a venda: " + result);
-                console.log("Erro ao finalizar a venda: " + result);
-            }
-        },
-        error: function(xhr, status, error) {
-            console.error("Erro ao finalizar a venda:", error);
-            alert("Erro ao processar a venda. Tente novamente.");
-        }
+        setTimeout(() => {
+            fecharVenda(dados);
+        }, 200);
     });
-}
+
+    function fecharVenda(dados) {
+        $.ajax({
+            url: "pdv/fechar-venda.php",
+            method: "POST",
+            data: dados, // Agora os dois formulários são enviados corretamente!
+            success: function(result) {
+                if (result.trim().includes("Venda finalizada com sucesso!")) {
+                    alert("Venda finalizada com sucesso!");
+                    window.open("../rel/comprovante_class.php", "_blank");
+                } else {
+                    alert("Erro ao finalizar a venda: " + result);
+                }
+            },
+            error: function(xhr, status, error) {
+                console.error("Erro ao finalizar a venda:", error);
+                alert("Erro ao processar a venda. Tente novamente.");
+            }
+        });
+    }
 </script>
 <!-- FIM FECHAR VENDA -->

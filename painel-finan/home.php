@@ -69,8 +69,8 @@ $valorVenceHoje = number_format($valorVenceHoje, 2, ',', '.');
 //BUSCAR CONTAS A PAGAR VENCIDAS
 $query = $pdo->query("SELECT * FROM contas_pagar WHERE vencimento < curDate() AND pago != 'Sim' ORDER BY vencimento ASC LIMIT 1");
 $res = $query->fetchAll(PDO::FETCH_ASSOC);
-$valorVencida = $res[0]['valor'];
-$descricaoVencida = $res[0]['descricao'];
+$valorVencida = @$res[0]['valor'];
+$descricaoVencida = @$res[0]['descricao'];
 $valorVencida = number_format($valorVencida, 2, ',', '.');
 //FIM BUSCAR CONTAS A PAGAR VENCIDAS
 
@@ -85,8 +85,8 @@ $valorRecebeVenceHoje = number_format($valorRecebeVenceHoje, 2, ',', '.');
 //BUSCAR CONTAS A RECEBER VENCIDAS
 $query = $pdo->query("SELECT * FROM contas_receber WHERE vencimento < curDate() AND pago != 'Sim' ORDER BY vencimento ASC LIMIT 1");
 $res = $query->fetchAll(PDO::FETCH_ASSOC);
-$valorRecebeVencida = $res[0]['valor'];
-$descricaoRecebeVencida = $res[0]['descricao'];
+$valorRecebeVencida = @$res[0]['valor'];
+$descricaoRecebeVencida = @$res[0]['descricao'];
 $valorRecebeVencida = number_format($valorRecebeVencida, 2, ',', '.');
 //FIN BUSCAR CONTAS A RECEBER VENCIDAS
 

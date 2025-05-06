@@ -47,6 +47,7 @@ $res->bindValue(":gerente_ab", $gerente);
 $res->bindValue(":caixa", $caixa);
 $res->execute();
 
+
 echo "Aberto com Sucesso!";
 
 ?>
