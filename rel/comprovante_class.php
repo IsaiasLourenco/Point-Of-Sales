@@ -1,36 +1,33 @@
-<?php 
+<?php
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
 
 require_once('../config.php');
-
-$id = $_GET['id'];
-
-//ALIMENTAR OS DADOS NO RELATÓRIO
-$html = file_get_contents($url_sistema."rel/comprovante.php?id=".$id);
-
-//CARREGAR DOMPDF
 require_once '../dompdf/autoload.inc.php';
+
 use Dompdf\Dompdf;
 use Dompdf\Options;
 
-//INICIALIZAR A CLASSE DO DOMPDF
+// Verifica se o ID foi passado
+if (!isset($_GET['id']) || empty($_GET['id'])) {
+    die('ID do comprovante não foi fornecido na URL.');
+}
+
+$id = $_GET['id'];
+$_GET['id'] = $id; // Garante que fique disponível no include()
+
+// Captura o HTML do comprovante
+ob_start();
+include(__DIR__ . '/../rel/comprovante.php');
+$html = ob_get_clean();
+
+// Configura e gera o PDF
 $options = new Options();
 $options->set('isRemoteEnabled', true);
 
-$pdf = new DOMPDF($options);
-
-//Definir o tamanho do papel e orientação da página
-$pdf->setPaper(array(0, 0, 497.64, 700), 'portrait');
-
-//CARREGAR O CONTEÚDO HTML
+$pdf = new Dompdf($options);
+$pdf->setPaper([0, 0, 497.64, 700], 'portrait');
 $pdf->loadHtml($html);
-
-//RENDERIZAR O PDF
 $pdf->render();
-
-//NOMEAR O PDF GERADO
-$pdf->stream(
-'comprovante.pdf',
-array("Attachment" => false)
-);
-
-?>
+$pdf->stream('comprovante.pdf', ['Attachment' => false]);

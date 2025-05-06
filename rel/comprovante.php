@@ -72,11 +72,6 @@ $nome_operador = $dados[0]['nome'];
 		border-bottom: 1px dashed #BCBCBC;
 	}
 
-
-
-
-
-
 	.cor {
 		color: #BCBCBC;
 	}
@@ -155,7 +150,7 @@ $nome_operador = $dados[0]['nome'];
 				</td>
 
 
-				<td align="right">R$ <?php
+				<td style="text-align: right;">R$ <?php
 
 										@$total_item;
 										@$sub_tot = @$sub_tot + @$total_item;
@@ -189,26 +184,26 @@ $nome_operador = $dados[0]['nome'];
 
 		<tr>
 			<td colspan="2">Sub-total</td>
-			<td align="right">R$ <?php echo @$sub_total ?></td>
+			<td style="text-align: right;">R$ <?php echo @$sub_total ?></td>
 		</tr>
 		<tr>
 			<td colspan="2">Desconto</td>
-			<td align="right"><?php echo $desconto ?></td>
+			<td style="text-align: right;"><?php echo $desconto ?></td>
 		</tr>
 
 		<tr>
 			<td colspan="2">Total</td>
-			<td align="right">R$ <?php echo $total ?></td>
+			<td style="text-align: right;">R$ <?php echo $total ?></td>
 		</tr>
 
 		<tr>
 			<td colspan="2">Total Pago</td>
-			<td align="right">R$ <?php echo $valor_recebido ?></td>
+			<td style="text-align: right;">R$ <?php echo $valor_recebido ?></td>
 		</tr>
 
 		<tr>
 			<td colspan="2">Troco</td>
-			<td align="right">R$ <?php echo $troco ?></td>
+			<td style="text-align: right;">R$ <?php echo $troco ?></td>
 		</tr>
 
 		<tr>
@@ -218,7 +213,7 @@ $nome_operador = $dados[0]['nome'];
 		</tr>
 
 		<tr>
-			<td align="center" class="ttu" colspan="3">
+			<td style="text-align: center;" class="ttu" colspan="3">
 				forma de pagamento
 			</td>
 
@@ -232,11 +227,11 @@ $nome_operador = $dados[0]['nome'];
 
 		<tr>
 			<td colspan="2">Forma de Pagamento</td>
-			<td align="right"><?php echo $nome_pgto ?></td>
+			<td style="text-align: right;"><?php echo $nome_pgto ?></td>
 		</tr>
 		<tr>
 			<td colspan="2">Operador</td>
-			<td align="right"><?php echo $nome_operador ?></td>
+			<td style="text-align: right;"><?php echo $nome_operador ?></td>
 		</tr>
 
 

@@ -76,8 +76,14 @@ try {
     $query_mov->bindValue(":id_mov", $id_venda);
     $query_mov->execute();
 
-    echo "Venda finalizada com sucesso!";
-    // header("Location: ../rel/comprovante_class.php?id=$id_venda");
+    // Depois do código de sucesso
+    echo json_encode([
+        "message" => "Venda finalizada com sucesso!",
+        "id_venda" => $id_venda
+    ]);
+    exit();
+
+
     exit();
 } catch (Exception $e) {
     echo "Erro ao processar a venda: " . $e->getMessage();

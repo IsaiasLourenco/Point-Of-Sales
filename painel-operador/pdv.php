@@ -574,8 +574,8 @@ if ($desconto_porcentagem == 'Sim') {
 
         // Preencher os campos ocultos corretamente
         $("#forma_pgto_input").val($("#forma_pgto").val());
-        $("#desconto_input").val($("#desconto").val().replace("R$", "").replace(",", "."));
-        $("#recebido_input").val($("#valor_recebido").val().replace("R$", "").replace(",", "."));
+        $("#desconto_input").val($("#desconto").val().replace("R$", "").replace(",", ".")); 
+        $("#recebido_input").val($("#valor_recebido").val().replace("R$", "").replace(",", ".")); 
         $("#troco_input").val($("#troco").val().replace("R$", "").replace(",", "."));
 
         // Serializar dois formulários
@@ -591,12 +591,17 @@ if ($desconto_porcentagem == 'Sim') {
             url: "pdv/fechar-venda.php",
             method: "POST",
             data: dados, // Agora os dois formulários são enviados corretamente!
-            success: function(result) {
-                if (result.trim().includes("Venda finalizada com sucesso!")) {
-                    alert("Venda finalizada com sucesso!");
-                    window.open("../rel/comprovante_class.php", "_blank");
+            success: function(response) {
+                // Converte a resposta para JSON
+                var res = JSON.parse(response);
+
+                // Verifica se a venda foi finalizada com sucesso
+                if (res.message && res.message.includes("Venda finalizada com sucesso!")) {
+                    alert(res.message);  // Exibe a mensagem de sucesso
+                    window.open("../rel/comprovante_class.php?id=" + res.id_venda, "_blank"); // Passa o id_venda para o comprovante
+                    window.location.href = "pdv.php";
                 } else {
-                    alert("Erro ao finalizar a venda: " + result);
+                    alert("Erro ao finalizar a venda: " + response);  // Caso haja erro, exibe a mensagem
                 }
             },
             error: function(xhr, status, error) {
