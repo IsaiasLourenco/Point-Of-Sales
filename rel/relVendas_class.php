@@ -2,17 +2,17 @@
 
 require_once('../config.php');
 
-$id = $_GET['id'];
+$dataInicial = $_POST['dataInicial'];
+$dataFinal = $_POST['dataFinal'];
+$status = $_POST['status'];
 
 //ALIMENTAR OS DADOS NO RELATÓRIO
-// $html = file_get_contents($url_sistema."rel/comprovante.php?id=".$id);
+$html = file_get_contents($url_sistema."rel/relVendas.php?dataInicial=$dataInicial&dataFinal=$dataFinal&status=$status");
 
-$_GET['id'] = $id; // Passa o ID para o script incluído
-ob_start();
-include(__DIR__ . '/../rel/comprovante.php'); // Caminho físico no servidor
-$html = ob_get_clean();
-
-
+if($relatorio_pdf != 'Sim'){
+	echo $html;
+	exit();
+}
 
 //CARREGAR DOMPDF
 require_once '../dompdf/autoload.inc.php';
@@ -26,7 +26,7 @@ $options->set('isRemoteEnabled', true);
 $pdf = new DOMPDF($options);
 
 //Definir o tamanho do papel e orientação da página
-$pdf->setPaper(array(0, 0, 497.64, 700), 'portrait');
+$pdf->setPaper('A4', 'portrait'); //caso queira a folha em paisagem use landscape em vez de portrait
 
 //CARREGAR O CONTEÚDO HTML
 $pdf->loadHtml($html);
@@ -36,8 +36,8 @@ $pdf->render();
 
 //NOMEAR O PDF GERADO
 $pdf->stream(
-'comprovante.pdf',
+'vendas.pdf',
 array("Attachment" => false)
 );
 
-?>
+

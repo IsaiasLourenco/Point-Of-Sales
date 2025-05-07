@@ -598,7 +598,7 @@ if ($desconto_porcentagem == 'Sim') {
                 // Verifica se a venda foi finalizada com sucesso
                 if (res.message && res.message.includes("Venda finalizada com sucesso!")) {
                     alert(res.message);  // Exibe a mensagem de sucesso
-                    window.open("../rel/comprovante_class.php?id=" + res.id_venda, "_blank"); // Passa o id_venda para o comprovante
+                    window.open("comprovante_class.php?id=" + res.id_venda, "_blank"); // Passa o id_venda para o comprovante
                     window.location.href = "pdv.php";
                 } else {
                     alert("Erro ao finalizar a venda: " + response);  // Caso haja erro, exibe a mensagem

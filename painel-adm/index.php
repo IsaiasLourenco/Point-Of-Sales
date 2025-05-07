@@ -12,6 +12,9 @@ $menu5 = 'produtos';
 $menu6 = 'compras';
 $menu7 = 'caixas';
 $menu8 = 'forma_pgtos';
+$menu9 = 'vendas';
+$menu10 = 'relCaixas';
+$menu11 = 'aberturas';
 
 //RECUPERAR DADOS DO USUÁRIO
 $query = $pdo->query("SELECT * FROM usuarios WHERE id = '$_SESSION[id_usuario]'");
@@ -72,15 +75,28 @@ $nivel_usu = $res[0]['nivel'];
                     <li class="nav-item">
                         <a class="nav-link active" aria-current="page" href="index.php?pagina=<?php echo $menu1 ?>">Home</a>
                     </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="index.php?pagina=<?php echo $menu2 ?>">Usuários</a>
+
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownPessoas" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            Pessoas
+                        </a>
+                        <ul class="dropdown-menu" aria-labelledby="navbarDropdownPessoas">
+                            <li><a class="dropdown-item" href="index.php?pagina=<?php echo $menu2 ?>">Usuários</a></li>
+                            <li><a class="dropdown-item" href="index.php?pagina=<?php echo $menu3 ?>">Fornecedores</a></li>
+                        </ul>
                     </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="index.php?pagina=<?php echo $menu3 ?>">Fornecedores</a>
+
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownCaixas" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            Caixas
+                        </a>
+                        <ul class="dropdown-menu" aria-labelledby="navbarDropdownCaixas">
+                            <li><a class="dropdown-item" href="index.php?pagina=<?php echo $menu7 ?>">Caixas</a></li>
+                            <li><a class="dropdown-item" href="index.php?pagina=<?php echo $menu10 ?>">Relatório dos Caixas</a></li>
+                            <li><a class="dropdown-item" href="index.php?pagina=<?php echo $menu11 ?>">Aberturas</a></li>
+                        </ul>
                     </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="index.php?pagina=<?php echo $menu7 ?>">Caixas</a>
-                    </li>
+
                     <li class="nav-item">
                         <a class="nav-link" href="index.php?pagina=<?php echo $menu8 ?>">Formas/Pagamento</a>
                     </li>
@@ -95,6 +111,10 @@ $nivel_usu = $res[0]['nivel'];
                                 <hr class="dropdown-divider">
                             </li>
                             <li><a class="dropdown-item" href="index.php?pagina=<?php echo $menu6 ?>">Compras</a></li>
+                            <li>
+                                <hr class="dropdown-divider">
+                            </li>
+                            <li><a class="dropdown-item" href="index.php?pagina=<?php echo $menu9 ?>">Vendas</a></li>
                         </ul>
                     </li>
                     <li class="nav-item dropdown">
@@ -104,6 +124,7 @@ $nivel_usu = $res[0]['nivel'];
                         <ul class="dropdown-menu" aria-labelledby="navbarDropdownRel">
                             <li><a class="dropdown-item" href="../rel/relProdutos_class.php" target="_blank">Relatório de Produtos</a></li>
                             <li><a class="dropdown-item" href="" target="_blank" data-bs-toggle="modal" data-bs-target="#modalRelCompras">Relatório de Compras</a></li>
+                            <li><a class="dropdown-item" href="" target="_blank" data-bs-toggle="modal" data-bs-target="#modalRelVendas">Relatório de Vendas</a></li>
                         </ul>
                     </li>
                 </ul>
@@ -147,6 +168,12 @@ $nivel_usu = $res[0]['nivel'];
             require_once($menu7 . '.php');
         } else if (@$_GET['pagina'] == $menu8) {
             require_once($menu8 . '.php');
+        } else if (@$_GET['pagina'] == $menu9) {
+            require_once($menu9 . '.php');
+        } else if (@$_GET['pagina'] == $menu10) {
+            require_once($menu10 . '.php');
+        } else if (@$_GET['pagina'] == $menu11) {
+            require_once($menu11 . '.php');
         } else {
             require_once($menu1 . '.php');
         }
@@ -280,6 +307,58 @@ $nivel_usu = $res[0]['nivel'];
     </div>
 </div>
 <!-- Fim Modal de Relatório de Compras -->
+
+<!-- Modal de Relatório de Vendas -->
+<div class="modal fade" id="modalRelVendas" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Vendas</h5>
+            </div>
+
+            <form action="../rel/relVendas_class.php" method="POST" target="_blank">
+                <div class="modal-body">
+
+                    <div class="row">
+
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label>Data Inicial</label>
+                                <input value="<?php echo date('Y-m-d') ?>" type="date" class="form-control" name="dataInicial">
+                            </div>
+                        </div>
+
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label>Data Final</label>
+                                <input value="<?php echo date('Y-m-d') ?>" type="date" class="form-control" name="dataFinal">
+                            </div>
+                        </div>
+
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label>Pago</label>
+                                <select class="form-control" name="status">
+                                    <option value="">Todas</option>
+                                    <option value="aberta">Aberta</option>
+                                    <option value="fechada">Fechada</option>
+                                    <option value="cancelada">Cancelada</option>
+                                </select>
+                            </div>
+                        </div>
+
+                    </div>
+
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-danger">Gerar Relatório</button>
+                </div>
+            </form>
+
+        </div>
+    </div>
+</div>
+<!-- Fim Modal de Relatório de Vendas -->
 
 <!-- Script Mascaras -->
 <script type="text/javascript" src="../assets/js/mascara.js"></script>

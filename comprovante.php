@@ -1,7 +1,8 @@
 <?php
 
 
-include('../conexao.php');
+include('conexao.php');
+include('config.php');
 
 $id = $_GET['id'];
 
@@ -27,6 +28,14 @@ $nome_pgto = $dados[0]['nome'];
 $res = $pdo->query("SELECT * from usuarios where id = '$operador' ");
 $dados = $res->fetchAll(PDO::FETCH_ASSOC);
 $nome_operador = $dados[0]['nome'];
+$desconto_valor = floatval(preg_replace('/[^0-9.]/', '', $desconto));
+$desconto_formatado = '';
+if ($desconto_porcentagem == 'Sim') {
+    $desconto_formatado = number_format($desconto_valor, 2, ',', '.') . '%';
+} else {
+    $desconto_formatado = 'R$ ' . number_format($desconto_valor, 2, ',', '.');
+}
+
 
 ?>
 
@@ -109,7 +118,7 @@ $nome_operador = $dados[0]['nome'];
 			<?php
 			if ($status == 'Cancelada') {
 				echo ' - Venda Cancelada';
-				$total = number_format($total_venda, 2, ',', '.');
+				
 			} ?>
 		</th>
 	</tr>
@@ -155,11 +164,17 @@ $nome_operador = $dados[0]['nome'];
 										@$total_item;
 										@$sub_tot = @$sub_tot + @$total_item;
 										$sub_total = $sub_tot;
-
+										
+										if ($desconto_porcentagem == 'Sim') {
+											$valor_desconto = ($sub_tot * $desconto_valor) / 100;
+										} else {
+											$valor_desconto = $desconto_valor;
+										}
+										$total_final = $sub_tot - $valor_desconto;
 
 										$sub_total = number_format($sub_total, 2, ',', '.');
 										$total_item = number_format($total_item, 2, ',', '.');
-										$total = number_format($total_venda, 2, ',', '.');
+										$total = number_format($total_final, 2, ',', '.');
 
 
 										echo $total_item;
@@ -188,12 +203,19 @@ $nome_operador = $dados[0]['nome'];
 		</tr>
 		<tr>
 			<td colspan="2">Desconto</td>
-			<td style="text-align: right;"><?php echo $desconto ?></td>
+			<td style="text-align: right;"><?php echo $desconto_formatado ?></td>
 		</tr>
 
 		<tr>
-			<td colspan="2">Total</td>
-			<td style="text-align: right;">R$ <?php echo $total ?></td>
+			<?php 
+				if ($status == 'Cancelada') {
+					echo "<td colspan='2'>Total</td>";
+					echo "<td style='text-align: right;'>VENDA CANCELADA</td>";
+				} else {
+					echo "<td colspan='2'>Total</td>";
+					echo "<td style='text-align: right;'>R$ $total</td>";
+				}
+			?>
 		</tr>
 
 		<tr>
