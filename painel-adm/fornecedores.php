@@ -16,7 +16,8 @@
         require_once('../conexao.php');
         require_once('verificar-permissao.php');
         ?>
-        <h5 style="text-align: center; color: darkgray;">FORNECEDORES</h5>
+        <h5 style="text-align: center;" class="text-secondary">FORNECEDORES</h5>
+        <a href="index.php" title="Home"><h5 style="text-align: center;" class="text-secondary"><i class="bi bi-house-door"></i></h5></a>
         <a href="index.php?pagina=<?php echo $pagina ?>&funcao=novo" type="button" class="btn btn-sm btn-secondary mt-2 mb-2">Novo Fornecedor</a>
 
         <?php

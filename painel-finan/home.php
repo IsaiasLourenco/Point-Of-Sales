@@ -113,7 +113,7 @@ $totalReceberMes = number_format($totalReceberMes, 2, ',', '.');
 // FIM TOTAL DE CONTAS A RECEBER NO MÊS
 
 // TOTAL DE VENDAS NO MÊS
-$query = $pdo->query("SELECT * FROM vendas WHERE data_venda >= '$dataInicioMes' AND data_venda <= curDate()");
+$query = $pdo->query("SELECT * FROM vendas WHERE data_venda >= '$dataInicioMes' AND data_venda <= curDate() AND status_venda = 'Fechada'");
 $res = $query->fetchAll(PDO::FETCH_ASSOC);
 $vendasMes = @count($res);
 $totalvendasMes = 0;
@@ -162,6 +162,7 @@ $totalvendasMes = number_format($totalvendasMes, 2, ',', '.');
                                         <span class="text-success">
                                             <h3>R$ <?php echo $entradasDia ?> </h3>
                                         </span>
+                                        <br>
                                         <span>Entradas do dia</span>
                                     </div>
                                 </div>
@@ -184,6 +185,7 @@ $totalvendasMes = number_format($totalvendasMes, 2, ',', '.');
                                         <span class="text-danger">
                                             <h3>R$ <?php echo $saidasDia ?> </h3>
                                         </span>
+                                        <br>
                                         <span>Saídas do Dia</span>
                                     </div>
                                 </div>
@@ -205,6 +207,7 @@ $totalvendasMes = number_format($totalvendasMes, 2, ',', '.');
                                         echo '</div>';
                                         echo '<div class="col-9 text-end">';
                                         echo '<span class="text-danger"><h3>R$ ' . $saidasDia . '</h3></span>'; // Aqui está o ajuste correto
+                                        echo '<br>';
                                         echo '<span>Saldo do dia</span>';
                                         echo '</div>';
                                     } else if ($saldoDia == 0) {
@@ -213,6 +216,7 @@ $totalvendasMes = number_format($totalvendasMes, 2, ',', '.');
                                         echo '</div>';
                                         echo '<div class="col-9 text-end">';
                                         echo '<span class="text-primary"><h3>R$ ' . $saldoDia . '</h3></span>'; // Correção aqui também
+                                        echo '<br>';
                                         echo '<span>Saldo do dia</span>';
                                         echo '</div>';
                                     } else {
@@ -221,6 +225,7 @@ $totalvendasMes = number_format($totalvendasMes, 2, ',', '.');
                                         echo '</div>';
                                         echo '<div class="col-9 text-end">';
                                         echo '<span class="text-success"><h3>R$ ' . $saldoDia . '</h3></span>'; // Correção aqui também
+                                        echo '<br>';
                                         echo '<span>Saldo do dia</span>';
                                         echo '</div>';
                                     }
@@ -506,78 +511,164 @@ $totalvendasMes = number_format($totalvendasMes, 2, ',', '.');
 
             </div>
 
-        <!-- </section id="stats-subtitle">
-        <div class="row mb-2">
-            <div class="col-12 mt-3 mb-1">
-                <h4 class="text-uppercase">Gráfico</h4>
-            </div>
-        </div>
+        </section>
 
-        <style type="text/css">
-            #principal {
-                width: 500px;
-                height: 100%;
-                margin-left: 10px;
-                font-family: Verdana, Helvetica, sans-serif;
-                font-size: 14px;
-
-            }
-
-            #barra {
-                margin: 0 2px;
-                vertical-align: bottom;
-                display: inline-block;
-
-            }
-
-            .cor1,
-            .cor2,
-            .cor3,
-            .cor4 {
-                color: #FFF;
-                padding: 5px;
-            }
-
-            .cor1 {
-                background-color: #FF0000;
-            }
-
-            .cor2 {
-                background-color: #0000FF;
-            }
-
-            .cor3 {
-                background-color: #FF6600;
-            }
-
-            .cor4 {
-                background-color: #009933;
-            }
-        </style>
-
-        <?php
-        // definindo porcentagem
-        $height1 = '28px';
-        $height2 = '49px';
-        $height3 = '33px';
-        $height4 = '13px';
-        $total  = 4; // total de barras
-        ?>
-        <div id="principal">
-            <p>Vendas anuais</p>
-            <?php
-            for ($i = 1; $i <= $total; $i++) {
-                $height = ${'height' . $i};
-            ?>
-                <div id="barra">
-                    <div class="cor<?php echo $i ?>" style="height:<?php echo $height ?>"> <?php echo $height ?> </div>
+        <section id="stats-subtitle">
+            <div class="row mb-2">
+                <div class="col-12 mt-3 mb-1">
+                    <h4 class="text-uppercase">Gráfico</h4>
+                    <p style="font-weight: bold;">Vendas do ano de <?php echo $ano_atual?></p>
                 </div>
-            <?php } ?>
-        </div>
-        <section> -->
+            </div>
 
-        <!-- </section> -->
+            <style type="text/css">
+                #principal {
+                    display: flex;
+                    align-items: flex-end;
+                    gap: 10px;
+                    width: 100%;
+                    height: 100%;
+                    margin-left: 10px;
+                    font-family: Verdana, Helvetica, sans-serif;
+                    font-size: 14px;
+                }
 
+                #barra {
+                    margin: 0 2px;
+                    vertical-align: bottom;
+                    display: flex;
+                    flex-direction: column-reverse;
+                    align-items: center;
+                    width: 60px;
+                    padding: 20px;
+                }
+
+                .cor1,
+                .cor2,
+                .cor3,
+                .cor4,
+                .cor5,
+                .cor6,
+                .cor7,
+                .cor8,
+                .cor9,
+                .cor10,
+                .cor11,
+                .cor12 {
+                    color: #FFF;
+                    padding: 5px;
+                    width: 60px;
+                }
+
+                .cor1 {
+                    background-color: #FF0000;
+                    color: black;
+                    text-align: center;
+                }
+                
+                .cor2 {
+                    background-color: #0000FF;
+                    color: black;
+                    text-align: center;
+                }
+                
+                .cor3 {
+                    background-color: #FF6600;
+                    color: black;
+                    text-align: center;
+                }
+                
+                .cor4 {
+                    background-color: #009933;
+                    color: black;
+                    text-align: center;
+                }
+                
+                .cor5 {
+                    background-color: rgb(145, 211, 142);
+                    color: black;
+                    text-align: center;
+                }
+                
+                .cor6 {
+                    background-color: #505050;
+                    color: black;
+                    text-align: center;
+                }
+                
+                .cor7 {
+                    background-color: #000000;
+                    color: white;
+                    text-align: center;
+                }
+                
+                .cor8 {
+                    background-color: #9c14d1;
+                    color: black;
+                    text-align: center;
+                }
+                
+                .cor9 {
+                    background-color: #085d84;
+                    color: black;
+                    text-align: center;
+                }
+                
+                .cor10 {
+                    background-color: #B84848;
+                    color: black;
+                    text-align: center;
+                }
+                
+                .cor11 {
+                    background-color: #49B8E0;
+                    color: black;
+                    text-align: center;
+                }
+                
+                .cor12 {
+                    background-color: rgb(79, 60, 107);
+                    color: black;
+                    text-align: center;
+                }
+            </style>
+
+            <div id="principal">
+
+                <?php
+                // BUSCAR TOTAL DE VENDAS NOS MESES DO ANO
+                $total  = 12; // total de barras
+                $escala = 2;
+                $meses = [
+                    1 => "Jan",
+                    2 => "Fev",
+                    3 => "Mar",
+                    4 => "Abr",
+                    5 => "Mai",
+                    6 => "Jun",
+                    7 => "Jul",
+                    8 => "Ago",
+                    9 => "Set",
+                    10 => "Out",
+                    11 => "Nov",
+                    12 => "Dez"
+                ];
+                for ($altura = 1; $altura < 13; $altura++) {
+                    $inicioMes = $ano_atual . "-" . $altura . "-01";
+                    $fimMes = $ano_atual . "-" . $altura . "-31";
+                    $totalVendasMes = 0;
+                    $queryMesAno = $pdo->query("SELECT * FROM vendas WHERE data_venda BETWEEN '$inicioMes' AND '$fimMes' AND status_venda = 'Fechada'");
+                    $resMesAno = $queryMesAno->fetchAll(PDO::FETCH_ASSOC);
+                    $totalRegMesAno = @count($resMesAno);
+                ?>
+                    <div id="barra">
+                        <div class="cor<?php echo $altura ?>" style="height:<?php echo ($totalRegMesAno * $escala) + 10 ?>px">
+                            <?php echo $totalRegMesAno ?>
+                        </div>
+                        <div><?php echo $meses[$altura] ?></div>
+                    </div>
+                <?php } ?>
+        </section>
     </div>
 </body>
 

@@ -15,6 +15,7 @@ $menu8 = 'forma_pgtos';
 $menu9 = 'vendas';
 $menu10 = 'relCaixas';
 $menu11 = 'aberturas';
+$menu12 = 'estoque';
 
 //RECUPERAR DADOS DO USUÁRIO
 $query = $pdo->query("SELECT * FROM usuarios WHERE id = '$_SESSION[id_usuario]'");
@@ -115,6 +116,10 @@ $nivel_usu = $res[0]['nivel'];
                                 <hr class="dropdown-divider">
                             </li>
                             <li><a class="dropdown-item" href="index.php?pagina=<?php echo $menu9 ?>">Vendas</a></li>
+                            <li>
+                                <hr class="dropdown-divider">
+                            </li>
+                            <li><a class="dropdown-item" href="index.php?pagina=<?php echo $menu12 ?>">Estoque Baixo</a></li>
                         </ul>
                     </li>
                     <li class="nav-item dropdown">
@@ -174,6 +179,8 @@ $nivel_usu = $res[0]['nivel'];
             require_once($menu10 . '.php');
         } else if (@$_GET['pagina'] == $menu11) {
             require_once($menu11 . '.php');
+        } else if (@$_GET['pagina'] == $menu12) {
+            require_once($menu12 . '.php');
         } else {
             require_once($menu1 . '.php');
         }

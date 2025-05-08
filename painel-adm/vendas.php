@@ -7,6 +7,7 @@ require_once('verificar-permissao.php');
 
 ?>
 <h5 style="text-align: center;" class="txt-secondary">VENDAS</h5>
+<a href="index.php" title="Home"><h5 style="text-align: center;" class="text-secondary"><i class="bi bi-house-door"></i></h5></a>
 <div class="mt-4" style="margin-right:25px">
     <?php
     $query = $pdo->query("SELECT * FROM vendas  ORDER BY id DESC");
@@ -72,7 +73,7 @@ require_once('verificar-permissao.php');
 
                             <td class="text-center">
                                 <?php if ($res[$i]['status_venda'] != 'Cancelada') { ?>
-                                    <a href="../comprovante_class.php?id=<?php echo $res[$i]['id'] ?>" title="Imprimir" style="text-decoration: none;" target="_blank">
+                                    <a href="../rel/comprovante_class.php?id=<?php echo $res[$i]['id'] ?>" title="Imprimir" style="text-decoration: none;" target="_blank">
                                         <i class="bi bi-printer-fill text-primary"></i>
                                     </a>
 

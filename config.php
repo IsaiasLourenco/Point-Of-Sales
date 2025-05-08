@@ -31,3 +31,5 @@ $cabecalho_img_rel = '';
 $desconto_porcentagem = '';
 
 $cupom_fiscal = '';
+
+$nivelEstoqueMinimo = 10;

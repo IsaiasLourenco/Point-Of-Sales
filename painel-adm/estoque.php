@@ -1,6 +1,6 @@
 <?php
 @session_start();
-$pagina = 'produtos';
+$pagina = 'estoque';
 require_once('../conexao.php');
 require_once('verificar-permissao.php');
 ?>
@@ -18,13 +18,12 @@ require_once('verificar-permissao.php');
 </body>
 
 </html>
-<h5 style="text-align: center;" class="text-secondary">PRODUTOS</h5>
+<h5 style="text-align: center;" class="text-secondary">ESTOQUE BAIXO</h5>
 <a href="index.php" title="Home"><h5 style="text-align: center;" class="text-secondary"><i class="bi bi-house-door"></i></h5></a>
-<a href="index.php?pagina=<?php echo $pagina ?>&funcao=novo" type="button" class="btn btn-sm btn-secondary mt-2 mb-2">Novo Produto</a>
 
 <div class="mt-4" style="margin-right:25px">
     <?php
-    $query = $pdo->query("SELECT * FROM produtos ORDER BY id ASC");
+    $query = $pdo->query("SELECT * FROM produtos WHERE estoque <= '$nivelEstoqueMinimo' ORDER BY id ASC");
     $res = $query->fetchAll(PDO::FETCH_ASSOC);
     $total_reg = @count($res);
     if ($total_reg > 0) {
@@ -81,13 +80,6 @@ require_once('verificar-permissao.php');
                             <td style="text-align: center;"><?php echo $nome_forn ?></td>
                             <td style="text-align: center;"><img src="../assets/img/produtos/<?php echo $res[$i]['imagem'] ?>" width="20"></td>
                             <td style="text-align: center;">
-                                <a href="index.php?pagina=<?php echo $pagina ?>&funcao=editar&id=<?php echo $res[$i]['id'] ?>" title="Editar Registro" style="text-decoration: none">
-                                    <i class="bi bi-pencil-square text-success"></i>
-                                </a>
-
-                                <a href="index.php?pagina=<?php echo $pagina ?>&funcao=deletar&id=<?php echo $res[$i]['id'] ?>" title="Excluir Registro" style="text-decoration: none">
-                                    <i class="bi bi-trash text-danger mx-1"></i>
-                                </a>
 
                                 <a href="#" onclick="mostrarDados(  '<?php echo $res[$i]['descricao'] ?>',  
                                                                     '<?php echo $nome_cat ?>', 
@@ -125,178 +117,6 @@ require_once('verificar-permissao.php');
         echo '<p>Não existem dados para serem exibidos!!';
     } ?>
 </div>
-
-
-<?php
-if (@$_GET['funcao'] == "editar") {
-    $titulo_modal = 'Editar Registro';
-    $query = $pdo->query("SELECT * from produtos where id = '$_GET[id]'");
-    $res = $query->fetchAll(PDO::FETCH_ASSOC);
-    $total_reg = @count($res);
-    if ($total_reg > 0) {
-        $nome = $res[0]['nome'];
-        $codigo = $res[0]['codigo'];
-        $categoria = $res[0]['categoria'];
-        $fornecedor = $res[0]['fornecedor'];
-        $descricao = $res[0]['descricao'];
-        $estoque = $res[0]['estoque'];
-        $valor_compra = $res[0]['valor_compra'];
-        $valor_venda = $res[0]['valor_venda'];
-        $prazo = $res[0]['prazo'];
-        $imagem = $res[0]['imagem'];
-    }
-} else {
-    $titulo_modal = 'Inserir';
-}
-?>
-
-<!-- MODAL INSERÇÃO EDIÇÃO -->
-<div class="modal fade" tabindex="-1" id="modalCadastrar" data-bs-backdrop="static">
-    <div class="modal-dialog modal-lg">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title"><?php echo $titulo_modal ?></h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <form method="POST" id="form">
-                <div class="modal-body">
-
-                    <div class="row">
-                        <div class="col-md-4">
-                            <div class="mb-3">
-                                <label for="codigo" class="form-label">Código</label>
-                                <input type="number" class="form-control" id="codigo" name="codigo" placeholder="Código" required="" value="<?php echo @$codigo ?>">
-                            </div>
-
-                        </div>
-                        <div class="col-md-4">
-                            <div class="mb-3">
-                                <label for="nome" class="form-label">Nome</label>
-                                <input type="text" class="form-control" id="nome" name="nome" placeholder="Nome" required="" value="<?php echo @$nome ?>">
-                            </div>
-                        </div>
-                        <div class="col-md-4">
-                            <div class="mb-3">
-                                <label for="valor_venda" class="form-label">Valor Venda</label>
-                                <input type="text" class="form-control" id="valor_venda" name="valor_venda" placeholder="Valor Venda" required="" value="<?php echo @$valor_venda ?>">
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="mb-3">
-                        <label for="descricao" class="form-label">Descrição do Produto</label>
-                        <input type="text" class="form-control" id="descricao" name="descricao" placeholder="Descrição" required="" value="<?php echo @$descricao ?>">
-                    </div>
-
-                    <div class="row">
-
-                        <div class="col-md-4">
-                            <div class="mb-3">
-                                <label for="exampleFormControlInput1" class="form-label">Categoria</label>
-                                <select class="form-select mt-1" aria-label="Default select example" name="categoria">
-                                    <?php
-                                    $query = $pdo->query("SELECT * from categorias order by nome asc");
-                                    $res = $query->fetchAll(PDO::FETCH_ASSOC);
-                                    $total_reg = @count($res);
-                                    if ($total_reg > 0) {
-                                        for ($i = 0; $i < $total_reg; $i++) {
-                                            foreach ($res[$i] as $key => $value) {
-                                            }
-                                    ?>
-                                            <option <?php if (@$categoria == $res[$i]['id']) { ?> selected <?php } ?> value="<?php echo $res[$i]['id'] ?>"><?php echo $res[$i]['nome'] ?></option>
-                                    <?php }
-                                    } else {
-                                        echo '<option value="">Cadastre uma Categoria</option>';
-                                    } ?>
-                                </select>
-                            </div>
-                        </div>
-
-                        <div class="col-md-4">
-                            <div class="mb-3">
-                                <label for="prazo" class="form-label">Prazo para pagamento/compras</label>
-                                <input type="number" class="form-control" id="prazo" name="prazo" placeholder="Prazo" required="" value="<?php echo @$prazo ?>">
-                            </div>
-                        </div>
-
-                    </div>
-
-                    <div class="col-md-4">
-                        <div class="form-group">
-                            <label>Imagem</label>
-                            <input type="file" value="<?php echo @$imagem ?>" class="form-control-file" id="imagem" name="imagem" onChange="carregarImg();">
-                        </div>
-
-                    </div>
-
-                    <div class="col-md-4">
-                        <div id="divImgConta" class="mt-4 mb-4">
-                            <?php if (@$imagem != "") { ?>
-                                <img src="../assets/img/produtos/<?php echo $imagem ?>" width="150px" id="target">
-                            <?php  } else { ?>
-                                <img src="../assets/img/produtos/sem-foto.jpg" width="150px" id="target">
-                            <?php } ?>
-                        </div>
-                    </div>
-
-                    <div id="codigoBarra"></div>
-
-
-                    <small>
-                        <div align="center" class="mt-1" id="mensagem">
-
-                        </div>
-                    </small>
-
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-sm btn-danger" data-bs-dismiss="modal" id="btn-fechar">Fechar</button>
-                    <button type="submit" class="btn btn-sm btn-secondary" name="btn-salvar" id="btn-salvar">Salvar</button>
-
-                    <input name="id" type="hidden" value="<?php echo @$_GET['id'] ?>">
-                    <input name="nome_double" type="hidden" value="<?php echo @$nome ?>">
-                    <input name="codigo_double" type="hidden" value="<?php echo @$codigo ?>">
-
-
-                </div>
-            </form>
-        </div>
-    </div>
-</div>
-<!-- FIM MODAL INSERÇÃO EDIÇÃO -->
-
-<!-- MODAL DELEÇÃO -->
-<div class="modal fade" tabindex="-1" id="modalDeletar">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title"><?php echo $titulo_modal ?></h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <form method="POST" id="form-excluir">
-                <div class="modal-body">
-
-                    <p>Deseja Realmente Excluir o Registro <?php echo $_GET['id'] ?>?</p>
-
-                    <small>
-                        <div align="center" class="mt-1" id="mensagem-excluir">
-
-                        </div>
-                    </small>
-
-                </div>
-                <div class="modal-footer">
-                    <button type="button" id="btn-fechar-excluir" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
-                    <button name="btn-excluir" id="btn-excluir" type="submit" class="btn btn-danger">Excluir</button>
-
-                    <input name="id" type="hidden" value="<?php echo @$_GET['id'] ?>">
-
-                </div>
-            </form>
-        </div>
-    </div>
-</div>
-<!-- FIM MODAL DELEÇÃO -->
 
 <!-- MODAL DADOS -->
 <div class="modal fade" tabindex="-1" id="modalDados">
@@ -411,19 +231,6 @@ if (@$_GET['funcao'] == "editar") {
 </div>
 <!-- FIM MODAL COMPRAS -->
 
-<!-- SCRIPT CHAMA MODAL INSERIR -->
-<?php
-if (@$_GET['funcao'] == "novo") { ?>
-    <script type="text/javascript">
-        var myModal = new bootstrap.Modal(document.getElementById('modalCadastrar'), {
-            backdrop: 'static'
-        })
-
-        myModal.show();
-    </script>
-<?php } ?>
-<!-- FIM SCRIPT CHAMA MODAL INSERIR -->
-
 <!-- SCRIPT CHAMA MODAL EDITAR -->
 <?php
 if (@$_GET['funcao'] == "editar") { ?>
@@ -436,102 +243,6 @@ if (@$_GET['funcao'] == "editar") { ?>
     </script>
 <?php } ?>
 <!-- FIM SCRIPT CHAMA MODAL EDITAR -->
-
-<!-- SCRIPT CHAMA MODAL DELEÇÃO -->
-<?php
-if (@$_GET['funcao'] == "deletar") { ?>
-    <script type="text/javascript">
-        var myModal = new bootstrap.Modal(document.getElementById('modalDeletar'), {
-
-        })
-
-        myModal.show();
-    </script>
-<?php } ?>
-<!-- FIM SCRIPT CHAMA MODAL DELEÇÃO -->
-
-<!--AJAX PARA INSERÇÃO E EDIÇÃO DOS DADOS -->
-<script type="text/javascript">
-    $("#form").submit(function() {
-        document.getElementById('codigo').focus();
-        var pagina = "<?= $pagina ?>";
-        event.preventDefault();
-        var formData = new FormData(this);
-
-        $.ajax({
-            url: pagina + "/inserir.php",
-            type: 'POST',
-            data: formData,
-
-            success: function(mensagem) {
-
-                $('#mensagem').removeClass()
-
-                if (mensagem.trim() == "Salvo com Sucesso!") {
-
-                    //$('#nome').val('');
-                    //$('#cpf').val('');
-                    $('#btn-fechar').click();
-                    window.location = "index.php?pagina=" + pagina;
-
-                } else {
-
-                    $('#mensagem').addClass('text-danger')
-                }
-
-                $('#mensagem').text(mensagem)
-
-            },
-
-            cache: false,
-            contentType: false,
-            processData: false,
-
-        });
-    });
-</script>
-<!-- FIM AJAX PARA INSERÇÃO E EDIÇÃO DOS DADOS -->
-
-<!--AJAX PARA EXCLUIR DADOS -->
-<script type="text/javascript">
-    $("#form-excluir").submit(function() {
-        var pagina = "<?= $pagina ?>";
-        event.preventDefault();
-        var formData = new FormData(this);
-
-        $.ajax({
-            url: pagina + "/excluir.php",
-            type: 'POST',
-            data: formData,
-
-            success: function(mensagem) {
-
-                $('#mensagem').removeClass()
-
-                if (mensagem.trim() == "Excluído com Sucesso!") {
-
-                    $('#mensagem-excluir').addClass('text-success')
-
-                    $('#btn-fechar-excluir').click();
-                    window.location = "index.php?pagina=" + pagina;
-
-                } else {
-
-                    $('#mensagem-excluir').addClass('text-danger')
-                }
-
-                $('#mensagem-excluir').text(mensagem)
-
-            },
-
-            cache: false,
-            contentType: false,
-            processData: false,
-
-        });
-    });
-</script>
-<!--FIM AJAX PARA EXCLUIR DADOS -->
 
 <!--AJAX ORDENAR DATATABLE -->
 <script type="text/javascript">
@@ -645,12 +356,11 @@ if (@$_GET['funcao'] == "deletar") { ?>
 <!--AJAX PARA COMPRAR PRODUTO -->
 <script type="text/javascript">
     $("#form-comprar").submit(function() {
-        var pagina = "<?= $pagina ?>";
         event.preventDefault();
         var formData = new FormData(this);
 
         $.ajax({
-            url: pagina + "/comprar-produto.php",
+            url: "/pdv/painel-adm/produtos/comprar-produto.php",
             type: 'POST',
             data: formData,
 
@@ -663,7 +373,7 @@ if (@$_GET['funcao'] == "deletar") { ?>
                     //$('#nome').val('');
                     //$('#cpf').val('');
                     $('#btn-fechar-comprar').click();
-                    window.location = "index.php?pagina=" + pagina;
+                    window.location = "index.php?pagina=estoque";
 
                 } else {
 

@@ -7,7 +7,9 @@ require_once('verificar-permissao.php');
 
 ?>
 <h5 style="text-align: center;" class="text-secondary">VENDAS</h5>
-<a href="index.php" title="Home"><h5 style="text-align: center;" class="text-secondary"><i class="bi bi-house-door"></i></h5></a>
+<a href="index.php" title="Home">
+    <h5 style="text-align: center;" class="text-secondary"><i class="bi bi-house-door"></i></h5>
+</a>
 <div class="mt-4" style="margin-right:25px">
     <?php
     $query = $pdo->query("SELECT * FROM vendas ORDER BY id DESC");
@@ -23,6 +25,7 @@ require_once('verificar-permissao.php');
                         <th class="text-center">Total</th>
                         <th class="text-center">Data</th>
                         <th class="text-center">Usuário</th>
+                        <th class="text-center">Imprimir Recibo</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -53,8 +56,12 @@ require_once('verificar-permissao.php');
                             <td class="text-center"> <i class="bi bi-square-fill <?php echo $classe ?>"></i></td>
                             <td class="text-center">R$ <?php echo number_format($res[$i]['valor'], 2, ',', '.'); ?></td>
                             <td class="text-center"><?php echo implode('/', array_reverse(explode('-', $res[$i]['data_venda']))); ?></td>
-                            <td class="text-center"><?php echo $nome_usuario ?></td>  
-
+                            <td class="text-center"><?php echo $nome_usuario ?></td>
+                            <td class="text-center">
+                                <a href="../rel/comprovante_class.php?id=<?php echo $res[$i]['id'] ?>" title="Imprimir" style="text-decoration: none;" target="_blank">
+                                    <i class="bi bi-printer-fill text-primary"></i>
+                                </a>
+                            </td>
                         </tr>
 
                     <?php } ?>

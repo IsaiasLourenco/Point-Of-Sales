@@ -1,11 +1,11 @@
 <?php 
 
-require_once('config.php');
+require_once('../conexao.php');
 
 $id = $_GET['id'];
 
 //ALIMENTAR OS DADOS NO RELATÓRIO
-$html = file_get_contents($url_sistema."comprovante.php?id=".$id);
+$html = file_get_contents($url_sistema."rel/comprovante.php?id=".$id);
 
 if($relatorio_pdf != 'Sim'){
 	echo $html;
@@ -14,7 +14,7 @@ if($relatorio_pdf != 'Sim'){
 
 
 //CARREGAR DOMPDF
-require_once 'dompdf/autoload.inc.php';
+require_once '../dompdf/autoload.inc.php';
 use Dompdf\Dompdf;
 
 

@@ -213,76 +213,79 @@ if ($dataInicial != $dataFinal) {
 
 		<hr>
 
-		<table class='table' width='100%' cellspacing='0' cellpadding='3'>
-			<tr style="background-color: #f9f9f9;">
-				<th>Status</th>
-				<th>Valor</th>
-				<th>Data</th>
-				<th>Hora</th>
-				<th>Operador</th>
-				<th>Pagamento</th>
+		<small><small>
+				<table class='table' width='100%' cellspacing='0' cellpadding='3'>
+					<tr style="background-color: #f9f9f9;">
+						<th>Status</th>
+						<th>Valor</th>
+						<th>Data</th>
+						<th>Hora</th>
+						<th>Operador</th>
+						<th>Pagamento</th>
 
-			</tr>
-			<?php
-			$saldo = 0;
-			$query = $pdo->query("SELECT * FROM	vendas WHERE data_venda >= '$dataInicial' AND data_venda <= '$dataFinal' AND status_venda LIKE '$status_like' ORDER BY id DESC");
-			$res = $query->fetchAll(PDO::FETCH_ASSOC);
-			$totalItens = @count($res);
+					</tr>
+					<?php
+					$saldo = 0;
+					$query = $pdo->query("SELECT * FROM	vendas WHERE data_venda >= '$dataInicial' AND data_venda <= '$dataFinal' AND status_venda LIKE '$status_like' ORDER BY id DESC");
+					$res = $query->fetchAll(PDO::FETCH_ASSOC);
+					$totalItens = @count($res);
 
-			for ($i = 0; $i < @count($res); $i++) {
-				foreach ($res[$i] as $key => $value) {
-				}
-				$st_venda = $res[$i]['status_venda'];
-				$valor = $res[$i]['valor'];
-				$data = $res[$i]['data_venda'];
-				$hora = $res[$i]['hora'];
-				$id_operador = $res[$i]['operador'];
-				$id_pg = $res[$i]['forma_pgto'];
-				
-				$valor = number_format($valor, 2, ',', '.');
+					for ($i = 0; $i < @count($res); $i++) {
+						foreach ($res[$i] as $key => $value) {
+						}
+						$st_venda = $res[$i]['status_venda'];
+						$valor = $res[$i]['valor'];
+						$data = $res[$i]['data_venda'];
+						$hora = $res[$i]['hora'];
+						$id_operador = $res[$i]['operador'];
+						$id_pg = $res[$i]['forma_pgto'];
 
-				$data = implode('/', array_reverse(explode('-', $data)));
+						@$saldo = $saldo + $valor;
 
-				$query_usu = $pdo->query("SELECT * FROM usuarios where id = '$id_operador'");
-				$res_usu = $query_usu->fetchAll(PDO::FETCH_ASSOC);
-				$nome_usu = $res_usu[0]['nome'];
-				
-				$query_pg = $pdo->query("SELECT * FROM forma_pgtos where id = '$id_pg'");
-				$res_pg = $query_pg->fetchAll(PDO::FETCH_ASSOC);
-				$nome_pg = $res_pg[0]['nome'];
+						$data = implode('/', array_reverse(explode('-', $data)));
 
-				if ($st_venda == 'Fechada') {
-					$foto = 'verde.jpg';
-				} else if ($st_venda == 'Aberta') {
-					$foto = 'vermelho.jpg';
-				} else if ($st_venda == 'Cancelada') {
-					$foto = 'amarelo.jpg';
-				}
-			?>
+						$query_usu = $pdo->query("SELECT * FROM usuarios where id = '$id_operador'");
+						$res_usu = $query_usu->fetchAll(PDO::FETCH_ASSOC);
+						$nome_usu = $res_usu[0]['nome'];
 
-				<tr>
+						$query_pg = $pdo->query("SELECT * FROM forma_pgtos where id = '$id_pg'");
+						$res_pg = $query_pg->fetchAll(PDO::FETCH_ASSOC);
+						$nome_pg = $res_pg[0]['nome'];
 
-					<td><img src="<?php echo $url_sistema ?>assets/img/<?php echo $foto ?>" width="13px"> </td> 
-					<td>R$ <?php echo $valor ?> </td>
-					<td><?php echo $data ?> </td>
-					<td><?php echo $hora ?> </td>
-					<td><?php echo $nome_usu ?> </td>
-					<td><?php echo $nome_pg ?> </td>
+						if ($st_venda == 'Fechada') {
+							$foto = 'verde.jpg';
+						} else if ($st_venda == 'Aberta') {
+							$foto = 'vermelho.jpg';
+						} else if ($st_venda == 'Cancelada') {
+							$foto = 'amarelo.jpg';
+						}
+					?>
 
-				</tr>
-			<?php } ?>
+						<tr>
 
-		</table>
+							<td><img src="<?php echo $url_sistema ?>assets/img/<?php echo $foto ?>" width="13px"> </td>
+							<td>R$ <?php echo number_format($valor, 2, ',', '.') ?> </td>
+							<td><?php echo $data ?> </td>
+							<td><?php echo $hora ?> </td>
+							<td><?php echo $nome_usu ?> </td>
+							<td><?php echo $nome_pg ?> </td>
 
+						</tr>
+					<?php } ?>
+
+				</table>
+			</small></small>
 		<hr>
 
 		<div class="row">
-			<div class="col-sm-8" style="text-align: center;">
+			<div class="col-sm-8" style="text-align: left;">
 				<span class=""> <b> Período da Apuração </b> </span>
 
 				<span class=""> <?php echo $apuracao ?> </span>
 			</div>
-			
+			<div class="col-sm-4 direita" style="text-align: right;">
+				<span class=""> <b> Total R$ <?php echo number_format($saldo, 2, ',', '.') ?> </b> </span>
+			</div>
 		</div>
 
 		<hr>
